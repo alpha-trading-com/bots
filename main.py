@@ -3,6 +3,7 @@ import bittensor as bt
 from utils.utils import *
 
 default_delta_price = 0.00001
+stake_amount = 1
 
 def stake_cheat1(netuid, subtensor, wallet, hotkey, tao_amount):
     staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
@@ -103,4 +104,4 @@ if __name__ == '__main__':
     
     # unstake_from_subnet(4, subtensor, wallet, "5GKH9FPPnWSUoeeTJp19wVtd84XqFW4pyK2ijV2GsFbhTrP1", 0.1)
     
-    stake_cheat2(netuid, subtensor, wallet, "5GKH9FPPnWSUoeeTJp19wVtd84XqFW4pyK2ijV2GsFbhTrP1", 0.05)
+    stake_cheat2(netuid, subtensor, wallet, "5GKH9FPPnWSUoeeTJp19wVtd84XqFW4pyK2ijV2GsFbhTrP1", stake_amount)
