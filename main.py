@@ -65,9 +65,12 @@ def stake_cheat2(netuid, subtensor, wallet, hotkey, tao_amount):
             print(f"==== Staked: {staked} ====")
             if alpha_to_tao > staked_price + default_delta_price:
                 if staked:
-                    unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
-                    staked_price = exchange_rates(netuid, subtensor)
-                    staked = False
+                    unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
+                    if unstaked:
+                        staked_price = exchange_rates(netuid, subtensor)
+                        staked = False
+                    else:
+                        print("Failed to unstake")
                 else:
                     # stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
                     # staked_price = exchange_rates(netuid, subtensor)
@@ -78,7 +81,10 @@ def stake_cheat2(netuid, subtensor, wallet, hotkey, tao_amount):
             elif alpha_to_tao < staked_price - default_delta_price:
                 if not staked:
                     staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
-                    staked_price = exchange_rates(netuid, subtensor)
+                    if staked:
+                        staked_price = exchange_rates(netuid, subtensor)
+                    else:
+                        print("Failed to stake")
                 else:
                     print("Already staked")
 

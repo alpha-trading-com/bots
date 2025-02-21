@@ -19,7 +19,7 @@ def auto_move(netuid, subtensor, wallet, hotkey, dest_hotkey, tao_amount):
 
 if __name__ == '__main__':
     # Create a wallet instance
-    wallet = bt.wallet(name='sec_ck1', hotkey='hk1')
+    wallet = bt.wallet(name='sec_ck1', hotkey='hk2')
     wallet.unlock_coldkey()
     
     print(wallet.hotkey.ss58_address)
