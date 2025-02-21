@@ -2,8 +2,8 @@ import time
 import bittensor as bt
 from utils.utils import *
 
-default_delta_price = 0.00001
-stake_amount = 1
+default_delta_price = 0.0005
+stake_amount = 0.1
 
 def stake_cheat1(netuid, subtensor, wallet, hotkey, tao_amount):
     staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
