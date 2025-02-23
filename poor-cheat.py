@@ -1,15 +1,15 @@
 import time
 import bittensor as bt
+from utils.const import sn_vali_addr
 from utils.utils import *
 
 default_delta_price = 0.0005
-stake_amount = 0.1
+stake_amount = 1
 
-def stake_cheat2(netuid, subtensor, wallet, hotkey, tao_amount):
+def poor_cheat(netuid, subtensor, wallet, hotkey, tao_amount):
     get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
     staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
     staked_price = exchange_rates(netuid, subtensor)
-    middel_price = staked_price
     staked_float = float(str(staked_price).replace('τ', ''))
     get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
     subtensor.wait_for_block()
@@ -18,9 +18,8 @@ def stake_cheat2(netuid, subtensor, wallet, hotkey, tao_amount):
         try:
             alpha_to_tao = exchange_rates(netuid, subtensor)
             alpha_float = float(str(alpha_to_tao).replace('τ', ''))
-            print(f"==== Staked price: {staked_float} ====")
-            print(f"==== Alpha to tao: {alpha_float} ====")
-            print(f"==== Netuid: {netuid} | Staked: {staked} ====")
+            print(f"[{netuid} staked: {staked}] ===> Staked price: {staked_float} || Alpha to tao: {alpha_float} ====")
+            
             if alpha_float > staked_float + default_delta_price:
                 if staked:
                     unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey)
@@ -29,13 +28,14 @@ def stake_cheat2(netuid, subtensor, wallet, hotkey, tao_amount):
                         staked_float = float(str(staked_price).replace('τ', ''))
                         staked = False
                         get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
+                        time.sleep(60)
                     else:
                         print("Failed to unstake")
                 else:
                     pass
             elif alpha_float == staked_float:
                 print("No change in price")
-            elif alpha_float < staked_float - default_delta_price and middel_price > alpha_float:
+            elif alpha_float < staked_float - default_delta_price:
                 if not staked:
                     staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
                     if staked:
@@ -47,9 +47,7 @@ def stake_cheat2(netuid, subtensor, wallet, hotkey, tao_amount):
                 else:
                     print("Already staked")
 
-            middel_price = alpha_float
             subtensor.wait_for_block()
-            time.sleep(60)
         except Exception as e:
             print(f"=== Unexpected Error: {e} ===")
 
@@ -65,4 +63,4 @@ if __name__ == '__main__':
     
     subtensor = bt.subtensor('finney')
 
-    stake_cheat2(netuid, subtensor, wallet, "5GKH9FPPnWSUoeeTJp19wVtd84XqFW4pyK2ijV2GsFbhTrP1", user_stake_amount)
+    poor_cheat(netuid, subtensor, wallet, sn_vali_addr(netuid), user_stake_amount)

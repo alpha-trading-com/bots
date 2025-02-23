@@ -65,8 +65,8 @@ def exchange_rates(netuid, subtensor):
 def watching_price(netuid, subtensor):
   while True:
     try:
-      print(exchange_rates(netuid, subtensor))
-      time.sleep(12)
+      print(f"Netuid: {netuid} ===> price: {exchange_rates(netuid, subtensor)}")
+      subtensor.wait_for_block()
     except Exception as e:
       print(e)
       continue
@@ -104,19 +104,28 @@ def calc_tao_amount(netuid, subtensor, wallet, hotkey):
     subnet = subtensor.subnet(netuid=netuid)
     return subnet.price
 
-def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount):
+def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
     try:
         subnet = subtensor.subnet(netuid=netuid)
-        amount = subnet.tao_to_alpha(tao_amount)
         
-        subtensor.unstake(
-            netuid=netuid,
-            amount=amount,  # Now using the converted Balance amount
-            wallet=wallet,
-            hotkey_ss58=hotkey
-        )
-        print(f"==== Unstaked {amount} TAO from {hotkey} on {netuid} ====")
-        return True
+        if tao_amount is not None:
+            amount = subnet.tao_to_alpha(tao_amount)
+            result = subtensor.unstake(
+                netuid=netuid,
+                amount=amount,
+                wallet=wallet,
+                hotkey_ss58=hotkey
+            )
+            print(f"==== Unstaked {amount} TAO from {hotkey} on {netuid} || result: {result} ====")
+        else:
+            # Unstake all if no amount specified
+            result = subtensor.unstake(
+                netuid=netuid,
+                wallet=wallet,
+                hotkey_ss58=hotkey
+            )
+            print(f"==== Unstaked all TAO from {hotkey} on {netuid} || result: {result} ====")
+        return result
     except Exception as e:
         print(f"Error unstaking from subnet {netuid}: {e}")
         return False
