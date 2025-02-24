@@ -20,7 +20,7 @@ def auto_move(netuid, subtensor, wallet, dest_hotkey, tao_amount):
             print(f"=== Unexpected Error: {e} ===")
             
         subtensor.wait_for_block()
-        time.sleep(5)
+        time.sleep(3600)
         print(f"==== sleeping... ====")
 
 if __name__ == '__main__':
@@ -32,5 +32,5 @@ if __name__ == '__main__':
     
     subtensor = bt.subtensor('finney')
 
-    auto_move(54, subtensor, wallet, "5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v", 0.1)
+    auto_move(54, subtensor, wallet, "5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v", 1)
     

@@ -3,7 +3,8 @@ VALIDATOR_NAME = {
     "RoundTable" : "5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v",
     "Taostats" : "5GKH9FPPnWSUoeeTJp19wVtd84XqFW4pyK2ijV2GsFbhTrP1",
     "Opentensor" : "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3",
-    "Yuma" : "5HEo565WAy4Dbq3Sv271SAi7syBSofyfhhwRNjFNSM2gP9M2"
+    "Yuma" : "5HEo565WAy4Dbq3Sv271SAi7syBSofyfhhwRNjFNSM2gP9M2",
+    "tao5" : "5CsvRJXuR955WojnGMdok1hbhffZyB4N5ocrv82f3p5A2zVp"
 }
 
 # Mapping of netuid to validator addresses
@@ -11,7 +12,7 @@ NETUID_TO_ADDRESS = {
     # focus sn valis
     4: VALIDATOR_NAME["Rizzo"],
     51: VALIDATOR_NAME["RoundTable"],
-    48: VALIDATOR_NAME["Taostats"],
+    48: VALIDATOR_NAME["Opentensor"],
     16: VALIDATOR_NAME["Opentensor"],
     
     # other valis
@@ -23,8 +24,13 @@ NETUID_TO_ADDRESS = {
     9: VALIDATOR_NAME["Opentensor"],
     53: VALIDATOR_NAME["Opentensor"],
     54: VALIDATOR_NAME["RoundTable"],
+    50: VALIDATOR_NAME["RoundTable"],
     
     # poor sn valis
+    65: VALIDATOR_NAME["tao5"],
+    66: VALIDATOR_NAME["Yuma"],
+    67: VALIDATOR_NAME["Yuma"],
+    68: VALIDATOR_NAME["Yuma"],
     69: VALIDATOR_NAME["Yuma"],
 }
 
