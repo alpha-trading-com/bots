@@ -4,7 +4,8 @@ VALIDATOR_NAME = {
     "Taostats" : "5GKH9FPPnWSUoeeTJp19wVtd84XqFW4pyK2ijV2GsFbhTrP1",
     "Opentensor" : "5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3",
     "Yuma" : "5HEo565WAy4Dbq3Sv271SAi7syBSofyfhhwRNjFNSM2gP9M2",
-    "tao5" : "5CsvRJXuR955WojnGMdok1hbhffZyB4N5ocrv82f3p5A2zVp"
+    "tao5" : "5CsvRJXuR955WojnGMdok1hbhffZyB4N5ocrv82f3p5A2zVp",
+    "WebGenieAI" : "5FcHYtdLLYSWUKbDgbZvvmCLRbnqwn3HUsWUAEmdQscW9dRW"
 }
 
 # Mapping of netuid to validator addresses
@@ -21,9 +22,10 @@ NETUID_TO_ADDRESS = {
     41: VALIDATOR_NAME["Opentensor"],
     19: VALIDATOR_NAME["Opentensor"],
     11: VALIDATOR_NAME["RoundTable"],
+    13: VALIDATOR_NAME["Opentensor"],
     9: VALIDATOR_NAME["Opentensor"],
     53: VALIDATOR_NAME["Opentensor"],
-    54: VALIDATOR_NAME["RoundTable"],
+    54: VALIDATOR_NAME["WebGenieAI"],
     50: VALIDATOR_NAME["RoundTable"],
     
     # poor sn valis

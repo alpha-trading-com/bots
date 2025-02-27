@@ -1,6 +1,7 @@
 import time
 import bittensor as bt
 import argparse
+from utils.const import sn_vali_addr
 from utils.utils import *
 
 default_delta_price = 0.00001
@@ -11,11 +12,14 @@ def auto_move(netuid, subtensor, wallet, dest_hotkey, tao_amount):
     hotkey2 = "5CfBpgAk4AUTBNFt43QpLr39bYpGB52pBcB9qhp9oqpaGtYr"
     while True:
         try:
-            unstake_from_subnet(netuid, subtensor, wallet, hotkey1, tao_amount)
-            stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
+            unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey1, tao_amount)
+            if unstaked:
+                stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
+            time.sleep(60)
             
-            unstake_from_subnet(netuid, subtensor, wallet, hotkey2, tao_amount)
-            stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
+            unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey2, tao_amount)
+            if unstaked:
+                stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
         except Exception as e:
             print(f"=== Unexpected Error: {e} ===")
             
@@ -32,5 +36,5 @@ if __name__ == '__main__':
     
     subtensor = bt.subtensor('finney')
 
-    auto_move(54, subtensor, wallet, "5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v", 1)
+    auto_move(54, subtensor, wallet, sn_vali_addr(54), 1)
     

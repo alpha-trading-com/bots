@@ -6,14 +6,26 @@ from utils.utils import *
 default_delta_price = 0.0005
 # stake_amount = 1
 
-def cheat1(netuid, subtensor, wallet, hotkey, tao_amount):
+def cheat1(netuid, subtensor, wallet, hotkey, tao_amount, entry_price):
     get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
-    staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
-    staked_price = exchange_rates(netuid, subtensor)
-    staked_float = float(str(staked_price).replace('τ', ''))
-    get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
-    subtensor.wait_for_block()
-    time.sleep(60)
+    
+    alpha_to_tao = exchange_rates(netuid, subtensor)
+    alpha_float = float(str(alpha_to_tao).replace('τ', ''))
+    print(f"Alpha to tao: {alpha_float}")
+    staked = False
+    
+    if alpha_float < entry_price:
+        staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
+        staked_price = exchange_rates(netuid, subtensor)
+        staked_float = float(str(staked_price).replace('τ', ''))
+        get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
+        subtensor.wait_for_block()
+        time.sleep(60)
+    else:
+        staked_float = entry_price + default_delta_price
+        print("Alpha to tao is too high, skipping stake")
+        time.sleep(60)
+        
     while True:
         try:
             alpha_to_tao = exchange_rates(netuid, subtensor)
@@ -52,7 +64,7 @@ def cheat1(netuid, subtensor, wallet, hotkey, tao_amount):
             subtensor.wait_for_block()
             time.sleep(60)
         except Exception as e:
-            time.sleep(300)
+            time.sleep(30)
             print(f"=== Unexpected Error: {e} ===")
 
 if __name__ == '__main__':
@@ -60,11 +72,16 @@ if __name__ == '__main__':
     wallet_name = input("Enter the wallet name: ")
     hotkey = input("Enter the hotkey: ")
     user_stake_amount = float(input("Enter the stake amount: "))
+    
+    subtensor = bt.subtensor('finney')
+    alpha_to_tao = exchange_rates(netuid, subtensor)
+    alpha_float = float(str(alpha_to_tao).replace('τ', ''))
+    print(f"Alpha to tao: {alpha_float}")
+    
+    entry_price = float(input("Enter the entry price: "))
 
     # Create a wallet instance
     wallet = bt.wallet(name=wallet_name, hotkey=hotkey)
     wallet.unlock_coldkey()
     
-    subtensor = bt.subtensor('finney')
-
-    cheat1(netuid, subtensor, wallet, sn_vali_addr(netuid), user_stake_amount)
+    cheat1(netuid, subtensor, wallet, sn_vali_addr(netuid), user_stake_amount, entry_price)
