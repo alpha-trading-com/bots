@@ -20,12 +20,15 @@ def auto_move(netuid, subtensor, wallet, dest_hotkey, tao_amount):
             unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey2, tao_amount)
             if unstaked:
                 stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
+
+            subtensor.wait_for_block()
+            time.sleep(3600)
+            print(f"==== sleeping... ====")
         except Exception as e:
             print(f"=== Unexpected Error: {e} ===")
+            subtensor.wait_for_block()
+            time.sleep(60)
             
-        subtensor.wait_for_block()
-        time.sleep(3600)
-        print(f"==== sleeping... ====")
 
 if __name__ == '__main__':
     # Create a wallet instance

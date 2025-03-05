@@ -36,11 +36,11 @@ def cheat1(netuid, subtensor, wallet, hotkey, tao_amount, entry_price):
                 if staked:
                     unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey)
                     if unstaked:
-                        staked_price = exchange_rates(netuid, subtensor)
-                        staked_float = float(str(staked_price).replace('τ', ''))
+                        # staked_price = exchange_rates(netuid, subtensor)
+                        # staked_float = float(str(staked_price).replace('τ', ''))
                         staked = False
                         get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
-                        time.sleep(600)
+                        time.sleep(60)
                     else:
                         print("Failed to unstake")
                 else:
@@ -51,10 +51,10 @@ def cheat1(netuid, subtensor, wallet, hotkey, tao_amount, entry_price):
                 if not staked:
                     staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
                     if staked:
-                        staked_price = exchange_rates(netuid, subtensor)
-                        staked_float = float(str(staked_price).replace('τ', ''))
+                        # staked_price = exchange_rates(netuid, subtensor)
+                        # staked_float = float(str(staked_price).replace('τ', ''))
                         get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
-                        time.sleep(600)
+                        time.sleep(60)
                     else:
                         print("Failed to stake")
                 else:
