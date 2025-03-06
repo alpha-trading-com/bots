@@ -20,7 +20,7 @@ if __name__ == '__main__':
     hotkey = input("Enter the hotkey: ")
     user_stake_amount = float(input("Enter the stake amount: "))
     
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor('local')
     
     # Create a wallet instance
     wallet = bt.wallet(name=wallet_name, hotkey=hotkey)

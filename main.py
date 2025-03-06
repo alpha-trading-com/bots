@@ -63,6 +63,6 @@ if __name__ == '__main__':
     wallet = bt.wallet(name=wallet_name, hotkey=hotkey)
     wallet.unlock_coldkey()
     
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor('local')
 
     stake_cheat2(netuid, subtensor, wallet, "5GKH9FPPnWSUoeeTJp19wVtd84XqFW4pyK2ijV2GsFbhTrP1", user_stake_amount)

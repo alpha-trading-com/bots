@@ -73,7 +73,7 @@ if __name__ == '__main__':
     hotkey = input("Enter the hotkey: ")
     user_stake_amount = float(input("Enter the stake amount: "))
     
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor('local')
     alpha_to_tao = exchange_rates(netuid, subtensor)
     alpha_float = float(str(alpha_to_tao).replace('τ', ''))
     print(f"Alpha to tao: {alpha_float}")
