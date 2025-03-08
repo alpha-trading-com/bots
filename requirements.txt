@@ -1,1 +1,9 @@
 bittensor
+retry
+rich
+aiohttp
+numpy
+pandas
+scipy
+statistics
+backoff

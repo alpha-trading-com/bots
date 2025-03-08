@@ -8,7 +8,7 @@ def autoStake(netuid, subtensor, wallet, hotkey, tao_amount):
     get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
     
     for i in range(100):
-        print(f"=== [{i}] Staking {tao_amount} TAO to subnet {netuid} ===")
+        logger.info(f"=== [{i}] Staking {tao_amount} TAO to subnet {netuid} ===")
         staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
         get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
         subtensor.wait_for_block()

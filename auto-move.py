@@ -22,10 +22,10 @@ def auto_move(netuid, subtensor, wallet, dest_hotkey, tao_amount):
                 stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
 
             subtensor.wait_for_block()
-            time.sleep(3600)
-            print(f"==== sleeping... ====")
+            time.sleep(600)
+            logger.info("==== sleeping... ====")
         except Exception as e:
-            print(f"=== Unexpected Error: {e} ===")
+            logger.error(f"=== Unexpected Error: {e} ===")
             subtensor.wait_for_block()
             time.sleep(60)
             
@@ -35,9 +35,9 @@ if __name__ == '__main__':
     wallet = bt.wallet(name='sec_ck1', hotkey='hk2')
     wallet.unlock_coldkey()
     
-    print(wallet.hotkey.ss58_address)
+    logger.info(wallet.hotkey.ss58_address)
     
     subtensor = bt.subtensor('local')
 
-    auto_move(54, subtensor, wallet, sn_vali_addr(54), 1)
+    auto_move(54, subtensor, wallet, sn_vali_addr(54), 0.1)
     
