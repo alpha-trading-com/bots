@@ -1,4 +1,4 @@
-from ast import Dict, List
+from typing import Dict, List
 from asyncio.log import logger
 import time
 import bittensor as bt
@@ -7,6 +7,11 @@ from config import *
 import logging
 from datetime import datetime
 
+# Setup logger at the top of the file
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 def old_register(
@@ -128,9 +133,9 @@ def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
         else:
             # Unstake all if no amount specified
             result = subtensor.unstake(
-                netuid=netuid,
                 wallet=wallet,
-                hotkey_ss58=hotkey
+                hotkey_ss58=hotkey,
+                netuid=netuid
             )
             logger.info(f"==== Unstaked all TAO from {hotkey} on {netuid} || result: {result} ====")
         return result

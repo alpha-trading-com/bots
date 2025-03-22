@@ -49,6 +49,7 @@ NETUID_TO_ADDRESS = {
     67: VALIDATOR_NAME["Yuma"],
     68: VALIDATOR_NAME["Yuma"],
     69: VALIDATOR_NAME["Yuma"],
+    76: VALIDATOR_NAME["RoundTable"],
 }
 
 def sn_vali_addr(netuid: int) -> str:

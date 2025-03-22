@@ -13,11 +13,13 @@ def auto_move(netuid, subtensor, wallet, dest_hotkey, tao_amount):
     while True:
         try:
             unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey1, tao_amount)
+            logger.info(f"unstaked[1]: {unstaked}")
             if unstaked:
                 stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
             time.sleep(60)
             
             unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey2, tao_amount)
+            logger.info(f"unstaked[2]: {unstaked}")
             if unstaked:
                 stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
 
