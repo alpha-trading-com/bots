@@ -19,7 +19,7 @@ def setup_logger():
     return logging.getLogger(__name__)
 
 logger = setup_logger()
-default_delta_price = 0.0005
+default_delta_price = 0.0001
 # stake_amount = 1
 def get_alpha_to_tao(netuid, subtensor):
     try:
@@ -38,9 +38,6 @@ def cheat1(netuid, subtensor, wallet, hotkey, tao_amount, entry_price):
     
     alpha_float = get_alpha_to_tao(netuid, subtensor)
     logger.info(f"Alpha to tao: {alpha_float}")
-    
-    ready_to_unstake = False
-    ready_to_stake = False
     
     staked = False
     
@@ -61,42 +58,26 @@ def cheat1(netuid, subtensor, wallet, hotkey, tao_amount, entry_price):
             logger.info(f"[{netuid} staked: {staked} amount: {tao_amount}] ===> Staked price: {staked_float} || Alpha to tao: {alpha_float} ====")
             
             if alpha_float > staked_float + default_delta_price:
-                ready_to_stake = False
                 if staked:
-                    if ready_to_unstake:
-                        unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey)
-                        if unstaked:
-                            ready_to_unstake = False
-                            staked_float = get_alpha_to_tao(netuid, subtensor)
-                            staked = False
-                            get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
-                            time.sleep(60)
-                        else:
-                            logger.error("Failed to unstake")
+                    unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey)
+                    if unstaked:
+                        staked_float = get_alpha_to_tao(netuid, subtensor)
+                        staked = False
+                        get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
+                        time.sleep(60)
                     else:
-                        ready_to_unstake = False
-                else:
-                    ready_to_unstake = False
+                        logger.error("Failed to unstake")
             elif alpha_float == staked_float:
-                ready_to_unstake = False
-                ready_to_stake = False
                 logger.info("No change in price")
             elif alpha_float < staked_float - default_delta_price:
-                ready_to_unstake = False
                 if not staked:
-                    if ready_to_stake:
-                        staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
-                        if staked:
-                            staked_float = get_alpha_to_tao(netuid, subtensor)
-                            get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
-                            ready_to_stake = False
-                            time.sleep(60)
-                        else:
-                            logger.error("Failed to stake")
+                    staked = stake_to_subnet(netuid, subtensor, wallet, hotkey, tao_amount)
+                    if staked:
+                        staked_float = get_alpha_to_tao(netuid, subtensor)
+                        get_balance_coldkey(subtensor, wallet.coldkeypub.ss58_address)
+                        time.sleep(60)
                     else:
-                        ready_to_stake = True
-                else:
-                    ready_to_stake = False
+                        logger.error("Failed to stake")
 
             subtensor.wait_for_block()
             time.sleep(60)

@@ -18,14 +18,15 @@ VALIDATOR_NAME = {
     "Love" : "5F27Eqz2PhyMtGMEce898x31DokNqRVxkm5AhDDe6rDGNvoY",
     "Tatsu" : "5D4gEn5S422dTGR5NJJKZ93FNV6hDmfwDPfxFNgcoVnUkZ4f",
     "Datura" : "5GP7c3fFazW9GXK8Up3qgu2DJBk8inu4aK9TZy3RuoSWVCMi",
-    "WebGenieAI" : "5FcHYtdLLYSWUKbDgbZvvmCLRbnqwn3HUsWUAEmdQscW9dRW"
+    "WebGenieAI" : "5FcHYtdLLYSWUKbDgbZvvmCLRbnqwn3HUsWUAEmdQscW9dRW",
+    "51": "5E1nK3myeWNWrmffVaH76f2mCFCbe9VcHGwgkfdcD7k3E8D1"
 }
 
 # Mapping of netuid to validator addresses
 NETUID_TO_ADDRESS = {
     # focus sn valis
     4: VALIDATOR_NAME["tao5"],
-    51: VALIDATOR_NAME["RoundTable"],
+    51: VALIDATOR_NAME["51"],
     48: VALIDATOR_NAME["Opentensor"],
     16: VALIDATOR_NAME["Opentensor"],
     34: VALIDATOR_NAME["tao5"],

@@ -16,7 +16,7 @@ def auto_move(netuid, subtensor, wallet, dest_hotkey, tao_amount):
             logger.info(f"unstaked[1]: {unstaked}")
             if unstaked:
                 stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
-            time.sleep(60)
+            time.sleep(1200)
             
             unstaked = unstake_from_subnet(netuid, subtensor, wallet, hotkey2, tao_amount)
             logger.info(f"unstaked[2]: {unstaked}")
@@ -24,7 +24,7 @@ def auto_move(netuid, subtensor, wallet, dest_hotkey, tao_amount):
                 stake_to_subnet(netuid, subtensor, wallet, dest_hotkey, tao_amount)
 
             subtensor.wait_for_block()
-            time.sleep(600)
+            time.sleep(60)
             logger.info("==== sleeping... ====")
         except Exception as e:
             logger.error(f"=== Unexpected Error: {e} ===")
@@ -41,5 +41,5 @@ if __name__ == '__main__':
     
     subtensor = bt.subtensor('local')
 
-    auto_move(54, subtensor, wallet, sn_vali_addr(54), 0.1)
+    auto_move(54, subtensor, wallet, sn_vali_addr(54), 0.2)
     
