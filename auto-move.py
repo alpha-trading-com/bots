@@ -39,7 +39,7 @@ if __name__ == '__main__':
     
     logger.info(wallet.hotkey.ss58_address)
     
-    subtensor = bt.subtensor('local')
+    subtensor = bt.subtensor('finney')
 
     auto_move(54, subtensor, wallet, sn_vali_addr(54), 0.2)
     

@@ -1302,7 +1302,7 @@ async def staking_manager(subtensor: bt.AsyncSubtensor, wallet: bt.wallet, live:
             await asyncio.sleep(10)
             
 async def main():
-    subtensor = bt.subtensor('local')
+    subtensor = bt.subtensor('finney')
     wallet = bt.wallet()
     wallet.unlock_coldkey()
     

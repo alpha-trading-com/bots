@@ -16,7 +16,7 @@ if __name__ == '__main__':
     hotkey = input("Enter the hotkey: ")
     # user_stake_amount = float(input("Enter the stake amount: "))
     
-    subtensor = bt.subtensor('local')
+    subtensor = bt.subtensor('finney')
 
     wallet = bt.wallet(name=wallet_name, hotkey=hotkey)
     wallet.unlock_coldkey()

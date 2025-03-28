@@ -2,23 +2,7 @@ import time
 import bittensor as bt
 from utils.const import sn_vali_addr
 from utils.utils import *
-import logging
-from datetime import datetime
 
-# Setup logging
-def setup_logger():
-    log_filename = f"cheat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler(log_filename),
-            logging.StreamHandler()
-        ]
-    )
-    return logging.getLogger(__name__)
-
-logger = setup_logger()
 default_delta_price = 0.0001
 # stake_amount = 1
 def get_alpha_to_tao(netuid, subtensor):
@@ -91,7 +75,7 @@ if __name__ == '__main__':
     hotkey = input("Enter the hotkey: ")
     user_stake_amount = float(input("Enter the stake amount: "))
     
-    subtensor = bt.subtensor('local')
+    subtensor = bt.subtensor('finney')
     alpha_float = get_alpha_to_tao(netuid, subtensor)
 
     logger.info(f"Alpha to tao: {alpha_float}")

@@ -50,7 +50,7 @@ if __name__ == '__main__':
     wallet = bt.wallet(name='taocorn')
     wallet.unlock_coldkey()
     
-    subtensor = bt.subtensor('local')
+    subtensor = bt.subtensor('finney')
     target_net_uid = 64
     hotkey = "5Fc8ggzwmUMVBWgPjAArTHy6JZS6BJ5q5m7BtqVCSwReDiMQ"
     auto_move(target_net_uid, subtensor, wallet, hotkey, 0.01)
