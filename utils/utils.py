@@ -145,10 +145,16 @@ def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
             logger.info(f"==== Unstaked {amount} TAO from {hotkey} on {netuid} || result: {result} ====")
         else:
             # Unstake all if no amount specified
+            stake_amount = subtensor.get_stake(coldkey_ss58=wallet.coldkeypub.ss58_address, hotkey_ss58=hotkey, netuid=netuid)
+            # Clean the stake amount string and convert to float
+            cleaned_stake = float(''.join(c for c in str(stake_amount) if c.isdigit() or c == '.'))
+            logger.info(f"==== Stake amount: {cleaned_stake:.8f} ====")
+            
             result = subtensor.unstake(
                 wallet=wallet,
                 hotkey_ss58=hotkey,
-                netuid=netuid
+                netuid=netuid,
+                amount=cleaned_stake
             )
             logger.info(f"==== Unstaked all TAO from {hotkey} on {netuid} || result: {result} ====")
         return result
