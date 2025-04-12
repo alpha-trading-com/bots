@@ -1,5 +1,5 @@
 import bittensor as bt
-from utils.utils import *
+from pycorn.revised_registration import dtao_register
 
 if __name__ == '__main__':
     netuid = int(input("Enter the netuid: "))

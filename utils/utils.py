@@ -8,7 +8,7 @@ import logging
 from datetime import datetime
 import os
 
-from pycorn.revised_registration import quick_register
+#from pycorn.revised_registration import 
 
 # Create logs directory if it doesn't exist
 os.makedirs('logs', exist_ok=True)

@@ -16,6 +16,7 @@ from scalecodec import (
     ss58_encode,
 )
 import json
+from typing import Optional
 
 def sign_extrinsic(
     subtensor:"Subtensor",
@@ -103,7 +104,7 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
         wallet=wallet,
     )
 
-    ws = subtensor.substrate.websocket
+    ws = subtensor.substrate.ws
     payload = {
         "jsonrpc": "2.0", "method": "chain_getHeader", "params": [None], "id": 0
     }
@@ -114,7 +115,9 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
             ws.send(get_block_ws_data)
             response = json.loads(ws.recv())
             b = int(response["result"]["number"],0)
-            if b != 0 and b != block: continue
+            if block != 0 and b != block: 
+                print(f"Waiting for the {block}: current Bockk {b}")
+                continue
 
             result, msg = send_extrinsic(
                 subtensor=subtensor,
