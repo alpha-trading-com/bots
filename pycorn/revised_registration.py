@@ -88,7 +88,7 @@ def send_extrinsic(subtensor:"Subtensor",
         return False, str(e)
 
 
-def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block):
+def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
     call = subtensor.substrate.compose_call(
         call_module="SubtensorModule",
         call_function="burned_register",
@@ -109,13 +109,12 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block):
     }
     get_block_ws_data = json.dumps(payload)
 
-
     while True:
         try:
             ws.send(get_block_ws_data)
             response = json.loads(ws.recv())
             b = int(response["result"]["number"],0)
-            if b != block: continue
+            if b != 0 and b != block: continue
 
             result, msg = send_extrinsic(
                 subtensor=subtensor,
