@@ -6,42 +6,88 @@ Extrinsics:
 - burned_register_extrinsic: Registers the wallet to chain by recycling TAO.
 """
 
-import time
-from typing import Optional, Union, TYPE_CHECKING
 
-from bittensor.utils import unlock_key
-from bittensor.utils.btlogging import logging
-from bittensor.utils.registration import create_pow, log_no_torch_error, torch
 from bittensor_wallet import Wallet
 from bittensor.core.subtensor import Subtensor
-from bittensor.utils.registration.pow import POWSolution
+from scalecodec import (
+    GenericCall,
+    GenericExtrinsic,
+    GenericRuntimeCallDefinition,
+    ss58_encode,
+)
 
 
-def quick_register(
-    subtensor: "Subtensor",
-    netuid: int,
+def sign_extrinsic(
+    subtensor:"Subtensor",
+    call: "GenericCall",
     wallet: "Wallet",
-    wait_for_inclusion: bool = False,
-    wait_for_finalization: bool = True,
-) -> tuple[bool, str]:
+    sign_with: str = "coldkey",
+    use_nonce: bool = False,
+    period: Optional[int] = None,
+    nonce_key: str = "hotkey",
+) -> GenericExtrinsic:
     """
-    Performs a burned register extrinsic call to the Subtensor chain.
+    Helper method to sign and submit an extrinsic call to chain.
 
-    This method sends a registration transaction to the Subtensor blockchain using the burned register mechanism.
-
-    Args:
-        subtensor (bittensor.core.subtensor.Subtensor): Subtensor instance.
-        netuid (int): The network unique identifier to register on.
-        wallet (bittensor_wallet.Wallet): The wallet to be registered.
-        wait_for_inclusion (bool): Whether to wait for the transaction to be included in a block. Default is False.
-        wait_for_finalization (bool): Whether to wait for the transaction to be finalized. Default is True.
+    Arguments:
+        call (scalecodec.types.GenericCall): a prepared Call object
+        wallet (bittensor_wallet.Wallet): the wallet whose coldkey will be used to sign the extrinsic
+        wait_for_inclusion (bool): whether to wait until the extrinsic call is included on the chain
+        wait_for_finalization (bool): whether to wait until the extrinsic call is finalized on the chain
+        sign_with: the wallet's keypair to use for the signing. Options are "coldkey", "hotkey", "coldkeypub"
 
     Returns:
-        Tuple[bool, Optional[str]]: A tuple containing a boolean indicating success or failure, and an optional error
-            message.
+        (success, error message)
     """
+    possible_keys = ("coldkey", "hotkey", "coldkeypub")
+    if sign_with not in possible_keys:
+        raise AttributeError(
+            f"'sign_with' must be either 'coldkey', 'hotkey' or 'coldkeypub', not '{sign_with}'"
+        )
 
-    # create extrinsic call
+    signing_keypair = getattr(wallet, sign_with)
+    extrinsic_data = {"call": call, "keypair": signing_keypair}
+    if use_nonce:
+        if nonce_key not in possible_keys:
+            raise AttributeError(
+                f"'nonce_key' must be either 'coldkey', 'hotkey' or 'coldkeypub', not '{nonce_key}'"
+            )
+        next_nonce = subtensor.substrate.get_account_next_index(
+            getattr(wallet, nonce_key).ss58_address
+        )
+        extrinsic_data["nonce"] = next_nonce
+    if period is not None:
+        extrinsic_data["era"] = {"period": period}
+
+    extrinsic = subtensor.substrate.create_signed_extrinsic(**extrinsic_data)
+
+    return extrinsic
+
+
+def send_extrinsic(subtensor:"Subtensor", 
+    extrinsic: GenericExtrinsic,
+    wait_for_inclusion: bool = True,
+    wait_for_finalization: bool = False,
+):
+    try:
+        response = subtensor.substrate.submit_extrinsic(
+            extrinsic,
+            wait_for_inclusion=wait_for_inclusion,
+            wait_for_finalization=wait_for_finalization,
+        )
+        # We only wait here if we expect finalization.
+        if not wait_for_finalization and not wait_for_inclusion:
+            return True, ""
+
+        if response.is_success:
+            return True, ""
+
+        return False, str(response.error_message)
+
+    except Exception as e:
+        return False, str(e)
+
+def dtao_register(netuid, subtensor: "Subtensor", wallet):
     call = subtensor.substrate.compose_call(
         call_module="SubtensorModule",
         call_function="burned_register",
@@ -50,11 +96,28 @@ def quick_register(
             "hotkey": wallet.hotkey.ss58_address,
         },
     )
-    return subtensor.sign_and_send_extrinsic(
+    extrinsic = sign_extrinsic(
+        subtensor=subtensor,
         call=call,
         wallet=wallet,
-        wait_for_inclusion=wait_for_inclusion,
-        wait_for_finalization=wait_for_finalization,
     )
+
+    while True:
+        try:
+            result, msg = send_extrinsic(
+                subtensor=subtensor,
+                extrinsic=extrinsic,
+            )
+            if result:  # Now just check the boolean value directly
+                print(f"Successfully registered wallet {wallet.name} {wallet.hotkey} to subnet {netuid}")
+                break
+            elif "HotKeyAlreadyRegisteredInSubNet" in msg:
+                print(f"Hotkey {wallet.hotkey} already registered in subnet {netuid}")
+                break
+        except Exception as e:
+            print(e)
+            continue
+
+
 
 
