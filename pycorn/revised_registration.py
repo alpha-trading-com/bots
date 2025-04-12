@@ -15,7 +15,7 @@ from scalecodec import (
     GenericRuntimeCallDefinition,
     ss58_encode,
 )
-
+import json
 
 def sign_extrinsic(
     subtensor:"Subtensor",
@@ -87,7 +87,8 @@ def send_extrinsic(subtensor:"Subtensor",
     except Exception as e:
         return False, str(e)
 
-def dtao_register(netuid, subtensor: "Subtensor", wallet):
+
+def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block):
     call = subtensor.substrate.compose_call(
         call_module="SubtensorModule",
         call_function="burned_register",
@@ -102,8 +103,20 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet):
         wallet=wallet,
     )
 
+    ws = subtensor.substrate.websocket
+    payload = {
+        "jsonrpc": "2.0", "method": "chain_getHeader", "params": [None], "id": 0
+    }
+    get_block_ws_data = json.dumps(payload)
+
+
     while True:
         try:
+            ws.send(get_block_ws_data)
+            response = json.loads(ws.recv())
+            b = int(response["result"]["number"],0)
+            if b != block: continue
+
             result, msg = send_extrinsic(
                 subtensor=subtensor,
                 extrinsic=extrinsic,
