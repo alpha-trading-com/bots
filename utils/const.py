@@ -18,8 +18,9 @@ VALIDATOR_NAME = {
     "Love" : "5F27Eqz2PhyMtGMEce898x31DokNqRVxkm5AhDDe6rDGNvoY",
     "Tatsu" : "5D4gEn5S422dTGR5NJJKZ93FNV6hDmfwDPfxFNgcoVnUkZ4f",
     "Datura" : "5GP7c3fFazW9GXK8Up3qgu2DJBk8inu4aK9TZy3RuoSWVCMi",
-    "WebGenieAI" : "5FcHYtdLLYSWUKbDgbZvvmCLRbnqwn3HUsWUAEmdQscW9dRW",
-    "51": "5E1nK3myeWNWrmffVaH76f2mCFCbe9VcHGwgkfdcD7k3E8D1"
+    "WebGenieAI" : "5CiPKkqrBuuuapd3sKQQ8MhvaXSyGXaw4b2g9AKQp6V5iVvm",
+    "51": "5E1nK3myeWNWrmffVaH76f2mCFCbe9VcHGwgkfdcD7k3E8D1",
+    "NovaOwner" : "5F1tQr8K2VfBr2pG5MpAQf62n5xSAsjuCZheQUy82csaPavg"
 }
 
 # Mapping of netuid to validator addresses
@@ -48,7 +49,7 @@ NETUID_TO_ADDRESS = {
     65: VALIDATOR_NAME["tao5"],
     66: VALIDATOR_NAME["Yuma"],
     67: VALIDATOR_NAME["Yuma"],
-    68: VALIDATOR_NAME["Yuma"],
+    68: VALIDATOR_NAME["NovaOwner"],
     69: VALIDATOR_NAME["Yuma"],
     76: VALIDATOR_NAME["RoundTable"],
     81: VALIDATOR_NAME["RoundTable"],

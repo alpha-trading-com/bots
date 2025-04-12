@@ -66,7 +66,7 @@ def cheat1(netuid, subtensor, wallet, hotkey, tao_amount, entry_price):
             subtensor.wait_for_block()
             time.sleep(60)
         except Exception as e:
-            time.sleep(30)
+            time.sleep(90)
             logger.error(f"=== Unexpected Error: {e} ===")
 
 if __name__ == '__main__':

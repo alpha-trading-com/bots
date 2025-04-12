@@ -8,6 +8,8 @@ import logging
 from datetime import datetime
 import os
 
+from pycorn.revised_registration import quick_register
+
 # Create logs directory if it doesn't exist
 os.makedirs('logs', exist_ok=True)
 
@@ -54,15 +56,15 @@ def old_register(
 def dtao_register(netuid, subtensor, wallet):
     while True:
         try:
-            receipt = subtensor.burned_register(
+            result, msg = quick_register(
+                subtensor=subtensor,
                 netuid=netuid,
                 wallet=wallet,
             )
-            print(receipt)
-            if receipt[0] == True:
+            if result:  # Now just check the boolean value directly
                 print(f"Successfully registered wallet {wallet.name} {wallet.hotkey} to subnet {netuid}")
                 break
-            elif "HotKeyAlreadyRegisteredInSubNet" in receipt[1]:
+            elif "HotKeyAlreadyRegisteredInSubNet" in msg:
                 print(f"Hotkey {wallet.hotkey} already registered in subnet {netuid}")
                 break
         except Exception as e:
@@ -135,7 +137,8 @@ def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
         subnet = subtensor.subnet(netuid=netuid)
         
         if tao_amount is not None:
-            amount = subnet.tao_to_alpha(tao_amount)
+            # Convert TAO amount to Balance properly
+            amount = bt.Balance.from_tao(tao_amount)
             result = subtensor.unstake(
                 netuid=netuid,
                 amount=amount,
@@ -151,10 +154,9 @@ def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
             logger.info(f"==== Stake amount: {cleaned_stake:.8f} ====")
             
             result = subtensor.unstake(
-                wallet=wallet,
-                hotkey_ss58=hotkey,
                 netuid=netuid,
-                amount=cleaned_stake
+                wallet=wallet,
+                hotkey_ss58=hotkey
             )
             logger.info(f"==== Unstaked all TAO from {hotkey} on {netuid} || result: {result} ====")
         return result

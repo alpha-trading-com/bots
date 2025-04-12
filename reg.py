@@ -10,7 +10,7 @@ if __name__ == '__main__':
     wallet = bt.wallet(name=wallet_name, hotkey=hotkey)
     wallet.unlock_coldkey()
     
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor('local')
 
     # Register the wallet to the subnet
     dtao_register(netuid, subtensor, wallet)
