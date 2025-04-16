@@ -116,7 +116,7 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
             response = json.loads(ws.recv())
             b = int(response["result"]["number"],0)
             if block != 0 and b != block: 
-                print(f"Waiting for the {block}: current Bockk {b}")
+                print(f"Waiting for the {block}: current Block {b}")
                 continue
 
             result, msg = send_extrinsic(

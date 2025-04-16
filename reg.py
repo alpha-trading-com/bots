@@ -11,6 +11,8 @@ if __name__ == '__main__':
     wallet.unlock_coldkey()
     
     subtensor = bt.subtensor('local')
-
+    meta = subtensor.metagraph(netuid)
+    print(meta.last_step + meta.tempo)
+    block = meta.last_step + meta.tempo
     # Register the wallet to the subnet
-    dtao_register(netuid, subtensor, wallet)
+    dtao_register(netuid, subtensor, wallet, block)

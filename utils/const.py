@@ -20,7 +20,8 @@ VALIDATOR_NAME = {
     "Datura" : "5GP7c3fFazW9GXK8Up3qgu2DJBk8inu4aK9TZy3RuoSWVCMi",
     "WebGenieAI" : "5CiPKkqrBuuuapd3sKQQ8MhvaXSyGXaw4b2g9AKQp6V5iVvm",
     "51": "5E1nK3myeWNWrmffVaH76f2mCFCbe9VcHGwgkfdcD7k3E8D1",
-    "NovaOwner" : "5F1tQr8K2VfBr2pG5MpAQf62n5xSAsjuCZheQUy82csaPavg"
+    "NovaOwner" : "5F1tQr8K2VfBr2pG5MpAQf62n5xSAsjuCZheQUy82csaPavg",
+    "TAO.com" : "5FKz1PAcB1y5vn3aGqNog2vyxagrKMjbkMRpdjY9cuXAG6pD"
 }
 
 # Mapping of netuid to validator addresses
@@ -52,7 +53,7 @@ NETUID_TO_ADDRESS = {
     68: VALIDATOR_NAME["NovaOwner"],
     69: VALIDATOR_NAME["Yuma"],
     76: VALIDATOR_NAME["RoundTable"],
-    81: VALIDATOR_NAME["RoundTable"],
+    81: VALIDATOR_NAME["TAO.com"],
 }
 
 def sn_vali_addr(netuid: int) -> str:

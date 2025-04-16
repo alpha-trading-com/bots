@@ -132,6 +132,26 @@ def calc_tao_amount(netuid, subtensor, wallet, hotkey):
     subnet = subtensor.subnet(netuid=netuid)
     return subnet.price
 
+def move_stake(netuid, subtensor, wallet, hotkey, alpha_amount, destination_hotkey):
+    try:
+        subnet = subtensor.subnet(netuid=netuid)
+        amount = bt.Balance.from_tao(alpha_amount)
+        logger.info(f"==== Moving {amount} Alpha from {hotkey} to {destination_hotkey} on {netuid} ====")
+        result = subtensor.move_stake(
+            wallet=wallet,
+            origin_hotkey=hotkey,
+            origin_netuid=netuid,
+            destination_hotkey=destination_hotkey,
+            destination_netuid=netuid,
+            amount=amount
+        )
+        logger.info(f"result: {result}")
+        logger.info(f"==== Moved {amount} Alpha from {hotkey} to {destination_hotkey} on {netuid} ====")
+        return result
+    except Exception as e:
+        logger.error(f"Error during moving stake: {e}")
+        return False
+
 def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
     try:
         subnet = subtensor.subnet(netuid=netuid)
