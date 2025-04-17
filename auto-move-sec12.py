@@ -8,13 +8,15 @@ default_delta_price = 0.00001
 stake_amount = 1
 
 def auto_stake_move(netuid, subtensor, wallet, dest_hotkey, alpha_amount):
-    hotkey1 = "5DXD5qbizv5Nct44VwrEYvRvzLRNNjurw2XgM4DtR2kC1FLF"
-    hotkey2 = "5G6MYC2iZdqA6atwjVAgw3nyjvmXygJ4GEib9qox2MfWANWc"
-    hotkey3 = "5FWq3nMw1MPDx2i4n4bKd4bugjmLPLtYsbBKnU73VeCstCdx"
-    hotkey4 = "5D7FwCdKMuthKJ2ctAT1sqNtDMT2HMawYZyuHThrekKGVmc8"
-    hotkey5 = "5D2MwaGVq8Zm6UsnmLGM8yg4tybzbwUtjsfNLJfDdXrRbNq1"
-    hotkey6 = "5CyZQs1xHzLuvutoeAkh486faH78cZtE3hmiukAcgtMTHsdD"
-    hotkey7 = "5GgYL9k1AjaQo6sXAwm5FmkJGQFSkL6opL6oiKkAsREcpGWa"
+    hotkey1 = "5GxHLxZDntjf8dbwJEKMXR2NvGckoJUapc7Gsj3bBbA96nf9"
+    hotkey2 = "5FqPndsB4VnYuPf73RcDqmsLiAnHcJZLUXfvyd8M476643fH"
+    hotkey3 = "5EveXqcAc85GzXWiXnmnDstd4Hx5Kpo8Hw58BPGQqpU7dFnq"
+    hotkey4 = "5HDtQiPjdCPhM8zh5Jv6bfKLJNu3mESXJBGaebEzYF3NRmyu"
+    hotkey5 = "5FCxQ1kv4q3tgiTMUH7845wDsGho9oGSrmKevpYuRDnWgpgD"
+    hotkey6 = "5GGymrP2X64ko3nxLEP4iR3g8rgrQQzeiL4e6VNWiKXgcciZ"
+    hotkey7 = "5HC7FMzgpy529kRP9LP2VDwCbJmDQQKRyfUkUDbgjLL3vHkN"
+    hotkey8 = "5HH2XtfGxEw8yVeynPFEuVJg2rZPpjBHZY5ubKtUdUzyk85x"
+    hotkey9 = "5EhoryScqfDmbzXnpHhdv3rN68yZJvZxQjjeEJgicy9qqCgc"
     while True:
         try:
             move_stake(netuid, subtensor, wallet, hotkey1, alpha_amount, dest_hotkey)
@@ -36,6 +38,13 @@ def auto_stake_move(netuid, subtensor, wallet, dest_hotkey, alpha_amount):
             time.sleep(60)
             subtensor.wait_for_block()
             move_stake(netuid, subtensor, wallet, hotkey7, alpha_amount, dest_hotkey)
+            time.sleep(60)
+            subtensor.wait_for_block()
+            move_stake(netuid, subtensor, wallet, hotkey8, alpha_amount, dest_hotkey)
+            time.sleep(60)
+            subtensor.wait_for_block()
+            move_stake(netuid, subtensor, wallet, hotkey9, alpha_amount, dest_hotkey)
+            
             logger.info("==== sleeping... ====")
             time.sleep(3600)
 
@@ -46,7 +55,7 @@ def auto_stake_move(netuid, subtensor, wallet, dest_hotkey, alpha_amount):
 
 if __name__ == '__main__':
     # Create a wallet instance
-    wallet = bt.wallet(name='stake_2', hotkey='hk2')
+    wallet = bt.wallet(name='sec_ck12', hotkey='hk1')
     wallet.unlock_coldkey()
     
     logger.info(wallet.hotkey.ss58_address)

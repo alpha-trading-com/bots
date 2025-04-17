@@ -13,6 +13,8 @@ if __name__ == '__main__':
     subtensor = bt.subtensor('local')
     meta = subtensor.metagraph(netuid)
     block = meta.last_step + meta.tempo
-    # Register the wallet to the subnet
+    prev_adjustment_block = subtensor.query_map_subtensor(name='LastAdjustmentBlock',params=(),block=subtensor.block)[netuid][1].value
+    block = prev_adjustment_block + 360
+
     print(f"Registering to the subnet {netuid} at block {block}")
     dtao_register(netuid, subtensor, wallet, block)

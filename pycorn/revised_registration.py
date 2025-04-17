@@ -71,20 +71,25 @@ def send_extrinsic(subtensor:"Subtensor",
     wait_for_finalization: bool = False,
 ):
     try:
-        response = subtensor.substrate.submit_extrinsic(
-            extrinsic,
-            wait_for_inclusion=wait_for_inclusion,
-            wait_for_finalization=wait_for_finalization,
-        )
-        # We only wait here if we expect finalization.
-        if not wait_for_finalization and not wait_for_inclusion:
-            return True, ""
+        # response = subtensor.substrate.submit_extrinsic(
+        #     extrinsic,
+        #     wait_for_inclusion=wait_for_inclusion,
+        #     wait_for_finalization=wait_for_finalization,
+        # )
+        # # We only wait here if we expect finalization.
+        # if not wait_for_finalization and not wait_for_inclusion:
+        #     return True, ""
 
-        if response.is_success:
-            return True, ""
+        # if response.is_success:
+        #     return True, ""
 
-        return False, str(response.error_message)
+        # return False, str(response.error_message)
 
+        response = subtensor.substrate.rpc_request("author_submitExtrinsic", [str(extrinsic.data)])
+        if "result" not in response:
+            raise "Error"
+        return True, ""
+    
     except Exception as e:
         return False, str(e)
 
