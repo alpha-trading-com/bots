@@ -9,7 +9,7 @@ if __name__ == '__main__':
     netuid = int(input("Enter the netuid: "))
     threshold = float(input("Enter the threshold price (in TAO): "))
 
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor('local')
     subnet = subtensor.subnet(netuid=netuid)
     alpha_price = subnet.alpha_to_tao(1)
     print(f"Current alpha token price: {alpha_price} TAO")
@@ -46,22 +46,22 @@ if __name__ == '__main__':
                     subtensor.wait_for_block()
             
             # Get the total balance after unstaking
-            balance = subtensor.get_balance(wallet.coldkeypub.ss58_address)
-            if balance > 0:
-                logger.info(f"Found balance of {balance} TAO, transferring to pool...")
-                try:
-                    result = subtensor.transfer(
-                        wallet=wallet,
-                        dest=pool_address,
-                        amount=balance
-                    )
-                    logger.info(f"Transferred {balance} TAO to pool {pool_address} || result: {result}")
-                except Exception as e:
-                    logger.error(f"Failed to transfer balance: {e}")
+            # balance = subtensor.get_balance(wallet.coldkeypub.ss58_address)
+            # if balance > 0:
+            #     logger.info(f"Found balance of {balance} TAO, transferring to pool...")
+            #     try:
+            #         result = subtensor.transfer(
+            #             wallet=wallet,
+            #             dest=pool_address,
+            #             amount=balance
+            #         )
+            #         logger.info(f"Transferred {balance} TAO to pool {pool_address} || result: {result}")
+            #     except Exception as e:
+            #         logger.error(f"Failed to transfer balance: {e}")
             
-            # Wait a few blocks before checking again
-            for _ in range(3):
-                subtensor.wait_for_block()
+            # # Wait a few blocks before checking again
+            # for _ in range(3):
+            #     subtensor.wait_for_block()
             break
         except KeyboardInterrupt:
             print("\nExiting...")

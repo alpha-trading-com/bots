@@ -18,10 +18,11 @@ VALIDATOR_NAME = {
     "Love" : "5F27Eqz2PhyMtGMEce898x31DokNqRVxkm5AhDDe6rDGNvoY",
     "Tatsu" : "5D4gEn5S422dTGR5NJJKZ93FNV6hDmfwDPfxFNgcoVnUkZ4f",
     "Datura" : "5GP7c3fFazW9GXK8Up3qgu2DJBk8inu4aK9TZy3RuoSWVCMi",
-    "WebGenieAI" : "5CiPKkqrBuuuapd3sKQQ8MhvaXSyGXaw4b2g9AKQp6V5iVvm",
+    "WebGenieAI" : "5CPR71gqPyvBT449xpezgZiLpxFaabXNLmnfcQdDw2t3BwqC",
     "51": "5E1nK3myeWNWrmffVaH76f2mCFCbe9VcHGwgkfdcD7k3E8D1",
     "NovaOwner" : "5F1tQr8K2VfBr2pG5MpAQf62n5xSAsjuCZheQUy82csaPavg",
-    "TAO.com" : "5FKz1PAcB1y5vn3aGqNog2vyxagrKMjbkMRpdjY9cuXAG6pD"
+    "TAO.com" : "5FKz1PAcB1y5vn3aGqNog2vyxagrKMjbkMRpdjY9cuXAG6pD",
+    "Staking" : "5HK4vbGgLQdFKarN3hLVqNRbgQtQR5w3WTZ2tTnFHHLPgXpY"
 }
 
 # Mapping of netuid to validator addresses
@@ -54,6 +55,7 @@ NETUID_TO_ADDRESS = {
     69: VALIDATOR_NAME["Yuma"],
     76: VALIDATOR_NAME["RoundTable"],
     81: VALIDATOR_NAME["TAO.com"],
+    88: VALIDATOR_NAME["Staking"],
 }
 
 def sn_vali_addr(netuid: int) -> str:
