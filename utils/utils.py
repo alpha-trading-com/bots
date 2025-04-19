@@ -132,7 +132,7 @@ def calc_tao_amount(netuid, subtensor, wallet, hotkey):
     subnet = subtensor.subnet(netuid=netuid)
     return subnet.price
 
-def move_stake(netuid, subtensor, wallet, hotkey, alpha_amount, destination_hotkey):
+def move_stake(netuid, subtensor, wallet, hotkey, alpha_amount, destination_hotkey, dest_netuid = None):
     try:
         subnet = subtensor.subnet(netuid=netuid)
         amount = bt.Balance.from_tao(alpha_amount)
@@ -142,7 +142,7 @@ def move_stake(netuid, subtensor, wallet, hotkey, alpha_amount, destination_hotk
             origin_hotkey=hotkey,
             origin_netuid=netuid,
             destination_hotkey=destination_hotkey,
-            destination_netuid=netuid,
+            destination_netuid=dest_netuid if dest_netuid is not None else netuid,
             amount=amount
         )
         logger.info(f"result: {result}")
@@ -278,4 +278,38 @@ def detect_price_trend(prices: List[float]) -> str:
         return "volatile"
     else:
         return "neutral"
+    
+def convert_rao_to_tao(rao_amount):
+    """
+    Convert a RAO amount to TAO.
+    
+    Args:
+        rao_amount (int, float, or str): The amount in RAO. Can include τ symbol and commas.
+        
+    Returns:
+        float: The amount in TAO
+    """
+    # If it's a string, clean it first
+    if isinstance(rao_amount, str):
+        # Remove τ symbol if present
+        rao_amount = rao_amount.replace('τ', '')
+        # Remove commas
+        rao_amount = rao_amount.replace(',', '')
+        # Convert to float
+        rao_amount = float(rao_amount)
+    
+    return float(rao_amount)
+
+def format_balance(rao_amount):
+    """
+    Format a balance amount from RAO to a human-readable TAO format.
+    
+    Args:
+        rao_amount (int, float, or str): The amount in RAO. Can include τ symbol and commas.
+        
+    Returns:
+        str: Formatted string in TAO
+    """
+    tao_amount = convert_rao_to_tao(rao_amount)
+    return f"{tao_amount:.9f} TAO"
     
