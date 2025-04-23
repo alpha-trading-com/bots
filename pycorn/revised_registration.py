@@ -17,7 +17,7 @@ from scalecodec import (
 )
 import json
 from typing import Optional
-
+import random
 def sign_extrinsic(
     subtensor:"Subtensor",
     call: "GenericCall",
@@ -71,24 +71,24 @@ def send_extrinsic(subtensor:"Subtensor",
     wait_for_finalization: bool = False,
 ):
     try:
-        response = subtensor.substrate.submit_extrinsic(
-            extrinsic,
-            wait_for_inclusion=wait_for_inclusion,
-            wait_for_finalization=wait_for_finalization,
-        )
-        # We only wait here if we expect finalization.
-        if not wait_for_finalization and not wait_for_inclusion:
-            return True, ""
+        # response = subtensor.substrate.submit_extrinsic(
+        #     extrinsic,
+        #     wait_for_inclusion=wait_for_inclusion,
+        #     wait_for_finalization=wait_for_finalization,
+        # )
+        # # We only wait here if we expect finalization.
+        # if not wait_for_finalization and not wait_for_inclusion:
+        #     return True, ""
 
-        if response.is_success:
-            return True, ""
+        # if response.is_success:
+        #     return True, ""
 
-        return False, str(response.error_message)
+        # return False, str(response.error_message)
 
-        # response = subtensor.substrate.rpc_request("author_submitExtrinsic", [str(extrinsic.data)])
-        # if "result" not in response:
-        #     raise "Error"
-        # return True, ""
+        response = subtensor.substrate.rpc_request("author_submitExtrinsic", [str(extrinsic.data)])
+        if "result" not in response:
+            raise "Error"
+        return True, ""
     
     except Exception as e:
         return False, str(e)
@@ -114,6 +114,16 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
         "jsonrpc": "2.0", "method": "chain_getHeader", "params": [None], "id": 0
     }
     get_block_ws_data = json.dumps(payload)
+    method = "author_submitExtrinsic"
+    params = [str(extrinsic.data)]
+    payload_id = f"{method}{random.randint(0, 7000)}"
+    payload = {
+        "id": payload_id,
+        "payload": {"jsonrpc": "2.0", "method": method, "params": params},
+    }
+    
+    item_id = f"{method}{random.randint(0, 7000)}"
+    burned_register_ws_data = json.dumps({**payload["payload"], **{"id": item_id}})
 
     while True:
         try:
@@ -123,17 +133,9 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
             if block != 0 and b != block: 
                 print(f"Waiting for the {block}: current Block {b}")
                 continue
-
-            result, msg = send_extrinsic(
-                subtensor=subtensor,
-                extrinsic=extrinsic,
-            )
-            if result:  # Now just check the boolean value directly
-                print(f"Successfully registered wallet {wallet.name} {wallet.hotkey} to subnet {netuid}")
-                break
-            elif "HotKeyAlreadyRegisteredInSubNet" in msg:
-                print(f"Hotkey {wallet.hotkey} already registered in subnet {netuid}")
-                break
+            ws.send(burned_register_ws_data)
+            response = json.loads(ws.recv())
+            break
         except Exception as e:
             print(e)
             continue
