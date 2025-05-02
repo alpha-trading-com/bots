@@ -15,7 +15,7 @@ if __name__ == '__main__':
     prev_adjustment_block = subtensor.query_map_subtensor(name='LastAdjustmentBlock',params=(),block=subtensor.block)[netuid][1].value
     block = prev_adjustment_block + 360
     
-    if delta_block == -1:
+    if delta_block == -100:
         block = 0
     else:
         block = block + delta_block
