@@ -9,7 +9,7 @@ if __name__ == '__main__':
     netuid = int(input("Enter the netuid: "))
     threshold = float(input("Enter the threshold price (in TAO): "))
 
-    subtensor = bt.subtensor('local')
+    subtensor = bt.subtensor('finney')
     subnet = subtensor.subnet(netuid=netuid)
     alpha_price = subnet.alpha_to_tao(1)
     print(f"Current alpha token price: {alpha_price} TAO")
