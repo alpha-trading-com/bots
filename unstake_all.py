@@ -33,6 +33,7 @@ if __name__ == '__main__':
             meta = subtensor.metagraph(netuid)
             hotkeys = meta.hotkeys
             
+            
             for hotkey_addr in hotkeys:
                 stake = subtensor.get_stake(
                     coldkey_ss58=wallet.coldkeypub.ss58_address,
@@ -40,6 +41,21 @@ if __name__ == '__main__':
                     netuid=netuid
                 )
                 if stake > 0:
+                    logger.info(f"Found stake of {stake} TAO for hotkey {hotkey_addr}")
+                    unstake_from_subnet(netuid, subtensor, wallet, hotkey_addr)
+                    # Wait a block between unstakes
+                    subtensor.wait_for_block()
+
+            validator_hotkeys = [
+                '5FKz1PAcB1y5vn3aGqNog2vyxagrKMjbkMRpdjY9cuXAG6pD',
+            ]
+            for hotkey_addr in validator_hotkeys:
+                stake = subtensor.get_stake(
+                    coldkey_ss58=wallet.coldkeypub.ss58_address,
+                    hotkey_ss58=hotkey_addr,
+                    netuid=netuid
+                )
+                if stake > 0:   
                     logger.info(f"Found stake of {stake} TAO for hotkey {hotkey_addr}")
                     unstake_from_subnet(netuid, subtensor, wallet, hotkey_addr)
                     # Wait a block between unstakes
