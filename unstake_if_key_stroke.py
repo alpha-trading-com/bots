@@ -24,7 +24,9 @@ if __name__ == '__main__':
         if input().lower() == 'y':
             while True:
                 try:
-                    unstake_from_subnet(netuid, subtensor, wallet, dest_hotkey)
+                    result = unstake_from_subnet(netuid, subtensor, wallet, dest_hotkey)
+                    if result:
+                        break
                 except Exception as e:
                     logger.error(f"Error: {e}")
                     continue
