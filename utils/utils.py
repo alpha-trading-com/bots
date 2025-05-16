@@ -181,9 +181,8 @@ def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
             logger.info(f"==== Unstaked all TAO from {hotkey} on {netuid} || result: {result} ====")
         return result
     except Exception as e:
-        logger.error(f"Error during unstaking: {e}")
-        return False
-
+        raise e
+    
 async def get_stake(subtensor: bt.AsyncSubtensor, coldkey: str, hotkey: str, netuid: int) -> bt.Balance:
     try:
         stake = await subtensor.get_stake(coldkey_ss58=coldkey, hotkey_ss58=hotkey, netuid=netuid)
