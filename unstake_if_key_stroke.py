@@ -30,7 +30,6 @@ if __name__ == '__main__':
                 except Exception as e:
                     logger.error(f"Error: {e}")
                     continue
-                break
     except KeyboardInterrupt:
         print("\nExiting...")
     except Exception as e:
