@@ -135,6 +135,7 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
                 continue
             ws.send(burned_register_ws_data)
             response = json.loads(ws.recv())
+            print(response)
             break
         except Exception as e:
             print(e)
