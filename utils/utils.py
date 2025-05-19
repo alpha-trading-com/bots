@@ -135,7 +135,8 @@ def calc_tao_amount(netuid, subtensor, wallet, hotkey):
 def move_stake(netuid, subtensor, wallet, hotkey, alpha_amount, destination_hotkey, dest_netuid = None):
     try:
         subnet = subtensor.subnet(netuid=netuid)
-        amount = bt.Balance.from_tao(alpha_amount)
+        #amount = bt.Balance.from_tao(alpha_amount)
+        amount = alpha_amount
         logger.info(f"==== Moving {amount} Alpha from {hotkey} to {destination_hotkey} on {netuid} ====")
         result = subtensor.move_stake(
             wallet=wallet,

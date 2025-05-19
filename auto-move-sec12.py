@@ -55,12 +55,15 @@ def auto_stake_move(netuid, subtensor, wallet, dest_hotkey, alpha_amount):
 
 if __name__ == '__main__':
     # Create a wallet instance
-    wallet = bt.wallet(name='sec_ck12', hotkey='hk1')
+    wallet = bt.wallet(name='sec_ck4')
     wallet.unlock_coldkey()
     
-    logger.info(wallet.hotkey.ss58_address)
     
     subtensor = bt.subtensor('finney')
-
-    auto_stake_move(81, subtensor, wallet, sn_vali_addr(81), 10)
-    
+    src_hotkey = "5GFDSCSaLqAWd7oHxyS4BmETaCwqSkaUeBNoi4zPheYZq95W"
+    dest_hotkey = "5CPR71gqPyvBT449xpezgZiLpxFaabXNLmnfcQdDw2t3BwqC"
+    netuid = 54
+    #auto_stake_move(81, subtensor, wallet, sn_vali_addr(81), 10)
+    alpha_amount = subtensor.get_stake(coldkey_ss58=wallet.coldkeypub.ss58_address, hotkey_ss58=src_hotkey, netuid=netuid) - 30
+    print(f"alpha_amount: {alpha_amount}")
+    move_stake(netuid, subtensor, wallet, src_hotkey, alpha_amount, dest_hotkey)
