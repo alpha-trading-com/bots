@@ -22,7 +22,7 @@ def unlock_wallets():
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello, World!"}
+    return {"message": "Hello, World wallet server"}
 
 
 @app.get("/stake")
@@ -32,7 +32,6 @@ def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotke
         try:
             wallet = wallets[wallet_name]
             subtensor = bt.subtensor('finney')
-                
             amount = bt.Balance.from_tao(tao_amount)
             
             stake = subtensor.add_stake(
