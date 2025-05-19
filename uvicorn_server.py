@@ -54,7 +54,9 @@ def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotke
                 netuid=netuid,
                 amount=tao_amount,
                 wallet=wallet,
-                hotkey_ss58=dest_hotkey
+                hotkey_ss58=dest_hotkey,
+                safe_staking=True,
+                rate_tolerance=0.005
             )
             return {"message": f"Staked {tao_amount} TAO from {wallet_name}", "result": stake}
         except Exception as e:

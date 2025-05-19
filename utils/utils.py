@@ -153,7 +153,7 @@ def move_stake(netuid, subtensor, wallet, hotkey, alpha_amount, destination_hotk
         logger.error(f"Error during moving stake: {e}")
         return False
 
-def unstake_from_subnet(netuid, subtensor, wallet, hotkey, tao_amount=None):
+def unstake_from_subnet(netuid, subtensor: bt.Subtensor, wallet, hotkey, tao_amount=None):
     try:
         subnet = subtensor.subnet(netuid=netuid)
         

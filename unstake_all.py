@@ -42,7 +42,12 @@ if __name__ == '__main__':
                 )
                 if stake > 0:
                     logger.info(f"Found stake of {stake} TAO for hotkey {hotkey_addr}")
-                    unstake_from_subnet(netuid, subtensor, wallet, hotkey_addr)
+                    result = subtensor.unstake(
+                        netuid=netuid,
+                        wallet=wallet,
+                        hotkey_ss58=hotkey_addr,
+                    )
+                    logger.info(f"==== Unstaked all TAO from {hotkey_addr} on {netuid} || result: {result} ====")
                     # Wait a block between unstakes
                     subtensor.wait_for_block()
 

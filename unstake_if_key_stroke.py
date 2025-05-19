@@ -24,7 +24,11 @@ if __name__ == '__main__':
         if input().lower() == 'y':
             while True:
                 try:
-                    result = unstake_from_subnet(netuid, subtensor, wallet, dest_hotkey)
+                    result = subtensor.unstake(
+                        netuid=netuid,
+                        wallet=wallet,
+                        hotkey_ss58=dest_hotkey,
+                    )
                     if result:
                         break
                 except Exception as e:
