@@ -81,7 +81,7 @@ INDEX_HTML = """
             </div>
             <div>
                 <label for="rate_tolerance">Rate Tolerance:</label>
-                <input type="number" id="rate_tolerance" name="rate_tolerance" step="0.001" value="0.005" required>
+                <input type="number" id="rate_tolerance" name="rate_tolerance" step="0.0001" value="0.005" required>
             </div>
             <button type="submit">Stake</button>
         </form>
