@@ -9,7 +9,7 @@ from constants import ROUND_TABLE_HOTKEY
 
 app = fastapi.FastAPI()
 
-wallet_names = ["stake_2", "sangar_ck2", "sec_ck4", "sec_ck12"]
+wallet_names = ["stake_2", "sangar_ck2",]
 wallets: Dict[str, bt.wallet] = {}
 
 
