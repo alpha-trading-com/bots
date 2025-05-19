@@ -26,7 +26,7 @@ def read_root():
 
 
 @app.get("/stake")
-def stake(wallet_name: str, tao_amount: float, netuid: int, dest_hotkey: str = ROUND_TABLE_HOTKEY):
+def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotkey: str = ROUND_TABLE_HOTKEY):
     retries = 4
     while retries > 0:
         try:
