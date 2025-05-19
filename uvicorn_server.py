@@ -16,6 +16,7 @@ wallets: Dict[str, bt.wallet] = {}
 def unlock_wallets():
     for wallet_name in wallet_names:
         wallet = bt.wallet(name=wallet_name)
+        print(f"Unlocking wallet {wallet_name}")
         wallet.unlock_coldkey()
         wallets[wallet_name] = wallet
 
