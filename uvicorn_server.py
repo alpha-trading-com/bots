@@ -33,19 +33,18 @@ def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotke
         try:
             wallet = wallets[wallet_name]
             subtensor = bt.subtensor('finney')
-            amount = bt.Balance.from_tao(tao_amount)
             
             stake = subtensor.add_stake(
                 netuid=netuid,
-                amount=amount,
+                amount=tao_amount,
                 wallet=wallet,
                 hotkey_ss58=dest_hotkey
             )
-            return {"message": f"Staked {amount} TAO from {wallet_name}", "result": stake}
+            return {"message": f"Staked {tao_amount} TAO from {wallet_name}", "result": stake}
         except Exception as e:
             retries -= 1
             if retries == 0:
-                return {"message": f"Error staking {amount} TAO from {wallet_name}: {e}", "result": None}
+                return {"message": f"Error staking {tao_amount} TAO from {wallet_name}: {e}", "result": None}
 
 
 if __name__ == "__main__":
