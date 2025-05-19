@@ -2,6 +2,7 @@ import time
 import bittensor as bt
 from utils.const import sn_vali_addr
 from utils.utils import *
+from constants import ROUND_TABLE_HOTKEY
 
         
 if __name__ == '__main__':
@@ -16,8 +17,7 @@ if __name__ == '__main__':
     wallet_name = input("Enter the wallet name: ")            
     wallet = bt.wallet(name=wallet_name)
     wallet.unlock_coldkey()
-    round_table_hotkey = '5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v'
-    dest_hotkey = input("Enter the destination hotkey (default is Round table): ") or round_table_hotkey
+    dest_hotkey = input("Enter the destination hotkey (default is Round table): ") or ROUND_TABLE_HOTKEY
     
     print("Press 'y' to unstake, or Ctrl+C to exit")
     try:
