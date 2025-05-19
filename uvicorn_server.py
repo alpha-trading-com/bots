@@ -43,7 +43,7 @@ def read_root():
 
 
 @app.get("/stake")
-def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotkey: str = ROUND_TABLE_HOTKEY):
+def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotkey: str = ROUND_TABLE_HOTKEY, rate_tolerance: float = 0.005):
     retries = 4
     while retries > 0:
         try:
@@ -56,7 +56,7 @@ def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotke
                 wallet=wallet,
                 hotkey_ss58=dest_hotkey,
                 safe_staking=True,
-                rate_tolerance=0.005
+                rate_tolerance=rate_tolerance
             )
             return {"message": f"Staked {tao_amount} TAO from {wallet_name}", "result": stake}
         except Exception as e:

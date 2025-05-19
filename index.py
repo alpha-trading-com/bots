@@ -79,6 +79,10 @@ INDEX_HTML = """
                 <label for="dest_hotkey">Destination Hotkey:</label>
                 <input type="text" id="dest_hotkey" name="dest_hotkey" value="5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v" required>
             </div>
+            <div>
+                <label for="rate_tolerance">Rate Tolerance:</label>
+                <input type="number" id="rate_tolerance" name="rate_tolerance" step="0.001" value="0.005" required>
+            </div>
             <button type="submit">Stake</button>
         </form>
     </div>
