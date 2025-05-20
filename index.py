@@ -86,7 +86,43 @@ INDEX_HTML = """
             <button type="submit">Stake</button>
         </form>
     </div>
+    <div class="stake-form">
+        <h2>Unstake TAO</h2>
+        <form id="unstakeForm">
+            <div>
+                <label for="unstake_netuid">NetUID:</label>
+                <input type="number" id="unstake_netuid" name="netuid" required>
+            </div>
+            <div>
+                <label for="unstake_wallet_name">Wallet:</label>
+                <select id="unstake_wallet_name" name="wallet_name">
+                    <option value="stake_2">stake_2</option>
+                    <option value="sangar_ck2">sangar_ck2</option>
+                </select>
+            </div>
+            <div>
+                <label for="unstake_dest_hotkey">Destination Hotkey:</label>
+                <input type="text" id="unstake_dest_hotkey" name="dest_hotkey" value="5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v" required>
+            </div>
+            <button type="submit">Unstake</button>
+        </form>
+    </div>
 
+    <script>
+        document.getElementById('unstakeForm').addEventListener('submit', async (e) => {{
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const params = new URLSearchParams(formData);
+            
+            try {{
+                const response = await fetch(`/unstake?${{params.toString()}}`);
+                const result = await response.json();
+                alert(result.message);
+            }} catch (error) {{
+                alert('Error: ' + error.message);
+            }}
+        }});
+    </script>
     <script>
         document.getElementById('stakeForm').addEventListener('submit', async (e) => {{
             e.preventDefault();

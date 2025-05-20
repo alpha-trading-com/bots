@@ -55,7 +55,7 @@ def stake(
             wallet = wallets[wallet_name]
             subtensor = bt.subtensor('finney')
             
-            stake = subtensor.add_stake(
+            result = subtensor.add_stake(
                 netuid=netuid,
                 amount=tao_amount,
                 wallet=wallet,
@@ -63,11 +63,37 @@ def stake(
                 safe_staking=True,
                 rate_tolerance=rate_tolerance
             )
-            return {"message": f"Staked {tao_amount} TAO from {wallet_name}", "result": stake}
+            if not result:
+                raise Exception("Stake failed")
+            return {"message": f"Staked {tao_amount} TAO from {wallet_name}", "result": result}
         except Exception as e:
             retries -= 1
             if retries == 0:
                 return {"message": f"Error staking {tao_amount} TAO from {wallet_name}: {e}", "result": None}
+
+
+@app.get("/unstake")
+def unstake(
+    netuid: int,
+    wallet_name: str="stake_2",
+    dest_hotkey: str = ROUND_TABLE_HOTKEY,
+    username: str = Depends(get_current_username)
+):
+    retries = 4
+    while retries > 0:
+        try:
+            wallet = wallets[wallet_name]
+            subtensor = bt.subtensor('finney')
+            result = subtensor.unstake(netuid=netuid, wallet=wallet, hotkey_ss58=dest_hotkey)
+            if not result:
+                raise Exception("Unstake failed")
+            
+            return {"message": f"Unstaked from {netuid} network", "result": result}
+        except Exception as e:
+            retries -= 1
+            if retries == 0:
+                return {"message": f"Error unstaking from {netuid} network: {e}", "result": False}
+
 
 if __name__ == "__main__":
     unlock_wallets()
