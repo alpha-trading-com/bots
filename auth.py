@@ -10,7 +10,7 @@ security = HTTPBasic()
 # In a real application, you would store these in a database
 # and use proper password hashing
 USERS = {
-    "admin": "$2b$12$4a8XSpvI8cvB6puudnr2TeFfnohvwRH3jVfJ/9ITcQl5nCdy0.Cp2"
+    "admin": "$2b$12$4a8XSpvI8cvB6puudnr2TeFfnohvwRH3jVfJ/9ITcQl5nCdy0.Cp2".encode()
 }
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
