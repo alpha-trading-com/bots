@@ -96,7 +96,7 @@ INDEX_HTML = """
             </div>
             <div>
                 <label for="netuid">NetUID:</label>
-                <input type="number" id="netuid" name="netuid" required>
+                <input type="text" id="netuid" name="netuid" required>
             </div>
             <div>
                 <label for="wallet_name">Wallet:</label>
@@ -121,7 +121,7 @@ INDEX_HTML = """
         <form id="unstakeForm">
             <div>
                 <label for="unstake_netuid">NetUID:</label>
-                <input type="number" id="unstake_netuid" name="netuid" required>
+                <input type="text" id="unstake_netuid" name="netuid" required>
             </div>
             <div>
                 <label for="unstake_wallet_name">Wallet:</label>
