@@ -47,9 +47,39 @@ INDEX_HTML = """
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            position: relative;
+            min-width: 100px;
         }}
         .stake-form button:hover {{
             background-color: #2a4365;
+        }}
+        .stake-form button:disabled {{
+            background-color: #718096;
+            cursor: not-allowed;
+        }}
+        .stake-form button.loading {{
+            color: transparent;
+        }}
+        .stake-form button.loading::after {{
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin: -8px 0 0 -8px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-right-color: transparent;
+            animation: button-loading-spinner 0.75s linear infinite;
+        }}
+        @keyframes button-loading-spinner {{
+            from {{
+                transform: rotate(0deg);
+            }}
+            to {{
+                transform: rotate(360deg);
+            }}
         }}
     </style>
 </head>
@@ -111,6 +141,10 @@ INDEX_HTML = """
     <script>
         document.getElementById('unstakeForm').addEventListener('submit', async (e) => {{
             e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.classList.add('loading');
+            
             const formData = new FormData(e.target);
             const params = new URLSearchParams(formData);
             
@@ -120,12 +154,19 @@ INDEX_HTML = """
                 alert(result.message);
             }} catch (error) {{
                 alert('Error: ' + error.message);
+            }} finally {{
+                submitButton.disabled = false;
+                submitButton.classList.remove('loading');
             }}
         }});
     </script>
     <script>
         document.getElementById('stakeForm').addEventListener('submit', async (e) => {{
             e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.classList.add('loading');
+            
             const formData = new FormData(e.target);
             const params = new URLSearchParams(formData);
             
@@ -135,6 +176,9 @@ INDEX_HTML = """
                 alert(result.message);
             }} catch (error) {{
                 alert('Error: ' + error.message);
+            }} finally {{
+                submitButton.disabled = false;
+                submitButton.classList.remove('loading');
             }}
         }});
     </script>
