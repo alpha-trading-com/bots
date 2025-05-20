@@ -32,7 +32,7 @@ def read_root(username: str = Depends(get_current_username)):
             balance = subtensor.get_balance(wallet.coldkey.ss58_address)
             balance_html += f"""
                 <div class="balance-container">
-                    <div class="balance-title">{wallet_name}</div>
+                    <div class="balance-title"><a target="_blank" href="/stake_list?wallet={wallet_name}" style="text-decoration: none; color: inherit; cursor: pointer; text-decoration: underline;">{wallet_name}</a></div>
                     <div class="balance-amount">{balance} TAO</div>
                 </div>
             """
