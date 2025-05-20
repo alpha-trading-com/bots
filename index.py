@@ -40,6 +40,15 @@ INDEX_HTML = """
             border: 1px solid #ddd;
             border-radius: 4px;
         }}
+        /* Disable number input spinners */
+        .stake-form input[type="text"]::-webkit-inner-spin-button,
+        .stake-form input[type="text"]::-webkit-outer-spin-button {{
+            -webkit-appearance: none;
+            margin: 0;
+        }}
+        .stake-form input[type="text"] {{
+            -moz-appearance: textfield;
+        }}
         .stake-form button {{
             background-color: #2c5282;
             color: white;
@@ -92,7 +101,7 @@ INDEX_HTML = """
         <form id="stakeForm">
             <div>
                 <label for="tao_amount">Amount (TAO):</label>
-                <input type="number" id="tao_amount" name="tao_amount" step="0.1" required>
+                <input type="text" id="tao_amount" name="tao_amount" step="0.1" required>
             </div>
             <div>
                 <label for="netuid">NetUID:</label>
@@ -111,7 +120,7 @@ INDEX_HTML = """
             </div>
             <div>
                 <label for="rate_tolerance">Rate Tolerance:</label>
-                <input type="number" id="rate_tolerance" name="rate_tolerance" step="0.0001" value="0.005" required>
+                <input type="text" id="rate_tolerance" name="rate_tolerance" step="0.0001" value="0.005" required>
             </div>
             <button type="submit">Stake</button>
         </form>
