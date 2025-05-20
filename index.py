@@ -141,11 +141,21 @@ INDEX_HTML = """
     <script>
         document.getElementById('unstakeForm').addEventListener('submit', async (e) => {{
             e.preventDefault();
+            const formData = new FormData(e.target);
+            const netuid = formData.get('netuid');
+            
+            const confirmMessage = `Please confirm the following details:\n\n` +
+                `NetUID: ${{netuid}}\n` +
+                `Are you sure you want to proceed?`;
+            
+            if (!confirm(confirmMessage)) {{
+                return;
+            }}
+
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.classList.add('loading');
             
-            const formData = new FormData(e.target);
             const params = new URLSearchParams(formData);
             
             try {{
@@ -163,11 +173,21 @@ INDEX_HTML = """
     <script>
         document.getElementById('stakeForm').addEventListener('submit', async (e) => {{
             e.preventDefault();
+            const formData = new FormData(e.target);
+            const netuid = formData.get('netuid');
+            const taoAmount = formData.get('tao_amount');
+            const confirmMessage = `Please confirm the following details:\n\n` +
+                `NetUID: ${{netuid}}\n` +
+                `Amount: ${{taoAmount}} TAO\n` +
+                `Are you sure you want to proceed?`;
+            
+            if (!confirm(confirmMessage)) {{
+                return;
+            }}
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.classList.add('loading');
             
-            const formData = new FormData(e.target);
             const params = new URLSearchParams(formData);
             
             try {{
