@@ -1,10 +1,12 @@
 import fastapi
 import bittensor as bt
 import uvicorn
+import subprocess
 from typing import Dict
 from fastapi import Depends
-from auth import get_current_username
+from fastapi.responses import HTMLResponse
 
+from auth import get_current_username
 from constants import ROUND_TABLE_HOTKEY
 
 app = fastapi.FastAPI()
@@ -93,6 +95,11 @@ def unstake(
             retries -= 1
             if retries == 0:
                 return {"message": f"Error unstaking from {netuid} network: {e}", "result": False}
+
+@app.get("/stake_list")
+def stake_list(wallet_name: str = "stake_2"):
+    result = subprocess.run(["btcli", "stake", "list", "--name", wallet_name, "--no-prompt"], capture_output=True, text=True)
+    return HTMLResponse(content=f"<pre>{result.stdout}</pre>")
 
 
 if __name__ == "__main__":
