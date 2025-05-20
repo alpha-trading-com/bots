@@ -107,7 +107,9 @@ INDEX_HTML = """
             </div>
             <div>
                 <label for="dest_hotkey">Destination Hotkey:</label>
-                <input type="text" id="dest_hotkey" name="dest_hotkey" value="5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v" required>
+                <select id="dest_hotkey" name="dest_hotkey" required>
+                    <option value="5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v">5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v</option>
+                </select>
             </div>
             <div>
                 <label for="rate_tolerance">Rate Tolerance:</label>
@@ -132,7 +134,9 @@ INDEX_HTML = """
             </div>
             <div>
                 <label for="unstake_dest_hotkey">Destination Hotkey:</label>
-                <input type="text" id="unstake_dest_hotkey" name="dest_hotkey" value="5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v" required>
+                <select id="unstake_dest_hotkey" name="dest_hotkey" required>
+                    <option value="5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v">5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v</option>
+                </select>
             </div>
             <button type="submit">Unstake</button>
         </form>
