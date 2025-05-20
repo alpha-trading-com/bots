@@ -141,15 +141,27 @@ INDEX_HTML = """
             <button type="submit">Unstake</button>
         </form>
     </div>
-
     <script>
         document.getElementById('unstakeForm').addEventListener('submit', async (e) => {{
             e.preventDefault();
+            const formData = new FormData(e.target);
+            const netuid = formData.get('netuid');
+            const wallet = formData.get('wallet_name');
+            const hotkey = formData.get('dest_hotkey');
+
+            const confirmMessage = `Are you sure you want to unstake from:\n\n` +
+                `Subnet UID: ${netuid}\n` +
+                `Wallet: ${wallet}\n` +
+                `Hotkey: ${hotkey}`;
+
+            if (!confirm(confirmMessage)) {{
+                return;
+            }}
+
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.classList.add('loading');
             
-            const formData = new FormData(e.target);
             const params = new URLSearchParams(formData);
             
             try {{
@@ -162,17 +174,37 @@ INDEX_HTML = """
                 submitButton.disabled = false;
                 submitButton.classList.remove('loading');
             }}
-        }});
+        });
     </script>
     <script>
         document.getElementById('stakeForm').addEventListener('submit', async (e) => {{
             e.preventDefault();
+            const formData = new FormData(e.target);
+            const taoAmount = formData.get('tao_amount');
+            const netuid = formData.get('netuid');
+            const wallet = formData.get('wallet_name');
+            const hotkey = formData.get('dest_hotkey');
+            const rateTolerance = formData.get('rate_tolerance');
+
+            const confirmMessage = `Are you sure you want to stake:\n\n` +
+                `Amount: ${taoAmount} TAO\n` +
+                `Subnet UID: ${netuid}\n` +
+                `Wallet: ${wallet}\n` +
+                `Hotkey: ${hotkey}\n` +
+                `Rate Tolerance: ${rateTolerance}`;
+
+            if (!confirm(confirmMessage)) {{
+                return;
+            }}
+            
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.classList.add('loading');
             
-            const formData = new FormData(e.target);
             const params = new URLSearchParams(formData);
+
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
             
             try {{
                 const response = await fetch(`/stake?${{params.toString()}}`);
@@ -184,7 +216,7 @@ INDEX_HTML = """
                 submitButton.disabled = false;
                 submitButton.classList.remove('loading');
             }}
-        }});
+        });
     </script>
 </body>
 </html>
