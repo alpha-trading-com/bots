@@ -23,6 +23,7 @@ if __name__ == '__main__':
     print("Press Ctrl+C to stop the script")
     while True:
         try:
+            subnet = subtensor.subnet(netuid=netuid)
             alpha_price = subnet.alpha_to_tao(1)
             logger.info(f"Current alpha token price: {alpha_price} TAO")
             
