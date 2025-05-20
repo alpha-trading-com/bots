@@ -2,16 +2,15 @@ import fastapi
 import bittensor as bt
 import uvicorn
 from typing import Dict
-
+from fastapi import Depends
+from auth import get_current_username
 
 from constants import ROUND_TABLE_HOTKEY
-
 
 app = fastapi.FastAPI()
 
 wallet_names = ["stake_2",]
 wallets: Dict[str, bt.wallet] = {}
-
 
 def unlock_wallets():
     for wallet_name in wallet_names:
@@ -21,7 +20,7 @@ def unlock_wallets():
         wallets[wallet_name] = wallet
 
 @app.get("/")
-def read_root():
+def read_root(username: str = Depends(get_current_username)):
     from index import INDEX_HTML
     subtensor = bt.subtensor('finney')
     def get_balance_html():
@@ -41,9 +40,15 @@ def read_root():
         content=INDEX_HTML.format(balance_html=get_balance_html())
     )
 
-
 @app.get("/stake")
-def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotkey: str = ROUND_TABLE_HOTKEY, rate_tolerance: float = 0.005):
+def stake(
+    tao_amount: float, 
+    netuid: int, 
+    wallet_name: str="stake_2", 
+    dest_hotkey: str = ROUND_TABLE_HOTKEY, 
+    rate_tolerance: float = 0.005,
+    username: str = Depends(get_current_username)
+):
     retries = 4
     while retries > 0:
         try:
@@ -63,10 +68,6 @@ def stake(tao_amount: float, netuid: int, wallet_name: str="stake_2", dest_hotke
             retries -= 1
             if retries == 0:
                 return {"message": f"Error staking {tao_amount} TAO from {wallet_name}: {e}", "result": None}
-
-
-
-
 
 if __name__ == "__main__":
     unlock_wallets()
