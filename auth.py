@@ -2,15 +2,18 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import secrets
 from typing import Optional
-
 from bcrypt import hashpw, gensalt, checkpw
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 security = HTTPBasic()
 
-# In a real application, you would store these in a database
-# and use proper password hashing
+# Get admin hash from environment variable
 USERS = {
-    "admin": "$2b$12$4a8XSpvI8cvB6puudnr2TeFfnohvwRH3jVfJ/9ITcQl5nCdy0.Cp2".encode()
+    "admin": os.getenv("ADMIN_HASH", "").encode()
 }
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):

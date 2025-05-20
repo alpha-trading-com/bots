@@ -7,3 +7,5 @@ pandas
 scipy
 statistics
 backoff
+python-dotenv
+bcrypt
