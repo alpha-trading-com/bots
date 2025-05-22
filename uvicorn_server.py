@@ -56,7 +56,11 @@ def stake(
         try:
             wallet = wallets[wallet_name]
             subtensor = bt.subtensor('finney')
-            
+            subnet = subtensor.subnet(netuid=netuid)
+            min_tolerance = tao_amount / subnet.tao_in.tao  
+            if rate_tolerance < min_tolerance:
+                rate_tolerance = min_tolerance
+
             result = subtensor.add_stake(
                 netuid=netuid,
                 amount= bt.Balance.from_tao(tao_amount),
@@ -67,12 +71,10 @@ def stake(
             )
             if not result:
                 raise Exception("Stake failed")
-            return {"message": f"Staked {tao_amount} TAO from {wallet_name}", "result": result}
+            return {"message": f"Staked {tao_amount} TAO from {wallet_name}, min_tolerance: {min_tolerance}", "result": result}
         except Exception as e:
             retries -= 1
-            if retries == 0:                
-                subnet = subtensor.subnet(netuid=netuid)
-                min_tolerance = tao_amount / subnet.tao_in.tao
+            if retries == 0:
                 return {
                     "message": f"Error staking {tao_amount} TAO from {wallet_name}: {e}, min_tolerance: {min_tolerance}", "result": None,
                 }
