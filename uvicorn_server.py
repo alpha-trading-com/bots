@@ -59,7 +59,7 @@ def stake(
             
             result = subtensor.add_stake(
                 netuid=netuid,
-                amount=tao_amount,
+                amount= bt.Balance.from_tao(tao_amount),
                 wallet=wallet,
                 hotkey_ss58=dest_hotkey,
                 safe_staking=True,
@@ -70,8 +70,12 @@ def stake(
             return {"message": f"Staked {tao_amount} TAO from {wallet_name}", "result": result}
         except Exception as e:
             retries -= 1
-            if retries == 0:
-                return {"message": f"Error staking {tao_amount} TAO from {wallet_name}: {e}", "result": None}
+            if retries == 0:                
+                subnet = subtensor.subnet(netuid=netuid)
+                min_tolerance = tao_amount / subnet.tao_in.tao
+                return {
+                    "message": f"Error staking {tao_amount} TAO from {wallet_name}: {e}, min_tolerance: {min_tolerance}", "result": None,
+                }
 
 
 @app.get("/unstake")

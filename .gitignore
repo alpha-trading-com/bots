@@ -5,3 +5,5 @@ subtensor
 logs/*
 
 .env
+
+test.py
