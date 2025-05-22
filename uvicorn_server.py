@@ -59,7 +59,7 @@ def stake(
             subnet = subtensor.subnet(netuid=netuid)
             min_tolerance = tao_amount / subnet.tao_in.tao  
             if rate_tolerance < min_tolerance:
-                rate_tolerance = min_tolerance
+                rate_tolerance = min_tolerance + 0.0001
 
             result = subtensor.add_stake(
                 netuid=netuid,
