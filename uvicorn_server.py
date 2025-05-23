@@ -7,7 +7,7 @@ from fastapi import Depends
 from fastapi.responses import HTMLResponse
 
 from auth import get_current_username
-from constants import ROUND_TABLE_HOTKEY
+from constants import ROUND_TABLE_HOTKEY, NETWORK
 
 app = fastapi.FastAPI()
 
@@ -24,7 +24,7 @@ def unlock_wallets():
 @app.get("/")
 def read_root(username: str = Depends(get_current_username)):
     from index import INDEX_HTML
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor(network=NETWORK)
     def get_balance_html():
         balance_html = ""
         for wallet_name in wallet_names:
@@ -55,7 +55,7 @@ def stake(
     while retries > 0:
         try:
             wallet = wallets[wallet_name]
-            subtensor = bt.subtensor('finney')
+            subtensor = bt.subtensor(network=NETWORK)
             subnet = subtensor.subnet(netuid=netuid)
             min_tolerance = tao_amount / subnet.tao_in.tao  
             if rate_tolerance < min_tolerance:
@@ -91,8 +91,14 @@ def unstake(
     while retries > 0:
         try:
             wallet = wallets[wallet_name]
-            subtensor = bt.subtensor('finney')
-            result = subtensor.unstake(netuid=netuid, wallet=wallet, hotkey_ss58=dest_hotkey)
+            subtensor = bt.subtensor(network=NETWORK)
+            result = subtensor.unstake(
+                netuid=netuid, 
+                wallet=wallet, 
+                hotkey_ss58=dest_hotkey,
+                safe_staking=True,
+                rate_tolerance=1.0,
+            )
             if not result:
                 raise Exception("Unstake failed")
             
