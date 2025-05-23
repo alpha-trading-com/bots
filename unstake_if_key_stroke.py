@@ -28,6 +28,8 @@ if __name__ == '__main__':
                         netuid=netuid,
                         wallet=wallet,
                         hotkey_ss58=dest_hotkey,
+                        safe_staking=True,
+                        rate_tolerance=1.0,
                     )
                     if result:
                         break
