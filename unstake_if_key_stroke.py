@@ -2,14 +2,14 @@ import time
 import bittensor as bt
 from utils.const import sn_vali_addr
 from utils.utils import *
-from constants import ROUND_TABLE_HOTKEY
+from constants import ROUND_TABLE_HOTKEY, NETWORK
 
         
 if __name__ == '__main__':
     
     netuid = int(input("Enter the netuid: "))
 
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor(network=NETWORK)
     subnet = subtensor.subnet(netuid=netuid)
     alpha_price = subnet.alpha_to_tao(1)
     print(f"Current alpha token price: {alpha_price} TAO")

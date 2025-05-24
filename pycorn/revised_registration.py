@@ -130,13 +130,12 @@ def dtao_register(netuid, subtensor: "Subtensor", wallet: "Wallet", block = 0):
             ws.send(get_block_ws_data)
             response = json.loads(ws.recv())
             b = int(response["result"]["number"],0)
-            if block != 0 and b != block: 
+            if block != 0 and b < block: 
                 print(f"Waiting for the {block}: current Block {b}")
                 continue
-            ws.send(burned_register_ws_data)
-            response = json.loads(ws.recv())
-            print(response)
-            #break
+            while True:
+                ws.send(burned_register_ws_data)
+                response = json.loads(ws.recv())
         except Exception as e:
             print(e)
             continue

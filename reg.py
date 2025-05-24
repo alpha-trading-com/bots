@@ -1,5 +1,6 @@
 import bittensor as bt
 from pycorn.revised_registration import dtao_register
+from constants import NETWORK
 
 if __name__ == '__main__':
     netuid = int(input("Enter the netuid: "))
@@ -11,7 +12,7 @@ if __name__ == '__main__':
     wallet = bt.wallet(name=wallet_name, hotkey=hotkey)
     wallet.unlock_coldkey()
     
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor(network=NETWORK)
     prev_adjustment_block = subtensor.query_map_subtensor(name='LastAdjustmentBlock',params=(),block=subtensor.block)[netuid][1].value
     block = prev_adjustment_block + 360
     
