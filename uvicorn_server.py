@@ -67,7 +67,7 @@ def min_tolerance(
 def stake(
     tao_amount: float, 
     netuid: int, 
-    wallet_name: str="stake_2", 
+    wallet_name: str, 
     dest_hotkey: str = ROUND_TABLE_HOTKEY, 
     rate_tolerance: float = 0.005,
     min_tolerance_staking: bool = True,
@@ -116,7 +116,7 @@ def stake(
 @app.get("/unstake")
 def unstake(
     netuid: int,
-    wallet_name: str="stake_2",
+    wallet_name: str,
     amount: float = None,
     dest_hotkey: str = ROUND_TABLE_HOTKEY,
     retries: int = 1,
@@ -157,11 +157,14 @@ def unstake(
 
 
 @app.get("/stake_list")
-def stake_list(wallet_name: str = "stake_2"):
+def stake_list(wallet_name: str):
     result = subprocess.run(["btcli", "stake", "list", "--name", wallet_name, "--no-prompt"], capture_output=True, text=True)
     return HTMLResponse(content=f"<pre>{result.stdout}</pre>")
 
 
 if __name__ == "__main__":
     unlock_wallets()
+    if not wallet_names:
+        print("No wallet names found in .env file")
+        exit(1)
     uvicorn.run(app, host="0.0.0.0", port=9000)
