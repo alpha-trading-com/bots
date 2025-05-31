@@ -394,6 +394,12 @@
                 return;
             }
 
+            // Add confirmation dialog
+            const confirmMessage = `Are you sure you want to stake ${amount} TAO from wallet "${walletName}" to validator "${validatorHotkey}" on network ${netuid}?`;
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
             try {
                 setButtonLoading(button, true);
                 let url = `/stake?wallet_name=${walletName}&tao_amount=${amount}&netuid=${netuid}&rate_tolerance=${rateTolerance}&dest_hotkey=${validatorHotkey}&min_tolerance_staking=${minToleranceStaking}`;
@@ -422,6 +428,13 @@
 
             if (!walletName) {
                 alert('Please select a wallet');
+                return;
+            }
+
+            // Add confirmation dialog
+            const amountText = amount ? `${amount} TAO` : 'all TAO';
+            const confirmMessage = `Are you sure you want to unstake ${amountText} from wallet "${walletName}" from validator "${validatorHotkey}" on network ${netuid}?`;
+            if (!confirm(confirmMessage)) {
                 return;
             }
 
