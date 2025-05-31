@@ -9,3 +9,4 @@ statistics
 backoff
 python-dotenv
 bcrypt
+jinja2
