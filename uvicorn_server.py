@@ -1,3 +1,4 @@
+import os
 import fastapi
 import bittensor as bt
 import uvicorn
@@ -8,6 +9,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from dotenv import load_dotenv
 
 from auth import get_current_username
 from constants import ROUND_TABLE_HOTKEY, NETWORK
@@ -17,7 +19,8 @@ app = fastapi.FastAPI()
 # Set up templates
 templates = Jinja2Templates(directory="templates")
 
-wallet_names = ["stake_2","sec_ck4",]
+load_dotenv()
+wallet_names = os.getenv('WALLET_NAMES', '').split(',')
 wallets: Dict[str, bt.wallet] = {}
 
 def unlock_wallets():
