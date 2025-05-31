@@ -137,7 +137,6 @@ def unstake(
                 amount=amount,
                 hotkey_ss58=dest_hotkey,
             )
-            print(result)
             if not result:
                 raise Exception("Unstake failed")
             
