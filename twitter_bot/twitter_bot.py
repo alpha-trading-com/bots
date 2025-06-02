@@ -59,14 +59,13 @@ class TwitterBot:
             print(f"Error getting user ID: {e}")
             return None
 
-    def analyze_content(self, text):
+    def analyze_content(self, text) -> tuple[bool, int]:
         """Analyze content and count specific words"""
         # Convert text to lowercase for case-insensitive matching
         text_lower = text.lower()
         
         # Define words to search for
-        words_to_count = ['subnet', '47', '54', '69', 'Coming', 'Soon']
-        
+        words_to_count = ['subnet', '47', '54', '69', 'coming', 'soon', 'bittensor']  
         # Count occurrences
         word_counts = {}
         for word in words_to_count:
@@ -74,7 +73,18 @@ class TwitterBot:
             pattern = r'\b' + re.escape(word.lower()) + r'\b'
             count = len(re.findall(pattern, text_lower))
             word_counts[word] = count
-        return word_counts
+
+        if word_counts['subnet'] > 0 and word_counts['bittensor'] > 0:
+            print("Subnet and Bittensor found in tweet")
+            subnets = ['47', '54', '69', '78', '82']
+            for subnet in subnets:
+                if subnet in text_lower:
+                    print(f"Subnet {subnet} found in tweet")
+                    return True, int(subnet)
+            return True, 0
+        else:
+            return False, 0
+        
 
     def get_recent_tweets(self, username, max_results=10, since_id=None):
         """Get recent tweets from a specified user"""
@@ -111,7 +121,7 @@ class TwitterBot:
             print(f"Error fetching tweets: {e}")
             return None
 
-    def check_new_tweets(self, username, interval=60):
+    def check_new_tweets(self, username, callback, interval=60):
         """Check for new tweets periodically"""
         while True:
             try:
@@ -129,19 +139,26 @@ class TwitterBot:
                     # Process new tweets
                     tweet = new_tweets[0]
                     content = tweet['text']
-                    word_counts = self.analyze_content(content)
+                    found, subnet = self.analyze_content(content)
+
+                    if found:
+                        print(f"Found {found} in tweet")
+                        print(f"Tweet: {content}")
+
+                    if subnet > 0:
+                        print(f"Found subnet {subnet} in tweet")
+                        print(f"Tweet: {content}")
+                        callback(subnet)                        
                     
-                    print("\nNew Tweet Found!")
-                    print("-" * 50)
-                    print(f"Content: {content}")
-                    print("\nWord Counts:")
-                    for word, count in word_counts.items():
-                        print(f"'{word}': {count} occurrences")
-                    print("-" * 50)
-                
+
             except Exception as e:
                 print(f"Error in check_new_tweets: {e}")
             time.sleep(interval)
+
+
+
+def callback(subnet):
+    print(f"Subnet {subnet} found in tweet")
 
 def main():
     # Initialize the bot
@@ -149,10 +166,10 @@ def main():
 
     # Example usage
     username = "OpenGradient"
-    
+
     # Start checking for new tweets
     print(f"Starting to monitor tweets from @{username}...")
-    bot.check_new_tweets(username)
+    bot.check_new_tweets(username, callback)
 
 if __name__ == "__main__":
     main() 
