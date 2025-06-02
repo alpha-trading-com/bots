@@ -65,7 +65,7 @@ class TwitterBot:
         text_lower = text.lower()
         
         # Define words to search for
-        words_to_count = ['subnet', '47', '54', '69', 'coming', 'soon', 'bittensor']  
+        words_to_count = ['subnet', 'bittensor']  
         # Count occurrences
         word_counts = {}
         for word in words_to_count:
@@ -74,9 +74,9 @@ class TwitterBot:
             count = len(re.findall(pattern, text_lower))
             word_counts[word] = count
 
-        if word_counts['subnet'] > 0 and word_counts['bittensor'] > 0:
-            print("Subnet and Bittensor found in tweet")
-            subnets = ['47', '54', '69', '78', '82']
+        if word_counts['subnet'] > 0 or word_counts['bittensor'] > 0:
+            print("Subnet or Bittensor found in tweet")
+            subnets = ['54', '69', '47', '78', '82']
             for subnet in subnets:
                 if subnet in text_lower:
                     print(f"Subnet {subnet} found in tweet")
