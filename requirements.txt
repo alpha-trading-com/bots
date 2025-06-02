@@ -10,3 +10,4 @@ backoff
 python-dotenv
 bcrypt
 jinja2
+tweepy==4.14.0
