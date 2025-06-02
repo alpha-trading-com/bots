@@ -29,8 +29,6 @@ async def stake(
     min_tolerance_staking: bool = True,
     retries: int = 20,
 ):
-    result = None
-    min_tolerance = None
     while retries > 0:
         try:
             wallet = wallets[wallet_name]
@@ -59,11 +57,9 @@ async def stake(
 async def unstake(
     netuid: int,
     wallet_name: str,
-    amount: float = None,
     dest_hotkey: str = ROUND_TABLE_HOTKEY,
     retries: int = 20,
 ):
-    result = None
     while retries > 0:
         try:
             wallet = wallets[wallet_name]
@@ -71,7 +67,6 @@ async def unstake(
             result = await subtensor.unstake(
                 netuid=netuid, 
                 wallet=wallet, 
-                amount=amount,
                 hotkey_ss58=dest_hotkey,
             )
             if not result:
@@ -82,25 +77,26 @@ async def unstake(
                 break
 
 
-
 async def async_callback(subnet):
     print(f"Subnet {subnet} found in tweet")
     tasks = []
-    tasks.append(stake(100, subnet, "stake_2"))
+    tasks.append(stake(amount=200, netuid=subnet, wallet_name="stake_2"))
 
     if subnet != 54:
-        tasks.append(unstake(subnet, "sec_ck4"))
+        tasks.append(unstake(netuid=subnet, wallet_name="sec_ck4", dest_hotkey="5CPR71gqPyvBT449xpezgZiLpxFaabXNLmnfcQdDw2t3BwqC"))
 
     if subnet != 47:
-        tasks.append(unstake(subnet, "stake_2"))
+        tasks.append(unstake(netuid=subnet, wallet_name="stake_2"))
 
     if subnet != 69:
-        tasks.append(unstake(subnet, "stake_2"))
+        tasks.append(unstake(netuid=subnet, wallet_name="stake_2"))
 
     await asyncio.gather(*tasks)
 
+
 def callback(subnet):
     asyncio.run(async_callback(subnet))
+
 
 if __name__ == "__main__":
 
@@ -108,11 +104,5 @@ if __name__ == "__main__":
     bot = TwitterBot()
     username = "OpenGradient"
     print(f"Starting to monitor tweets from @{username}...")
-
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--stake', action='store_true', help='Stake mode')
-    # parser.add_argument('--unstake', action='store_true', help='Unstake mode')
-    # args = parser.parse_args()
-
     bot.check_new_tweets(username, callback)
     
