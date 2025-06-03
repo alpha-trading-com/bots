@@ -1,9 +1,9 @@
 import requests
 import json
+from constants import USERS, WEBHOOK_URL
 from twitter_bot.twitter_bot_x import TwitterBotX
 
 
-WEBHOOK_URL = "https://discord.com/api/webhooks/1379490127151370260/M3gi6L-7pyzl6EoTfc6vUj6SayRyY7tCT0BD2Bv5DK0sm7SUKxdseKzV2GZOjXJkR4CX"
 
 def send_message(content):
     data = {
@@ -26,7 +26,8 @@ def callback(username, content):
 
 def main():
     bot = TwitterBotX()
-    bot.check_new_tweets(["OpenGradient"], callback)
+    usernames = USERS
+    bot.check_new_tweets(usernames, callback)
 
 if __name__ == "__main__":
     main()

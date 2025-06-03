@@ -5,6 +5,7 @@ from datetime import datetime
 import re
 import json
 import time
+from constants import USERS
 
 # Load environment variables
 load_dotenv()
@@ -128,7 +129,7 @@ def main():
     bot = TwitterBotX()
 
     # List of usernames to monitor
-    usernames = ["OpenGradient", "User2", "User3"]  # Add your target usernames here
+    usernames = USERS  # Add your target usernames here
     
     # Start checking for new tweets
     print(f"Starting to monitor tweets from {usernames}...")
