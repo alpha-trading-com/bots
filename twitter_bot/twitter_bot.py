@@ -121,7 +121,7 @@ class TwitterBot:
             print(f"Error fetching tweets: {e}")
             return None
 
-    def check_new_tweets(self, username, callback, interval=60):
+    def check_new_tweets(self, username, callback, interval=172):
         """Check for new tweets periodically"""
         while True:
             try:
