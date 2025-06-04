@@ -7,8 +7,8 @@ WEBHOOK_URL = "https://discord.com/api/webhooks/1379627091502305280/1GW3BaWycWYq
 
 USERS = []
 try:
-    with open("users.txt", "r") as f:
+    with open("handles.txt", "r") as f:
         USERS = f.read().splitlines()
 except FileNotFoundError:
-    print("users.txt not found")
+    print("handles.txt not found")
     USERS = []
