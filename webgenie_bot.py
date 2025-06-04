@@ -35,29 +35,38 @@ def format_tweet(tweet):
     # Format the timestamp
     created_at = tweet['created_at']
     # Create a beautiful formatted message
-    message = f"""🐦 **New Tweet Alert from {tweet['username']}!**
+    message = f"""
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-👤 **Author:** {tweet['username']}
+
+
+Hey @everyone!
+
+🐦 ** {tweet['username']} ** 🐦
+
 ⏰ **Time:** {created_at}
-💬 **Content:**
+
 {tweet['text']}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 🔗 **Link:** https://x.com/{tweet['username']}/status/{tweet['id']}
 
-
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """  
     return message
 
 
 def periodic_check(interval=5):
+
     while True:
-        for tweet_file_name in os.listdir(TWEETS_DIR):
+        tweet_files = sorted(os.listdir(TWEETS_DIR), key=lambda x: int(x.split('.')[0]))
+        for tweet_file_name in tweet_files:
             with open(f"{TWEETS_DIR}/{tweet_file_name}", 'r') as f:
                 tweet = json.load(f)
                 message = format_tweet(tweet)   
                 result = send_message(message)
                 if result:
                     os.remove(f"{TWEETS_DIR}/{tweet_file_name}")
+                else:
+                    break
         time.sleep(interval)
 
 
