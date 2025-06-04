@@ -76,7 +76,7 @@ class TwitterBot:
 
         if word_counts['subnet'] > 0 or word_counts['bittensor'] > 0:
             print("Subnet or Bittensor found in tweet")
-            subnets = ['54', '69', '47', '78', '82']
+            subnets = ['54', '69', '47', '78', '82', '15']
             for subnet in subnets:
                 if subnet in text_lower:
                     print(f"Subnet {subnet} found in tweet")
