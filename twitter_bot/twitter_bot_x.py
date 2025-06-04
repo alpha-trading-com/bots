@@ -54,9 +54,10 @@ class TwitterBotX:
     def get_tweets_from_multiple_users(self, usernames, max_results=50, since_id=None):
         """Get tweets from multiple users using search_recent_tweets"""
         try:
-            # Create a query string with OR operator between usernames
-            query = " OR ".join([f"from:{username}" for username in usernames])
-            query = f"({query}) -is:retweet -is:reply"
+            # Create a more concise query by removing 'from:' prefix and using a shorter format
+            # This reduces the query length significantly
+            usernames_str = " OR ".join(usernames)
+            query = f"({usernames_str}) -is:retweet -is:reply"
             
             tweets = self.client.search_recent_tweets(
                 query=query,
