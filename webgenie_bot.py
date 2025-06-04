@@ -42,14 +42,11 @@ def format_tweet(tweet):
 Hey @everyone!
 
 🐦 ** {tweet['username']} ** 🐦
-
 ⏰ **Time:** {created_at}
 
 {tweet['text']}
 
 🔗 **Link:** https://x.com/{tweet['username']}/status/{tweet['id']}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """  
     return message
 
