@@ -80,7 +80,7 @@ async def unstake(
 async def async_callback(subnet):
     print(f"Subnet {subnet} found in tweet")
     tasks = []
-    tasks.append(stake(amount=200, netuid=subnet, wallet_name="stake_2"))
+    tasks.append(stake(amount=170, netuid=subnet, wallet_name="stake_2"))
 
     if subnet != 54:
         tasks.append(unstake(netuid=subnet, wallet_name="sec_ck4", dest_hotkey="5CPR71gqPyvBT449xpezgZiLpxFaabXNLmnfcQdDw2t3BwqC"))
