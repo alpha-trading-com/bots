@@ -35,13 +35,17 @@ def format_tweet(tweet):
     # Format the timestamp
     created_at = tweet['created_at']
     # Create a beautiful formatted message
-    message = f"""🐦 **New Tweet Alert!**
+    message = f"""🐦 **New Tweet Alert from {tweet['username']}!**
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 👤 **Author:** {tweet['username']}
 ⏰ **Time:** {created_at}
 💬 **Content:**
 {tweet['text']}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"""  
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔗 **Link:** https://x.com/{tweet['username']}/status/{tweet['id']}
+
+
+"""  
     return message
 
 
