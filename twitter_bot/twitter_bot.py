@@ -129,7 +129,7 @@ class TwitterBot:
                 last_id = self.last_seen.get(username)
                 
                 # Fetch new tweets
-                new_tweets = self.get_recent_tweets(username, max_results=5, since_id=last_id)
+                new_tweets = self.get_recent_tweets(username, max_results=10, since_id=last_id)
                 
                 if new_tweets:
                     # Update last seen ID
@@ -137,19 +137,21 @@ class TwitterBot:
                     self.save_last_seen()
                     
                     # Process new tweets
-                    tweet = new_tweets[0]
-                    content = tweet['text']
-                    found, subnet = self.analyze_content(content)
+                    for tweet in new_tweets:
+                        content = tweet['text']
+                        with open('tweets.txt', 'a') as f:
+                            f.write(f"{content}\n")
+                            f.write(f"--------------------------------\n")
+                        found, subnet = self.analyze_content(content)
+                        if found:
+                            print(f"Found {found} in tweet")
+                            print(f"Tweet: {content}")
 
-                    if found:
-                        print(f"Found {found} in tweet")
-                        print(f"Tweet: {content}")
-
-                    if subnet > 0:
-                        print(f"Found subnet {subnet} in tweet")
-                        print(f"Tweet: {content}")
-                        callback(subnet)                        
-                    
+                        if subnet > 0:
+                            print(f"Found subnet {subnet} in tweet")
+                            print(f"Tweet: {content}")
+                            callback(subnet)                        
+                        
 
             except Exception as e:
                 print(f"Error in check_new_tweets: {e}")

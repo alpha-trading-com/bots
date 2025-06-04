@@ -108,21 +108,17 @@ class TwitterBotX:
                     # Update last seen ID with the most recent tweet
                     self.last_seen_id = new_tweets[0]['id']
                     self.save_last_seen(self.last_seen_id)
-                    
-                    # Process new tweets
-                    for tweet in new_tweets:
-                        username = tweet['username']
-                        callback(username, tweet['text'])
+                    # Process new tweets in reverse order
+                    for tweet in reversed(new_tweets):
+                        callback(tweet)
                     
             except Exception as e:
                 print(f"Error in check_new_tweets: {e}")
             time.sleep(interval)
 
 
-def callback(username , content):
-    print(f"Username: {username}")
-    print(f"Content: {content}")
-
+def callback(tweet):
+    pass
 
 def main():
     # Initialize the bot
