@@ -273,6 +273,15 @@
                     <input type="text" id="unstakeNetuid" class="input-field" value="0">
                 </div>
                 <div class="input-group">
+                    <label class="input-label">Rate Tolerance</label>
+                    <div class="flex items-center gap-3">
+                        <input type="text" id="unstakeRateTolerance" class="input-field flex-1" value="0.005" step="0.0001">
+                        <input type="checkbox" id="minToleranceUnstaking" class="form-checkbox h-4 w-4 text-blue-600" checked onchange="toggleUnstakeRateTolerance()">
+                        <label for="minToleranceUnstaking" class="text-sm text-red-500 mb-0">Use Min Tolerance</label>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-1" id="unstakeRateToleranceNote">This value will be ignored when "Use Minimum Tolerance" is checked</p>
+                </div>
+                <div class="input-group">
                     <label class="input-label">Validator Hotkey</label>
                     <input type="text" id="unstakeValidatorHotkey" class="input-field" value="5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v">
                 </div>
@@ -424,6 +433,8 @@
             const netuid = document.getElementById('unstakeNetuid').value;
             const validatorHotkey = document.getElementById('unstakeValidatorHotkey').value;
             const amount = document.getElementById('unstakeAmount').value;
+            const rateTolerance = document.getElementById('unstakeRateTolerance').value;
+            const minToleranceUnstaking = document.getElementById('minToleranceUnstaking').checked;
             const retries = document.getElementById('unstakeRetries').value;
 
             if (!walletName) {
@@ -440,7 +451,7 @@
 
             try {
                 setButtonLoading(button, true);
-                let url = `/unstake?wallet_name=${walletName}&netuid=${netuid}&dest_hotkey=${validatorHotkey}`;
+                let url = `/unstake?wallet_name=${walletName}&netuid=${netuid}&dest_hotkey=${validatorHotkey}&rate_tolerance=${rateTolerance}&min_tolerance_unstaking=${minToleranceUnstaking}`;
                 if (amount) {
                     url += `&amount=${amount}`;
                 }
@@ -491,9 +502,22 @@
             }
         }
 
+        function toggleUnstakeRateTolerance() {
+            const rateToleranceInput = document.getElementById('unstakeRateTolerance');
+            const minToleranceChecked = document.getElementById('minToleranceUnstaking').checked;
+            
+            rateToleranceInput.disabled = minToleranceChecked;
+            if (minToleranceChecked) {
+                rateToleranceInput.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                rateToleranceInput.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
         // Call this function when the page loads to set initial state
         document.addEventListener('DOMContentLoaded', function() {
             toggleRateTolerance();
+            toggleUnstakeRateTolerance();
         });
 
         // Initial balance fetch

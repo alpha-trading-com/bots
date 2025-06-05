@@ -119,6 +119,8 @@ def unstake(
     wallet_name: str,
     amount: float = None,
     dest_hotkey: str = ROUND_TABLE_HOTKEY,
+    rate_tolerance: float = 0.005,
+    min_tolerance_unstaking: bool = True,
     retries: int = 1,
     username: str = Depends(get_current_username)
 ):
@@ -130,15 +132,29 @@ def unstake(
 
             wallet = wallets[wallet_name]
             subtensor = bt.subtensor(network=NETWORK)
-            if amount is not None:
-                subnet = subtensor.subnet(netuid=netuid)
+            subnet = subtensor.subnet(netuid=netuid)
+
+            if amount is None:
+                amount = subtensor.get_stake(
+                    coldkey_ss58=wallet.coldkeypub.ss58_address,
+                    hotkey_ss58=dest_hotkey,
+                    netuid=netuid
+                )
+            else:
                 amount = bt.Balance.from_tao(amount / subnet.price.tao, netuid)
+                
+            min_tolerance = amount / (amount + subnet.alpha_in.tao)
+
+            if min_tolerance_unstaking:
+                rate_tolerance = min_tolerance + 0.001
 
             result = subtensor.unstake(
                 netuid=netuid, 
                 wallet=wallet, 
                 amount=amount,
                 hotkey_ss58=dest_hotkey,
+                safe_staking=True,
+                rate_tolerance=rate_tolerance,
             )
             if not result:
                 raise Exception("Unstake failed")
@@ -146,13 +162,16 @@ def unstake(
             return {
                 "success": True,
                 "result": result,
+                "min_tolerance": min_tolerance,
             }
+        
         except Exception as e:
             retries -= 1
             if retries == 0:
                 return {
                     "success": False,
                     "result": result,
+                    "min_tolerance": min_tolerance,
                 }
 
 
