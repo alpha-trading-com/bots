@@ -12,6 +12,7 @@ if __name__ == '__main__':
     subtensor = bt.subtensor('finney')
     subnet = subtensor.subnet(netuid=netuid)
     alpha_price = subnet.alpha_to_tao(1)
+    print(subnet.alpha_in.tao)
     print(f"Current alpha token price: {alpha_price} TAO")
 
     wallet_name = input("Enter the wallet name: ")            

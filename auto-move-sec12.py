@@ -1,8 +1,8 @@
 import time
 import bittensor as bt
 import argparse
-from utils.const import sn_vali_addr
 from utils.utils import *
+from constants import NETWORK
 
 default_delta_price = 0.00001
 stake_amount = 1
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     wallet.unlock_coldkey()
     
     
-    subtensor = bt.subtensor('finney')
+    subtensor = bt.subtensor(NETWORK)
     src_hotkey = "5GFDSCSaLqAWd7oHxyS4BmETaCwqSkaUeBNoi4zPheYZq95W"
     dest_hotkey = "5CPR71gqPyvBT449xpezgZiLpxFaabXNLmnfcQdDw2t3BwqC"
     netuid = 54

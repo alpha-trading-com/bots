@@ -78,14 +78,15 @@ def stake(
         retries = 1
     result = None
     min_tolerance = None
+    wallet = wallets[wallet_name]
+    subtensor = bt.subtensor(network=NETWORK)
+    subnet = subtensor.subnet(netuid=netuid)
+    min_tolerance = tao_amount / subnet.tao_in.tao  
+    if min_tolerance_staking:
+        rate_tolerance = min_tolerance + 0.001
+
     while retries > 0:
         try:
-            wallet = wallets[wallet_name]
-            subtensor = bt.subtensor(network=NETWORK)
-            subnet = subtensor.subnet(netuid=netuid)
-            min_tolerance = tao_amount / subnet.tao_in.tao  
-            if min_tolerance_staking:
-                rate_tolerance = min_tolerance + 0.001
 
             result = subtensor.add_stake(
                 netuid=netuid,
@@ -127,27 +128,26 @@ def unstake(
     if retries < 1:
         retries = 1
     result = None
+    wallet = wallets[wallet_name]
+    subtensor = bt.subtensor(network=NETWORK)
+    subnet = subtensor.subnet(netuid=netuid)
+
+    if amount is None:
+        amount = subtensor.get_stake(
+            coldkey_ss58=wallet.coldkeypub.ss58_address,
+            hotkey_ss58=dest_hotkey,
+            netuid=netuid
+        )
+    else:
+        amount = bt.Balance.from_tao(amount / subnet.price.tao, netuid)
+                    
+    min_tolerance = amount.tao / (amount.tao + subnet.alpha_in.tao)
+
+    if min_tolerance_unstaking:
+        rate_tolerance = min_tolerance + 0.001
+
     while retries > 0:
         try:
-
-            wallet = wallets[wallet_name]
-            subtensor = bt.subtensor(network=NETWORK)
-            subnet = subtensor.subnet(netuid=netuid)
-
-            if amount is None:
-                amount = subtensor.get_stake(
-                    coldkey_ss58=wallet.coldkeypub.ss58_address,
-                    hotkey_ss58=dest_hotkey,
-                    netuid=netuid
-                )
-            else:
-                amount = bt.Balance.from_tao(amount / subnet.price.tao, netuid)
-                
-            min_tolerance = amount / (amount + subnet.alpha_in.tao)
-
-            if min_tolerance_unstaking:
-                rate_tolerance = min_tolerance + 0.001
-
             result = subtensor.unstake(
                 netuid=netuid, 
                 wallet=wallet, 
