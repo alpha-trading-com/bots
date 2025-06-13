@@ -84,7 +84,7 @@ class TempWeighter:
             )
             if not success:
                 print(f"Error setting weights: {message}")
-                time.sleep(10)
+                time.sleep(1)
                 continue
 
             print("Weights set.")
@@ -107,7 +107,7 @@ class TempWeighter:
             print(
                 f"Waiting {self.config.set_weights_interval} blocks before next weight set..."
             )
-            time.sleep(12)
+            time.sleep(10)
 
 
 if __name__ == "__main__":
