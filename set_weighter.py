@@ -1,27 +1,28 @@
 import time
 import argparse
 import datetime
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 import bittensor as bt
 from bittensor_wallet import Wallet
 from constants import NETWORK
 
 
-MAINNET_NETUID = 5
-BLOCK_TIME = 12
-
-
 class TempWeighter:
     def __init__(self):
         self.config = self.get_config()
 
-        # Initialize wallet.
         self.wallet = Wallet(config=self.config)
-        print(f"Wallet: {self.wallet}")
+        self.async_subtensor = bt.async_subtensor(network=NETWORK)
 
-        # Initialize subtensor.
-        self.subtensor = bt.subtensor(network=NETWORK)
-        print(f"Subtensor: {self.subtensor}")
+        self.netuid_burn_pairs = [
+            (69, 98),
+            (40, 66),
+            (63, 148),
+            (82, 50),
+        ]
+        
 
     def get_config(self):
         # Set up the configuration parser.
@@ -35,20 +36,8 @@ class TempWeighter:
             "run", help="""Run the weighter"""
         )
 
-        # Adds override arguments for network and netuid.
-        run_command_parser.add_argument(
-            "--netuid", type=int, default=MAINNET_NETUID, help="The chain subnet uid." # TODO: change to 40
-        )
-
-        run_command_parser.add_argument(
-            "--set_weights_interval",
-            type=int,
-            default= 2,  # 2 epochs
-            help="The interval to set weights in blocks.",
-        )
-
         # Adds subtensor specific arguments.
-        bt.subtensor.add_args(run_command_parser)
+        bt.async_subtensor.add_args(run_command_parser)
         # Adds wallet specific arguments.
         Wallet.add_args(run_command_parser)
 
@@ -61,53 +50,67 @@ class TempWeighter:
 
         return config
 
-    def run(self):
+    async def set_weights(self, netuid, burn_uid):
+        uids = [burn_uid]
+        weights = [1.0]
+
+        # Set weights.
+        success, message = await self.async_subtensor.set_weights(
+            self.wallet,
+            netuid,
+            uids,
+            weights,
+            wait_for_inclusion=True,
+            wait_for_finalization=True,
+        )    
+
+        if not success:
+            print(f"Error setting weights: {message}")
+            return netuid, burn_uid, success, message
+
+        print("Weights set.")
+        try:
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"weight_set_all.txt"
+            
+            with open(filename, "a") as f:
+                f.write(f"Timestamp: {timestamp}\n")
+                f.write(f"Burn UID: {burn_uid}\n")
+                f.write(f"Success: {success}\n")
+                f.write(f"Message: {message}\n")
+                f.write(f"Name: {self.wallet.hotkey.ss58_address}\n")
+            print(f"Saved weight set information to {filename}")
+        except Exception as e:
+            print(f"Error saving weight set information: {e}")
+
+        return netuid, burn_uid, success, message
+    
+
+    async def run_async(self):
         print("Running weighter...")
 
         while True:
             print("Running weighter loop...")
-            # Get the burn UID.
-            burn_uid = 13
+            # Create tasks for all pairs
+            tasks = [
+                self.set_weights(netuid, burn_uid)
+                for netuid, burn_uid in self.netuid_burn_pairs
+            ]
+            
+            # Wait for all tasks to complete
+            results = await asyncio.gather(*tasks)
+            
+            # Process results
+            for netuid, burn_uid, success, message in results:
+                if not success:
+                    print(f"Error setting weights for netuid {netuid}: {message}")
+                else:
+                    print(f"Successfully set weights for netuid {netuid} and burn_uid {burn_uid}")
+            
 
-            # Set weights to burn UID.
-            uids = [burn_uid]
-            weights = [1.0]
-
-            # Set weights.
-            success, message = self.subtensor.set_weights(
-                self.wallet,
-                self.config.netuid,
-                uids,
-                weights,
-                wait_for_inclusion=True,
-                wait_for_finalization=True,
-            )
-            if not success:
-                print(f"Error setting weights: {message}")
-                time.sleep(1)
-                continue
-
-            print("Weights set.")
-            # Save the current state to a file
-            try:
-                timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = f"weight_set.txt"
-                
-                with open(filename, "a") as f:
-                    f.write(f"Timestamp: {timestamp}\n")
-                    f.write(f"Burn UID: {burn_uid}\n")
-                    f.write(f"Success: {success}\n")
-                    f.write(f"Message: {message}\n")
-                    f.write(f"Name: {self.wallet.name}\n")
-                print(f"Saved weight set information to {filename}")
-            except Exception as e:
-                print(f"Error saving weight set information: {e}")
-
-            # Wait for next time to set weights.
-            print(
-                f"Waiting {self.config.set_weights_interval} blocks before next weight set..."
-            )
-            time.sleep(10)
+    def run(self):
+        # Run the async event loop
+        asyncio.run(self.run_async())
 
 
 if __name__ == "__main__":
