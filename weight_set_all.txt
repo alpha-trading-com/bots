@@ -1,0 +1,95 @@
+Timestamp: 20250613_130325
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
+Timestamp: 20250613_130337
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v
+Timestamp: 20250613_130337
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_130402
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
+Timestamp: 20250613_130413
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_130413
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v
+Timestamp: 20250613_130438
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
+Timestamp: 20250613_130450
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_130450
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v
+Timestamp: 20250613_130513
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
+Timestamp: 20250613_130525
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v
+Timestamp: 20250613_130525
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_130550
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
+Timestamp: 20250613_130601
+Burn UID: 220
+Success: True
+Message: reveal_round:19012068
+Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
+Timestamp: 20250613_130601
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_130601
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v
+Timestamp: 20250613_130626
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
+Timestamp: 20250613_130638
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_130638
+Burn UID: 232
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v

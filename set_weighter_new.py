@@ -94,31 +94,38 @@ class TempWeighter:
         return netuid, burn_uid, success, message
     
 
-    async def run_async(self):
+    async def run_async(self, netuid, burn_uid):
         print("Running weighter...")
 
         while True:
             print("Running weighter loop...")
             # Create tasks for all pairs
-            tasks = [
-                self.set_weights(netuid, burn_uid)
-                for netuid, burn_uid in self.netuid_burn_pairs
-            ]
             
-            # Wait for all tasks to complete
-            results = await asyncio.gather(*tasks)
-            
-            # Process results
-            for netuid, burn_uid, success, message in results:
-                if not success:
-                    print(f"Error setting weights for netuid {netuid}: {message}")
-                else:
-                    print(f"Successfully set weights for netuid {netuid} and burn_uid {burn_uid}")
-            
+            netuid, burn_uid, success, message = await self.set_weights(netuid, burn_uid)
+            if not success:
+                print(f"Error setting weights for netuid {netuid}: {message}")
+                await asyncio.sleep(1)
+            else:
+                print(f"Successfully set weights for netuid {netuid} and burn_uid {burn_uid}")
+                await asyncio.sleep(10)
+
 
     def run(self):
-        # Run the async event loop
-        asyncio.run(self.run_async())
+        # Create and run the event loop
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        try:
+            # Create tasks for each pair
+            tasks = []
+            for netuid, burn_uid in self.netuid_burn_pairs:
+                task = loop.create_task(self.run_async(netuid, burn_uid))
+                tasks.append(task)
+            
+            # Run all tasks
+            loop.run_until_complete(asyncio.gather(*tasks))
+        finally:
+            loop.close()
 
 
 if __name__ == "__main__":
