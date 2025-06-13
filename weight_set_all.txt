@@ -38,3 +38,13 @@ Burn UID: 66
 Success: True
 Message: reveal_round:19009208
 Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_081738
+Burn UID: 99
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_081738
+Burn UID: 99
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v
