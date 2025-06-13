@@ -1,15 +1,15 @@
-Timestamp: 20250613_133351
+Timestamp: 20250613_133415
+Burn UID: 148
+Success: True
+Message: Successfully set weights and Finalized.
+Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
+Timestamp: 20250613_133426
 Burn UID: 232
 Success: True
 Message: Successfully set weights and Finalized.
 Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
-Timestamp: 20250613_133415
-Burn UID: 232
-Success: True
-Message: Successfully set weights and Finalized.
-Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3
-Timestamp: 20250613_133415
-Burn UID: 232
+Timestamp: 20250613_133438
+Burn UID: 51
 Success: True
 Message: Successfully set weights and Finalized.
 Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v

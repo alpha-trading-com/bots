@@ -11,25 +11,7 @@ from constants import NETWORK
 
 class TempWeighter:
     def __init__(self):
-        self.config = self.get_config()
-
-        self.wallet = Wallet(config=self.config)
-        self.async_subtensor = bt.async_subtensor(network=NETWORK)
-
-        self.netuid_burn_pairs = [
-            (69, 98),
-            (40, 66),
-            (63, 148),
-            (82, 50),
-#            (39, 99),
-            (15, 178),
-            (47, 220),
-            (28, 232),
-            (104, 51),
-            (108, 246),
-            (98, 215),
-            (114, 10),
-        ]
+        pass
         
 
     def get_config(self):
@@ -79,7 +61,7 @@ class TempWeighter:
         print("Weights set.")
         try:
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"weight_set_all.txt"
+            filename = f"weight_set_all_new.txt"
             
             with open(filename, "a") as f:
                 f.write(f"Timestamp: {timestamp}\n")
@@ -110,22 +92,43 @@ class TempWeighter:
                 await asyncio.sleep(10)
 
 
-    def run(self):
-        # Create and run the event loop
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+    async def run(self):
+        self.config = self.get_config()
+
+        self.wallet = Wallet(config=self.config)
+        self.async_subtensor = bt.async_subtensor(network=NETWORK)
+        await self.async_subtensor.initialize()
+
+        self.netuid_burn_pairs = [
+            (69, 98),
+            (40, 66),
+            (63, 148),
+            (82, 50),
+#            (39, 99),
+            (15, 178),
+            (47, 220),
+            (28, 232),
+            (104, 51),
+            (108, 246),
+            (98, 215),
+            (114, 10),
+        ]
+        # Create tasks for each pair
+        tasks = []
+        for netuid, burn_uid in self.netuid_burn_pairs:
+            task = asyncio.create_task(self.run_async(netuid, burn_uid))
+            tasks.append(task)
         
-        try:
-            # Create tasks for each pair
-            tasks = []
-            for netuid, burn_uid in self.netuid_burn_pairs:
-                task = loop.create_task(self.run_async(netuid, burn_uid))
-                tasks.append(task)
-            
-            # Run all tasks
-            loop.run_until_complete(asyncio.gather(*tasks))
-        finally:
-            loop.close()
+        # Run all tasks concurrently
+        await asyncio.gather(*tasks)
+
+
+async def main():
+    weighter = TempWeighter()
+    await weighter.run()
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 
 if __name__ == "__main__":

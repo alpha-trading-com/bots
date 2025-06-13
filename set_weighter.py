@@ -11,27 +11,8 @@ from constants import NETWORK
 
 class TempWeighter:
     def __init__(self):
-        self.config = self.get_config()
-
-        self.wallet = Wallet(config=self.config)
-        self.async_subtensor = bt.async_subtensor(network=NETWORK)
-
-        self.netuid_burn_pairs = [
-            (69, 98),
-            (40, 66),
-            (63, 148),
-            (82, 50),
-#            (39, 99),
-            (15, 178),
-            (47, 220),
-            (28, 232),
-            (104, 51),
-            (108, 246),
-            (98, 215),
-            (114, 10),
-        ]
+        pass
         
-
     def get_config(self):
         # Set up the configuration parser.
         parser = argparse.ArgumentParser(
@@ -95,6 +76,26 @@ class TempWeighter:
     
 
     async def run_async(self):
+        self.config = self.get_config()
+
+        self.wallet = Wallet(config=self.config)
+        self.async_subtensor = bt.async_subtensor(network=NETWORK)
+        await self.async_subtensor.initialize()
+
+        self.netuid_burn_pairs = [
+            (69, 98),
+            (40, 66),
+            (63, 148),
+            (82, 50),
+#            (39, 99),
+            (15, 178),
+            (47, 220),
+            (28, 232),
+            (104, 51),
+            (108, 246),
+            (98, 215),
+            (114, 10),
+        ]
         print("Running weighter...")
 
         while True:
@@ -121,6 +122,10 @@ class TempWeighter:
         asyncio.run(self.run_async())
 
 
-if __name__ == "__main__":
+async def main():
     weighter = TempWeighter()
-    weighter.run()
+    await weighter.run_async()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
