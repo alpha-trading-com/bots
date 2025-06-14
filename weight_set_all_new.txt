@@ -1,15 +1,5 @@
-Timestamp: 20250613_133415
-Burn UID: 148
+Timestamp: 20250614_001815
+Burn UID: 178
 Success: True
-Message: Successfully set weights and Finalized.
+Message: reveal_round:19025196
 Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
-Timestamp: 20250613_133426
-Burn UID: 232
-Success: True
-Message: Successfully set weights and Finalized.
-Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
-Timestamp: 20250613_133438
-Burn UID: 51
-Success: True
-Message: Successfully set weights and Finalized.
-Name: 5FFApaS75bv5pJHfAp2FVLBj9ZaXuFDjEypsaBNc1wCfe52v
