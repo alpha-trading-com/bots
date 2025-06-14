@@ -1,5 +1,0 @@
-Timestamp: 20250614_001815
-Burn UID: 178
-Success: True
-Message: reveal_round:19025196
-Name: 5F2CsUDVbRbVMXTh9fAzF9GacjVX7UapvRxidrxe7z8BYckQ
