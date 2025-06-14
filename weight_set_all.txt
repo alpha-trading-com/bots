@@ -1,5 +1,0 @@
-Timestamp: 20250614_013415
-Burn UID: 234
-Success: True
-Message: Successfully set weights and Finalized.
-Name: 5F4tQyWrhfGVcNhoqeiNsR6KjD4wMZ2kfhLj4oHYuyHbZAc3

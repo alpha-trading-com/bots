@@ -60,7 +60,7 @@ class TempWeighter:
         print("Weights set.")
         try:
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"weight_set_all.txt"
+            filename = f"weight_set_5.txt"
             
             with open(filename, "a") as f:
                 f.write(f"Timestamp: {timestamp}\n")
