@@ -27,7 +27,14 @@ def unlock_wallets():
     for wallet_name in wallet_names:
         wallet = bt.wallet(name=wallet_name)
         print(f"Unlocking wallet {wallet_name}")
-        wallet.unlock_coldkey()
+        retries = 3
+        for _ in range(retries):
+            try:
+                wallet.unlock_coldkey()
+                break
+            except Exception as e:
+                print(f"Error unlocking wallet {wallet_name}: {e}")
+                continue
         wallets[wallet_name] = wallet
 
 @app.get("/")
