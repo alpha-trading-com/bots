@@ -185,7 +185,18 @@ def unstake(
 @app.get("/stake_list")
 def stake_list(wallet_name: str):
     result = subprocess.run(["btcli", "stake", "list", "--name", wallet_name, "--no-prompt"], capture_output=True, text=True)
-    return HTMLResponse(content=f"<pre>{result.stdout}</pre>")
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{wallet_name} | Stake List</title>
+    </head>
+    <body>
+        <pre>{result.stdout}</pre>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
 
 if __name__ == "__main__":
