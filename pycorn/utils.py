@@ -1,14 +1,34 @@
-import string
-import itertools
-import random
+import bittensor as bt
 
+def stake_to_subnet(
+    subtensor, 
+    netuid, 
+    wallet, 
+    dest_hotkey, 
+    tao_amount, 
+    min_tolerance_staking = True, 
+    rate_tolerance = 0.005, 
+    retries = 1
+):
+    subnet = subtensor.subnet(netuid=netuid)
+    min_tolerance = tao_amount / subnet.tao_in.tao
 
-id_cycle = itertools.count(1)
-rng = random.Random()
-def get_next_id() -> str:
-    """
-    Generates a pseudo-random ID by returning the next int of a range from 1-998 prepended with
-    two random ascii characters.
-    """
-    random_letters = "".join(rng.choices(string.ascii_letters, k=2))
-    return f"{random_letters}{next(id_cycle)}"
+    if min_tolerance_staking:
+        rate_tolerance = min_tolerance + 0.005
+
+    for _ in range(retries):
+        try:
+            result = subtensor.add_stake(
+                netuid=netuid,
+                amount= bt.Balance.from_tao(tao_amount, netuid),
+                wallet=wallet,
+                hotkey_ss58=dest_hotkey,
+                safe_staking=True,
+                rate_tolerance=rate_tolerance
+            )
+            if result:
+                return True
+        except Exception as e:
+            continue
+
+    return False
