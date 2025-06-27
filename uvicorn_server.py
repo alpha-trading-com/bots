@@ -90,7 +90,7 @@ def stake(
     subnet = subtensor.subnet(netuid=netuid)
     min_tolerance = tao_amount / subnet.tao_in.tao  
     if min_tolerance_staking:
-        rate_tolerance = min_tolerance + 0.001
+        rate_tolerance = min_tolerance * 1.1
 
     while retries > 0:
         try:
@@ -151,7 +151,7 @@ def unstake(
     min_tolerance = amount.tao / (amount.tao + subnet.alpha_in.tao)
 
     if min_tolerance_unstaking:
-        rate_tolerance = min_tolerance + 0.001
+        rate_tolerance = min_tolerance * 1.1
 
     while retries > 0:
         try:
