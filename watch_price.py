@@ -1,11 +1,11 @@
 import bittensor as bt
 from utils.utils import *
-from constants import NETWORK
+from constants import NETWORK, NETWORK_FINNEY
 
 
 if __name__ == '__main__':
     netuid = int(input("Enter the netuid: "))
-    subtensor = bt.subtensor(network=NETWORK)
+    subtensor = bt.subtensor(network=NETWORK_FINNEY)
     prev_tao_in = 0
     while True:
         try:
