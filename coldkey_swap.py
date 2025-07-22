@@ -116,4 +116,5 @@ if __name__ == "__main__":
    
     fetcher = ColdkeySwapFetcher()
     print(fetcher.owner_coldkeys)
-    fetcher.run()
+    fetcher.discord_bot.send_message(fetcher.format_message(fetcher.fetch_extrinsic_data(6053868)))
+    #fetcher.run()
