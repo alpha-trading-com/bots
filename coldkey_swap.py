@@ -38,7 +38,7 @@ class ColdkeySwapFetcher:
         self.subtensor = bt.subtensor("archive")
         self.subtensor_finney = bt.subtensor("finney")
 
-        self.last_checked_block = self.subtensor.get_current_block() - 1
+        self.last_checked_block = self.subtensor.get_current_block()
         self.discord_bot = DiscordBot()
         self.owner_coldkeys = self.get_owner_coldkeys()       
         self.thread = threading.Thread(target=self.fetch_owner_coldkeys, daemon=True)
