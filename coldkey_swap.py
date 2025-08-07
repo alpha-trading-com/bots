@@ -76,10 +76,17 @@ class ColdkeySwapFetcher:
                 new_coldkey = next((a['value'] for a in args if a['name'] == 'new_coldkey'), None)
                 from_coldkey = ex.value.get('address', None)
                 print(f"Swap scheduled: from {from_coldkey} to {new_coldkey}")
+                
+                try:
+                    subnet_id = self.owner_coldkeys.index(from_coldkey)
+                except ValueError:
+                    print(f"From coldkey {from_coldkey} not found in owner coldkeys")
+                    continue
+
                 swap_info = {
                     'old_coldkey': from_coldkey,
                     'new_coldkey': new_coldkey,
-                    'subnet': self.owner_coldkeys.index(from_coldkey),
+                    'subnet': subnet_id,
                 }
                 
                 coldkey_swaps.append(swap_info)
@@ -91,37 +98,37 @@ class ColdkeySwapFetcher:
         print("Thread started")
 
         while True:
-                current_block = self.subtensor.get_current_block()
-                if current_block < self.last_checked_block:
+            current_block = self.subtensor.get_current_block()
+            if current_block < self.last_checked_block:
+                time.sleep(2)
+                continue
+
+            print(f"Fetching coldkey swaps for block {self.last_checked_block}")
+            while True:
+                try:
+                    coldkey_swaps = self.fetch_extrinsic_data(self.last_checked_block)
+                    if len(coldkey_swaps) > 0:
+                        try:
+                            with open("coldkey_swaps.log", "a") as f:
+                                for swap in coldkey_swaps:
+                                    f.write(f"{swap}\n")
+                        except Exception as e:
+                            print(f"Error writing to file: {e}")
+
+                        try:
+                            message = self.format_message(coldkey_swaps)
+                            self.discord_bot.send_message(message)
+                        except Exception as e:
+                            print(f"Error sending message: {e}")
+                    else:
+                        print("No coldkey swaps found")
+                    
+                    self.last_checked_block += 1
+                    break
+                except Exception as e:
+                    print(f"Error fetching coldkey swaps: {e}")
                     time.sleep(1)
-                    continue
 
-                print(f"Fetching coldkey swaps for block {self.last_checked_block}")
-                while True:
-                    try:
-                        coldkey_swaps = self.fetch_extrinsic_data(self.last_checked_block)
-                        if len(coldkey_swaps) > 0:
-                            try:
-                                with open("coldkey_swaps.log", "a") as f:
-                                    for swap in coldkey_swaps:
-                                        f.write(f"{swap}\n")
-                            except Exception as e:
-                                print(f"Error writing to file: {e}")
-
-                            try:
-                                message = self.format_message(coldkey_swaps)
-                                self.discord_bot.send_message(message)
-                            except Exception as e:
-                                print(f"Error sending message: {e}")
-                        else:
-                            print("No coldkey swaps found")
-                        
-                        self.last_checked_block += 1
-                        break
-                    except Exception as e:
-                        print(f"Error fetching coldkey swaps: {e}")
-                        time.sleep(1)
-        time.sleep(1)
 
     def format_message(self, coldkey_swaps):
         message = "Hey @everyone! \n"
