@@ -33,6 +33,7 @@ class DiscordBot:
         return False
 
 
+
 class ColdkeySwapFetcher:
     def __init__(self):
         self.subtensor = bt.subtensor(NETWORK)
@@ -40,30 +41,18 @@ class ColdkeySwapFetcher:
 
         self.last_checked_block = self.subtensor.get_current_block()
         self.discord_bot = DiscordBot()
-        self.owner_coldkeys = self.get_owner_coldkeys()       
-        self.thread = threading.Thread(target=self.fetch_owner_coldkeys, daemon=True)
-
-    def fetch_owner_coldkeys(self):
-        print("Running fetch_owner_coldkeys thread")
-        while True:
-            self.owner_coldkeys = self.get_owner_coldkeys()
-            time.sleep(300)
-
-    def get_owner_coldkeys(self):
-        print("Getting owner coldkeys")
-        owner_coldkeys = []
-        subnet_infos = self.subtensor_finney.get_all_subnets_info()
-        for subnet_info in subnet_infos:
-            owner_coldkeys.append(subnet_info.owner_ss58)
-        print("Fetched owner coldkeys")
-        return owner_coldkeys
-    
-
+        self.subnet_names = []
+  
     def fetch_extrinsic_data(self, block_number):
         """Extract ColdkeySwapScheduled events from the data"""
         coldkey_swaps = []
+        identity_changes = []
+
         block_hash = self.subtensor.substrate.get_block_hash(block_id=block_number)
         extrinsics = self.subtensor.substrate.get_extrinsics(block_hash=block_hash)
+        subnet_infos = self.subtensor.all_subnets()
+        owner_coldkeys = [subnet_info.owner_coldkey for subnet_info in subnet_infos]
+        subnet_names = [subnet_info.subnet_name for subnet_info in subnet_infos]
        
         for ex in extrinsics:
             call = ex.value.get('call', {})
@@ -78,27 +67,34 @@ class ColdkeySwapFetcher:
                 print(f"Swap scheduled: from {from_coldkey} to {new_coldkey}")
                 
                 try:
-                    subnet_id = self.owner_coldkeys.index(from_coldkey)
+                    subnet_id = owner_coldkeys.index(from_coldkey)
+                    swap_info = {
+                        'old_coldkey': from_coldkey,
+                        'new_coldkey': new_coldkey,
+                        'subnet': subnet_id,
+                    }
+                    
+                    coldkey_swaps.append(swap_info)
                 except ValueError:
                     print(f"From coldkey {from_coldkey} not found in owner coldkeys")
-                    continue
-
-                swap_info = {
-                    'old_coldkey': from_coldkey,
-                    'new_coldkey': new_coldkey,
-                    'subnet': subnet_id,
-                }
                 
-                coldkey_swaps.append(swap_info)
-        
-        return coldkey_swaps
+        subnet_count = len(self.subnet_names)
+        for i in range(subnet_count):
+            if subnet_names[i] != self.subnet_names[i]:
+                identity_change_info = {
+                    'subnet': i,
+                    'old_identity': self.subnet_names[i],
+                    'new_identity': subnet_names[i],
+                }
+                identity_changes.append(identity_change_info)
+
+        self.subnet_names = subnet_names
+        return coldkey_swaps, identity_changes
  
     def run(self):
-        self.thread.start()
-        print("Thread started")
-
         while True:
             current_block = self.subtensor.get_current_block()
+            print(f"Current block: {current_block}")
             if current_block < self.last_checked_block:
                 time.sleep(2)
                 continue
@@ -106,17 +102,24 @@ class ColdkeySwapFetcher:
             print(f"Fetching coldkey swaps for block {self.last_checked_block}")
             while True:
                 try:
-                    coldkey_swaps = self.fetch_extrinsic_data(self.last_checked_block)
-                    if len(coldkey_swaps) > 0:
+                    coldkey_swaps, identity_changes = self.fetch_extrinsic_data(self.last_checked_block)
+                    if len(coldkey_swaps) > 0 or len(identity_changes) > 0:
                         try:
                             with open("coldkey_swaps.log", "a") as f:
                                 for swap in coldkey_swaps:
                                     f.write(f"{swap}\n")
                         except Exception as e:
                             print(f"Error writing to file: {e}")
+        
+                        try:
+                            with open("identity_changes.log", "a") as f:
+                                for change in identity_changes:
+                                    f.write(f"{change}\n")
+                        except Exception as e:
+                            print(f"Error writing to file: {e}")
 
                         try:
-                            message = self.format_message(coldkey_swaps)
+                            message = self.format_message(coldkey_swaps, identity_changes)
                             self.discord_bot.send_message(message)
                         except Exception as e:
                             print(f"Error sending message: {e}")
@@ -125,15 +128,19 @@ class ColdkeySwapFetcher:
                     
                     self.last_checked_block += 1
                     break
+
                 except Exception as e:
                     print(f"Error fetching coldkey swaps: {e}")
                     time.sleep(1)
 
 
-    def format_message(self, coldkey_swaps):
+    def format_message(self, coldkey_swaps, identity_changes):
         message = "Hey @everyone! \n"
         for swap in coldkey_swaps:
             message += f"Subnet {swap['subnet']} is swapping coldkey from {swap['old_coldkey']} to {swap['new_coldkey']}\n"
+
+        for change in identity_changes:
+            message += f"Subnet {change['subnet']} has changed identity from {change['old_identity']} to {change['new_identity']}\n"
         return message
 
 
