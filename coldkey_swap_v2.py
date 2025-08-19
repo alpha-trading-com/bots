@@ -11,7 +11,8 @@ import requests
 
 TAOSTAS_API = "tao-20304005-d9a1-4629-b08d-4a828a9b628e:d201be87"
 WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"
-NETWORK = "ws://34.30.248.57:9944"
+NETWORK = "finney"
+#NETWORK = "ws://34.30.248.57:9944"
 
 class DiscordBot:
     def __init__(self):
@@ -47,13 +48,14 @@ class ColdkeySwapFetcher:
         """Extract ColdkeySwapScheduled events from the data"""
         coldkey_swaps = []
         identity_changes = []
-
+        print(f"Fetching events from chain")
         block_hash = self.subtensor.substrate.get_block_hash(block_id=block_number)
         extrinsics = self.subtensor.substrate.get_extrinsics(block_hash=block_hash)
         subnet_infos = self.subtensor.all_subnets()
         owner_coldkeys = [subnet_info.owner_coldkey for subnet_info in subnet_infos]
         subnet_names = [subnet_info.subnet_name for subnet_info in subnet_infos]
-       
+        print(f"Fetched {len(extrinsics)} events from chain and {len(subnet_infos)} subnets")
+
         for ex in extrinsics:
             call = ex.value.get('call', {})
             if (

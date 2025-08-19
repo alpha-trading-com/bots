@@ -16,13 +16,18 @@ SLEEP_TIME = 48
 
 
 TAOSTATS_APIS = [
-    "tao-cffc75d5-9445-43b3-beb3-ae10662ee3cf:324b050a",
-    "tao-39838f20-b4a8-42c8-80e4-edff89ed13b5:5772a70e",
-    "tao-aaf4332e-7a6a-4ef4-9b53-13350ac4a69e:f21ce581",
-    "tao-f8813bfe-2f9c-45c7-a662-b91ad6785cbe:8610e605",
-    "tao-d1e25d76-ec14-4546-8d48-8e755e4584b9:50ba1c0d",
-    "tao-1bd1cb2e-c7da-42f7-976c-daee1c261b3b:7e09047a",
-    "tao-0840fa20-cd56-4c77-b39f-f1111cd7001a:5163bf2e"
+    "tao-b9e1c93a-8542-424f-9cbf-04c52c0b0eff:70c737dd",
+    "tao-8a34e4f6-41bd-49c6-bbd7-625c07c198b6:23cb8cfc",
+    "tao-08e84b70-1818-44e8-8d77-592a7226de79:01bdc313",
+    "tao-3c59299a-3580-434f-8d73-91c168f4ac95:772bf163",
+    "tao-ca48e2a2-fe87-41a4-8799-db25c086cfe1:850b76fd",
+    "tao-8da14397-fd00-4063-8409-5d10c7ff5161:6fb31bc1",
+    "tao-82be3dfa-4ac1-4acd-902e-193349420ee6:04e1585b",
+    "tao-0ff0e3c6-b46b-494c-b209-8917d29b69e4:d8dd4aca",
+    "tao-0f28da94-48bd-407a-99b5-2e9f46dfc60c:c5cb3314",
+    "tao-6cd08888-1304-4d21-93c2-8732ddf48fd6:1a93ee64",
+    "tao-848794ea-6267-493e-a4fe-2c4d91e91bfa:cc80ff4f",
+    "tao-cf44a08e-901e-433b-9cde-4ea75b85ff98:e18f49b9"
 ]
 
 

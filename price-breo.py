@@ -13,7 +13,7 @@ if __name__ == '__main__':
             price = subnet.alpha_to_tao(1)
             now_tao_in = subnet.tao_in
             tao_flow = now_tao_in - prev_tao_in
-            print(f"UID: {netuid} => {price}, {tao_flow}")
+            print(f"{netuid} => {price}, {tao_flow}")
             prev_tao_in = now_tao_in
             subtensor.wait_for_block()
         except Exception as e:
