@@ -13,7 +13,7 @@ if __name__ == '__main__':
             is_printed = False
             for i in range(len(tao_flow)):
                 if abs(tao_flow[i]) >= threshold:
-                    print(f"SN {i} => {round(tao_flow[i], 2)}")
+                    print(f"SN {i} => {round(float(subnet_infos[i].price), 5)}, {round(tao_flow[i], 2)}")
                     is_printed = True
 
             if not is_printed:
