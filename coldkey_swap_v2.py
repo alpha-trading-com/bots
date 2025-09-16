@@ -11,6 +11,7 @@ import requests
 
 TAOSTAS_API = "tao-20304005-d9a1-4629-b08d-4a828a9b628e:d201be87"
 WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"
+WEBHOOK_URL_OWN = "https://canary.discord.com/api/webhooks/1410255303689375856/Rkt1TkqmxV3tV_82xFNz_SRP7O0RVBVPaOuZM4JXveyLYypFKqi05EeSCKc4m1a9gJh0"
 NETWORK = "finney"
 #NETWORK = "ws://34.30.248.57:9944"
 
@@ -33,6 +34,20 @@ class DiscordBot:
             print(f"Failed to send message: {response.status_code}, {response.text}")
         return False
 
+    def send_message_to_my_own(self, content):
+        data = {
+            "content": content,
+            "username": "Coldkey Swap Bot",  # Optional: Custom username for the webhook
+            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
+        }
+        response = requests.post(WEBHOOK_URL_OWN, data=json.dumps(data), headers={"Content-Type": "application/json"})
+        
+        if response.status_code == 204:
+            print("Message sent successfully!")
+            return True
+        else:
+            print(f"Failed to send message: {response.status_code}, {response.text}")
+        return False
 
 
 class ColdkeySwapFetcher:
@@ -122,7 +137,8 @@ class ColdkeySwapFetcher:
 
                         try:
                             message = self.format_message(coldkey_swaps, identity_changes)
-                            self.discord_bot.send_message(message)
+                            self.discord_bot.send_message_to_my_own(message)
+                            threading.Timer(60.0, lambda: self.discord_bot.send_message(message)).start()
                         except Exception as e:
                             print(f"Error sending message: {e}")
                     else:
