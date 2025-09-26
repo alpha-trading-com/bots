@@ -3,9 +3,11 @@ import bittensor as bt
 subtensor = bt.subtensor("finney")
 
 bots = [
-    "5FjxQ1fPgbttCsA5CsB2roGGmaZei5cxV3TDNUPQ7mmhux4L",
+    "5FjxQ1fPgbttCsA5CsB2roGGmaZei5cxV3TDNUPQ7mmhux4L", #Bots
     "5GuLYhyfPPMRqu9j57FUBLvQgx3wDjgL3WvqoyKnLjpuYeET",
     "5C9xYZAkGGG3dpnkpLDCHqZjD1FvsX8oe9HnHXXr7jaCCvym",
+    "5DkaS1EP5p7ehaYQVuhJGh2Dbsq7qZtyvRHpsnRw8idM2AAx",
+    "5DDDpkANMCJZjK4dAcHGMJNahD4ATWQyksAyiaDh9iMNRMzK",
 ]
 
 def extract_stake_events_from_data(events_data):
@@ -118,12 +120,13 @@ def print_stake_events(stake_events, netuid):
     """
     Print stake events in a readable format.
     """
+    print(stake_events)
     for event in stake_events:
         netuid = int(event['netuid'])
 
         tao_amount = float(event['amount_tao'])
         coldkey = event['coldkey']
-
+        
         if coldkey in bots:
             coldkey = coldkey + "(bot)"
 
@@ -131,6 +134,8 @@ def print_stake_events(stake_events, netuid):
             tao_amount = tao_amount
         elif event['type'] == 'StakeRemoved':
             tao_amount = -tao_amount
+        else:
+            continue
         
         if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
             print(f"SN {netuid:3d} => {tao_amount:+8.5f}  {coldkey}")
