@@ -2,6 +2,12 @@ import bittensor as bt
 
 subtensor = bt.subtensor("finney")
 
+bots = [
+    "5FjxQ1fPgbttCsA5CsB2roGGmaZei5cxV3TDNUPQ7mmhux4L",
+    "5GuLYhyfPPMRqu9j57FUBLvQgx3wDjgL3WvqoyKnLjpuYeET",
+    "5C9xYZAkGGG3dpnkpLDCHqZjD1FvsX8oe9HnHXXr7jaCCvym",
+]
+
 def extract_stake_events_from_data(events_data):
     """
     Extract stake and unstake events from blockchain event data.
@@ -39,14 +45,11 @@ def extract_stake_events_from_data(events_data):
                 # )
                 # So we need to unpack the tuple accordingly.
                 if isinstance(attributes, tuple) and len(attributes) >= 6:
-                    coldkey_tuple = attributes[0][0] if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else None
-                    hotkey_tuple = attributes[1][0] if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else None
+                    coldkey_tuple = to_ss58(attributes[0][0]) if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else attributes[0]
+                    hotkey_tuple = to_ss58(attributes[1][0]) if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else attributes[1]
                     amount = attributes[2]
                     # attributes[3] is stake, but we use amount for TAO
                     netuid = attributes[4]
-                    print("here")
-                    print(attributes)
-                    print(coldkey_tuple, hotkey_tuple, amount, netuid)
                 else:
                     coldkey_tuple = None
                     hotkey_tuple = None
@@ -54,8 +57,8 @@ def extract_stake_events_from_data(events_data):
                     netuid = None
                 stake_events.append({
                     'type': 'StakeAdded',
-                    'coldkey': to_ss58(coldkey_tuple),
-                    'hotkey': to_ss58(hotkey_tuple),
+                    'coldkey': coldkey_tuple,
+                    'hotkey': hotkey_tuple,
                     'netuid': netuid,
                     'amount': amount,
                     'amount_tao': amount / 1e9 if amount else 0,
@@ -64,8 +67,8 @@ def extract_stake_events_from_data(events_data):
             elif event_id == 'StakeRemoved':
                 # Extract unstake information - also a tuple
                 if isinstance(attributes, tuple) and len(attributes) >= 6:
-                    coldkey_tuple = attributes[0][0] if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else None
-                    hotkey_tuple = attributes[1][0] if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else None
+                    coldkey_tuple = to_ss58(attributes[0][0]) if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else attributes[0]
+                    hotkey_tuple = to_ss58(attributes[1][0]) if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else attributes[1]
                     amount = attributes[2]
                     netuid = attributes[4]
                 else:
@@ -77,8 +80,8 @@ def extract_stake_events_from_data(events_data):
 
                 stake_events.append({
                     'type': 'StakeRemoved',
-                    'coldkey': to_ss58(coldkey_tuple),
-                    'hotkey': to_ss58(hotkey_tuple),
+                    'coldkey': coldkey_tuple,
+                    'hotkey': hotkey_tuple,
                     'netuid': netuid,
                     'amount': amount,
                     'amount_tao': amount / 1e9 if amount else 0,
@@ -87,9 +90,9 @@ def extract_stake_events_from_data(events_data):
             elif event_id == 'StakeMoved':
                 # Extract stake move information - also a tuple
                 if isinstance(attributes, tuple) and len(attributes) >= 6:
-                    coldkey_tuple = attributes[0][0] if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else None
-                    from_hotkey_tuple = attributes[1][0] if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else None
-                    to_hotkey_tuple = attributes[3][0] if isinstance(attributes[3], tuple) and len(attributes[3]) > 0 else None
+                    coldkey_tuple = to_ss58(attributes[0][0]) if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else attributes[0]
+                    from_hotkey_tuple = to_ss58(attributes[1][0]) if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else attributes[1]
+                    to_hotkey_tuple = to_ss58(attributes[3][0]) if isinstance(attributes[3], tuple) and len(attributes[3]) > 0 else attributes[3]
                     netuid = attributes[4]
                     amount = attributes[5]
                 else:
@@ -101,9 +104,9 @@ def extract_stake_events_from_data(events_data):
                 
                 stake_events.append({
                     'type': 'StakeMoved',
-                    'coldkey': to_ss58(coldkey_tuple),
-                    'from_hotkey': to_ss58(from_hotkey_tuple),
-                    'to_hotkey': to_ss58(to_hotkey_tuple),
+                    'coldkey': coldkey_tuple,
+                    'from_hotkey': from_hotkey_tuple,
+                    'to_hotkey': to_hotkey_tuple,
                     'netuid': netuid,
                     'amount': amount,
                     'amount_tao': amount / 1e9 if amount else 0,
@@ -111,26 +114,31 @@ def extract_stake_events_from_data(events_data):
     
     return stake_events
 
-def print_stake_events(stake_events):
+def print_stake_events(stake_events, netuid):
     """
     Print stake events in a readable format.
     """
     for event in stake_events:
-        if event['type'] == 'StakeAdded':
-            print(f"[  ADDED] Coldkey: {event['coldkey']}, "
-                  f"Amount: {event['amount_tao']:.2f} TAO, on subnet {event['netuid']}")
-                  
-        elif event['type'] == 'StakeRemoved':
-            print(f"[REMOVED] Coldkey: {event['coldkey']}, "
-                  f"Amount: {event['amount_tao']:.2f} TAO from subnet {event['netuid']}")
-                  
-        # elif event['type'] == 'StakeMoved':
-        #     print(f"[  MOVED] Coldkey: {event['coldkey']}, "
-        #           f"From: {event['from_hotkey']}, To: {event['to_hotkey']}, "
-        #           f"Amount: {event['amount_tao']:.2f} TAO on subnet {event['netuid']}")
+        netuid = int(event['netuid'])
 
+        tao_amount = float(event['amount_tao'])
+        coldkey = event['coldkey']
+
+        if coldkey in bots:
+            coldkey = coldkey + "(bot)"
+
+        if event['type'] == 'StakeAdded':
+            tao_amount = tao_amount
+        elif event['type'] == 'StakeRemoved':
+            tao_amount = -tao_amount
+        
+        if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
+            print(f"SN {netuid:3d} => {tao_amount:+8.5f}  {coldkey}")
+                  
 if __name__ == "__main__":    
-    print("\n=== Live Event Monitoring ===")
+    netuid = int(input("Enter the netuid: "))
+    threshold = float(input("Enter the threshold: "))
+    
     while True:
         block_number = subtensor.get_current_block()
         block_hash = subtensor.substrate.get_block_hash(block_id=block_number)
@@ -139,7 +147,7 @@ if __name__ == "__main__":
         # Extract stake events from live data
         stake_events = extract_stake_events_from_data(events)
         if stake_events:
-            print(f"\n--- Block {block_number} Stake Events ---")
-            print_stake_events(stake_events)
+            print(f"***")
+            print_stake_events(stake_events, netuid)
         
         subtensor.wait_for_block()
