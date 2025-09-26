@@ -120,7 +120,6 @@ def print_stake_events(stake_events, netuid):
     """
     Print stake events in a readable format.
     """
-    print(stake_events)
     for event in stake_events:
         netuid = int(event['netuid'])
 
