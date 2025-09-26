@@ -115,29 +115,29 @@ def extract_stake_events_from_data(events_data):
                 })
     
     return stake_events
-
 def print_stake_events(stake_events, netuid):
-    """
-    Print stake events in a readable format.
-    """
     for event in stake_events:
-        netuid = int(event['netuid'])
-
+        netuid_val = int(event['netuid'])
         tao_amount = float(event['amount_tao'])
         coldkey = event['coldkey']
-        
-        if coldkey in bots:
-            coldkey = coldkey + "(bot)"
 
+        if coldkey in bots:
+            coldkey = coldkey + " (bot)"
+
+        # Green for stake added, red for stake removed
         if event['type'] == 'StakeAdded':
-            tao_amount = tao_amount
+            color = "\033[32m"   # green
+            sign = "+"
         elif event['type'] == 'StakeRemoved':
-            tao_amount = -tao_amount
+            color = "\033[31m"   # red
+            sign = "-"
         else:
             continue
-        
+
+        reset = "\033[0m"
         if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
-            print(f"SN {netuid:3d} => {tao_amount:+8.5f}  {coldkey}")
+            print(f"{color}SN {netuid_val:3d} => {sign}{tao_amount:8.5f}  {coldkey}{reset}")
+
                   
 if __name__ == "__main__":    
     netuid = int(input("Enter the netuid: "))
