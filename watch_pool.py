@@ -12,7 +12,14 @@ if __name__ == '__main__':
             tao_flow = [float(now_tao_in[i] - prev_tao_in[i]) for i in range(len(now_tao_in))]
             for i in range(len(tao_flow)):
                 if abs(tao_flow[i]) >= threshold:
-                    print(f"SN {i:2d} => {round(float(now_subnet_infos[i].price), 5):>8.5f}, {round(tao_flow[i], 2):>8.2f}")
+                    if tao_flow[i] > 0:
+                        color = "\033[92m"  # bright green
+                        sign = "+"
+                    else:
+                        color = "\033[91m"  # bright red
+                        sign = "-"
+                    reset = "\033[0m"
+                    print(f"{color}SN {i:2d} => {round(float(now_subnet_infos[i].price), 5):>8.5f}, {sign}{round(abs(tao_flow[i]), 2):>8.2f}{reset}")
 
             print("***")
             prev_tao_in = now_tao_in

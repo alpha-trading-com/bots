@@ -3,11 +3,17 @@ import bittensor as bt
 subtensor = bt.subtensor("finney")
 
 bots = [
-    "5FjxQ1fPgbttCsA5CsB2roGGmaZei5cxV3TDNUPQ7mmhux4L", #Bots
+    "5FjxQ1fPgbttCsA5CsB2roGGmaZei5cxV3TDNUPQ7mmhux4L",
     "5GuLYhyfPPMRqu9j57FUBLvQgx3wDjgL3WvqoyKnLjpuYeET",
     "5C9xYZAkGGG3dpnkpLDCHqZjD1FvsX8oe9HnHXXr7jaCCvym",
     "5DkaS1EP5p7ehaYQVuhJGh2Dbsq7qZtyvRHpsnRw8idM2AAx",
     "5DDDpkANMCJZjK4dAcHGMJNahD4ATWQyksAyiaDh9iMNRMzK",
+    "5Hq44tCRLEKKL4dVh7jEzHLgBLVijMrmsq95KePBTRpuK6Qz",
+    "5C4hrfkeBZiRUUDVdd7Y3mzgd3MNpCaBk7PnPEb3Gx39SBio",
+    "5FbTTfwwD1ZrB6EALUMbo16dULsepyTauRqzUCAyqVDkTdKU", 
+    "5H6ALLYFhUwTJoHECf8xjkYCncU8DLEqki7SgYQrdSWjssFC",
+    "5F1zGEfHw5XazEYZbyMUmaZShqwG9DDVAQVMXGN8Ry7p7AVB",
+
 ]
 
 def extract_stake_events_from_data(events_data):
@@ -116,6 +122,8 @@ def extract_stake_events_from_data(events_data):
     
     return stake_events
 def print_stake_events(stake_events, netuid):
+    now_subnet_infos = subtensor.all_subnets()
+    prices = [float(subnet_info.price) for subnet_info in now_subnet_infos]
     for event in stake_events:
         netuid_val = int(event['netuid'])
         tao_amount = float(event['amount_tao'])
@@ -124,19 +132,19 @@ def print_stake_events(stake_events, netuid):
         if coldkey in bots:
             coldkey = coldkey + " (bot)"
 
-        # Green for stake added, red for stake removed
+        # Green for stake added, red for stake removed (bright)
         if event['type'] == 'StakeAdded':
-            color = "\033[32m"   # green
+            color = "\033[92m"   # bright green
             sign = "+"
         elif event['type'] == 'StakeRemoved':
-            color = "\033[31m"   # red
+            color = "\033[91m"   # bright red
             sign = "-"
         else:
             continue
 
         reset = "\033[0m"
         if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
-            print(f"{color}SN {netuid_val:3d} => {sign}{tao_amount:8.5f}  {coldkey}{reset}")
+            print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset}")
 
                   
 if __name__ == "__main__":    
@@ -147,11 +155,12 @@ if __name__ == "__main__":
         block_number = subtensor.get_current_block()
         block_hash = subtensor.substrate.get_block_hash(block_id=block_number)
         events = subtensor.substrate.get_events(block_hash=block_hash)
+
         
         # Extract stake events from live data
         stake_events = extract_stake_events_from_data(events)
         if stake_events:
-            print(f"***")
+            print(f"*{'*'*40}")
             print_stake_events(stake_events, netuid)
         
         subtensor.wait_for_block()
