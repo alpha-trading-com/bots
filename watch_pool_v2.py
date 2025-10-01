@@ -1,20 +1,39 @@
 import bittensor as bt
 
 subtensor = bt.subtensor("finney")
+import requests
+import re
 
-bots = [
-    "5FjxQ1fPgbttCsA5CsB2roGGmaZei5cxV3TDNUPQ7mmhux4L",
-    "5GuLYhyfPPMRqu9j57FUBLvQgx3wDjgL3WvqoyKnLjpuYeET",
-    "5C9xYZAkGGG3dpnkpLDCHqZjD1FvsX8oe9HnHXXr7jaCCvym",
-    "5DkaS1EP5p7ehaYQVuhJGh2Dbsq7qZtyvRHpsnRw8idM2AAx",
-    "5DDDpkANMCJZjK4dAcHGMJNahD4ATWQyksAyiaDh9iMNRMzK",
-    "5Hq44tCRLEKKL4dVh7jEzHLgBLVijMrmsq95KePBTRpuK6Qz",
-    "5C4hrfkeBZiRUUDVdd7Y3mzgd3MNpCaBk7PnPEb3Gx39SBio",
-    "5FbTTfwwD1ZrB6EALUMbo16dULsepyTauRqzUCAyqVDkTdKU", 
-    "5H6ALLYFhUwTJoHECf8xjkYCncU8DLEqki7SgYQrdSWjssFC",
-    "5F1zGEfHw5XazEYZbyMUmaZShqwG9DDVAQVMXGN8Ry7p7AVB",
+def load_bots_from_gdoc():
+    """
+    Loads the list of bot addresses from the Google Doc.
+    Returns a list of addresses.
+    """
+    # The Google Doc's "export?format=txt" endpoint gives plain text
+    url = "https://docs.google.com/document/d/1Vdm20cXVAK-kjgjBw9XcbVYaAvvCWyY8IuPLAE2aRBI/export?format=txt"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        text = response.text
+        # Find all Substrate addresses (start with 5, 48 chars, base58)
+        # This regex matches addresses starting with 5 and 47 more base58 chars
+        bots = re.findall(r'5[1-9A-HJ-NP-Za-km-z]{47}', text)
+        return bots
+    except Exception as e:
+        print(f"Failed to load bots from Google Doc: {e}")
+        # Fallback to empty list or optionally a hardcoded list
+        return []
 
-]
+bots = load_bots_from_gdoc()
+
+
+def get_coldkey_display_name(coldkey):
+    if coldkey is None:
+        return "Unknown"
+    if coldkey in bots:
+        return coldkey + f" (bot{bots.index(coldkey)+1})"
+    else:
+        return coldkey
 
 def extract_stake_events_from_data(events_data):
     """
@@ -128,9 +147,7 @@ def print_stake_events(stake_events, netuid):
         netuid_val = int(event['netuid'])
         tao_amount = float(event['amount_tao'])
         coldkey = event['coldkey']
-
-        if coldkey in bots:
-            coldkey = coldkey + " (bot)"
+        coldkey = get_coldkey_display_name(coldkey)
 
         # Green for stake added, red for stake removed (bright)
         if event['type'] == 'StakeAdded':
