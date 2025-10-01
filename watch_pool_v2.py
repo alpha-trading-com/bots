@@ -23,8 +23,15 @@ def load_bots_from_gdoc():
         print(f"Failed to load bots from Google Doc: {e}")
         # Fallback to empty list or optionally a hardcoded list
         return []
+import threading
 
-bots = load_bots_from_gdoc()
+def refresh_bots_periodically(interval_minutes=20):
+    global bots
+    bots = load_bots_from_gdoc()
+    threading.Timer(interval_minutes * 60, refresh_bots_periodically, [interval_minutes]).start()
+
+# Initial load and start periodic refresh
+refresh_bots_periodically()
 
 
 def get_coldkey_display_name(coldkey):
