@@ -37,10 +37,23 @@ refresh_bots_periodically()
 def get_coldkey_display_name(coldkey):
     if coldkey is None:
         return "Unknown"
+
+    color = "\033[94m"
+    reset = "\033[0m"
+    
     if coldkey in bots:
-        return coldkey + f" (bot{bots.index(coldkey)+1})"
+        return coldkey + f"{color} (bot{bots.index(coldkey)+1}){reset}"
     else:
         return coldkey
+
+def get_color(event_type, coldkey):
+    if event_type == 'StakeAdded':
+        return "\033[92m"
+    elif event_type == 'StakeRemoved':
+        return "\033[91m"
+    else:
+        return "\033[0m"
+
 
 def extract_stake_events_from_data(events_data):
     """
@@ -156,12 +169,12 @@ def print_stake_events(stake_events, netuid):
         coldkey = event['coldkey']
         coldkey = get_coldkey_display_name(coldkey)
 
+        color = get_color(event['type'], coldkey)    
+
         # Green for stake added, red for stake removed (bright)
         if event['type'] == 'StakeAdded':
-            color = "\033[92m"   # bright green
             sign = "+"
         elif event['type'] == 'StakeRemoved':
-            color = "\033[91m"   # bright red
             sign = "-"
         else:
             continue
