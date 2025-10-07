@@ -2,31 +2,75 @@ import bittensor as bt
 import threading
 import requests
 import re
+import json
 
 #NETWORK = "finney"
 NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
 
-def load_bots_from_gdoc():
-    url = "https://docs.google.com/document/d/1Vdm20cXVAK-kjgjBw9XcbVYaAvvCWyY8IuPLAE2aRBI/export?format=txt"
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        text = response.text
-        bots = re.findall(r'5[1-9A-HJ-NP-Za-km-z]{47}', text)
-        return bots
-    except Exception as e:
-        print(f"Failed to load bots from Google Doc: {e}")
-        return []
-
-def refresh_bots_periodically(interval_minutes=20):
-    global bots
-    bots = load_bots_from_gdoc()
-    threading.Timer(interval_minutes * 60, refresh_bots_periodically, [interval_minutes]).start()
 
 
-refresh_bots_periodically()
+WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"
+WEBHOOK_URL_OWN = "https://canary.discord.com/api/webhooks/1410255303689375856/Rkt1TkqmxV3tV_82xFNz_SRP7O0RVBVPaOuZM4JXveyLYypFKqi05EeSCKc4m1a9gJh0"
+WEBHOOK_URL_AETH = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"
+NETWORK = "finney"
+#NETWORK = "ws://34.30.248.57:9944"
 
+class DiscordBot:
+    def __init__(self):
+        self.webhook_url = WEBHOOK_URL
+
+    def send_message(self, content):
+        self.send_message_ours(content)
+        self.send_message_to_aeth(content)
+
+    def send_message_ours(self, content):
+        data = {
+            "content": content,
+            "username": "Coldkey Swap Bot",  # Optional: Custom username for the webhook
+            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
+        }
+        response = requests.post(self.webhook_url, data=json.dumps(data), headers={"Content-Type": "application/json"})
+        
+        if response.status_code == 204:
+            print("Message sent successfully!")
+            return True
+        else:
+            print(f"Failed to send message: {response.status_code}, {response.text}")
+        return False
+
+    def send_message_to_aeth(self, content):
+        data = {
+            "content": content,
+            "username": "Aeth Bot",  # Optional: Custom username for the webhook
+            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
+        }
+        response = requests.post(WEBHOOK_URL_AETH, data=json.dumps(data), headers={"Content-Type": "application/json"})
+        
+        if response.status_code == 204:
+            print("Message sent successfully!")
+            return True
+        else:
+            print(f"Failed to send message: {response.status_code}, {response.text}")
+        return False
+
+    def send_message_to_my_own(self, content):
+        data = {
+            "content": content,
+            "username": "Coldkey Swap Bot",  # Optional: Custom username for the webhook
+            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
+        }
+        response = requests.post(WEBHOOK_URL_OWN, data=json.dumps(data), headers={"Content-Type": "application/json"})
+        
+        if response.status_code == 204:
+            print("Message sent successfully!")
+            return True
+        else:
+            print(f"Failed to send message: {response.status_code}, {response.text}")
+        return False
+
+
+discord_bot = DiscordBot()
 
 def get_owner_coldkeys():
     subtensor = bt.subtensor("finney")
@@ -39,30 +83,6 @@ def refresh_owner_coldkeys_periodically(interval_minutes=20):
     threading.Timer(interval_minutes * 60, refresh_owner_coldkeys_periodically, [interval_minutes]).start()
 
 refresh_owner_coldkeys_periodically()
-
-
-def get_coldkey_display_name(coldkey):
-    if coldkey is None:
-        return "Unknown"
-    owner_color = "\033[93m"
-    color = "\033[94m"
-    reset = "\033[0m"
-
-    if coldkey in owner_coldkeys:
-        return coldkey + f"{owner_color} (owner{owner_coldkeys.index(coldkey)}){reset}"
-
-    if coldkey in bots:
-        return coldkey + f"{color} (bot{bots.index(coldkey)+1}){reset}"
-    else:
-        return coldkey
-
-def get_color(event_type, coldkey):
-    if event_type == 'StakeAdded':
-        return "\033[92m"
-    elif event_type == 'StakeRemoved':
-        return "\033[91m"
-    else:
-        return "\033[0m"
 
 
 def extract_stake_events_from_data(events_data):
@@ -170,33 +190,33 @@ def extract_stake_events_from_data(events_data):
                 })
     
     return stake_events
-def print_stake_events(stake_events, netuid):
-    now_subnet_infos = subtensor.all_subnets()
-    prices = [float(subnet_info.price) for subnet_info in now_subnet_infos]
+
+def format_message(stake_events):
+    message = "Hey @everyone! \n"
+
     for event in stake_events:
-        netuid_val = int(event['netuid'])
-        tao_amount = float(event['amount_tao'])
         coldkey = event['coldkey']
-        coldkey = get_coldkey_display_name(coldkey)
-
-        color = get_color(event['type'], coldkey)    
-
-        # Green for stake added, red for stake removed (bright)
-        if event['type'] == 'StakeAdded':
-            sign = "+"
-        elif event['type'] == 'StakeRemoved':
-            sign = "-"
-        else:
+        tao_amount = float(event['amount_tao'])
+        
+        if coldkey not in owner_coldkeys:
             continue
 
-        reset = "\033[0m"
-        if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
-            print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset}")
+        message += f"Owner {owner_coldkeys.index(coldkey)} is {event['type']} {tao_amount} TAO\n"
 
+    return message
+
+
+def send_message_to_discord(stake_events):
+    stake_events = [event for event in stake_events if event['coldkey'] in owner_coldkeys]
+    if not stake_events:
+        print("No stake events found for owner coldkeys")
+        return
+    message = format_message(stake_events)
+    discord_bot.send_message(message)
+
+    
                   
 if __name__ == "__main__":    
-    netuid = int(input("Enter the netuid: "))
-    threshold = float(input("Enter the threshold: "))
     
     while True:
         block_number = subtensor.get_current_block()
@@ -206,8 +226,5 @@ if __name__ == "__main__":
         
         # Extract stake events from live data
         stake_events = extract_stake_events_from_data(events)
-        if stake_events:
-            print(f"*{'*'*40}")
-            print_stake_events(stake_events, netuid)
-        
+        send_message_to_discord(stake_events)
         subtensor.wait_for_block()
