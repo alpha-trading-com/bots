@@ -3,6 +3,7 @@ import threading
 import requests
 import re
 import json
+import time
 
 #NETWORK = "finney"
 NETWORK = "ws://161.97.128.68:9944"
@@ -197,21 +198,32 @@ def format_message(stake_events):
     for event in stake_events:
         coldkey = event['coldkey']
         tao_amount = float(event['amount_tao'])
+        netuid_val = int(event['netuid'])
         
         if coldkey not in owner_coldkeys:
             continue
 
-        message += f"Owner {owner_coldkeys.index(coldkey)} is {event['type']} {tao_amount} TAO\n"
+        message += f"Owner {owner_coldkeys.index(coldkey)} is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
 
     return message
 
 
 def send_message_to_discord(stake_events):
-    stake_events = [event for event in stake_events if event['coldkey'] in owner_coldkeys]
-    if not stake_events:
+    filtered_stake_events = []
+    for event in stake_events:
+        if event['coldkey'] not in owner_coldkeys:
+            continue
+
+        subnet_id = owner_coldkeys.index(event['coldkey'])
+        if subnet_id == 20:
+            continue
+
+        filtered_stake_events.append(event)
+
+    if not filtered_stake_events:
         print("No stake events found for owner coldkeys")
         return
-    message = format_message(stake_events)
+    message = format_message(filtered_stake_events)
     discord_bot.send_message(message)
 
     
@@ -219,12 +231,16 @@ def send_message_to_discord(stake_events):
 if __name__ == "__main__":    
     
     while True:
-        block_number = subtensor.get_current_block()
-        block_hash = subtensor.substrate.get_block_hash(block_id=block_number)
-        events = subtensor.substrate.get_events(block_hash=block_hash)
+        try:
+            block_number = subtensor.get_current_block()
+            block_hash = subtensor.substrate.get_block_hash(block_id=block_number)
+            events = subtensor.substrate.get_events(block_hash=block_hash)
 
-        
-        # Extract stake events from live data
-        stake_events = extract_stake_events_from_data(events)
-        send_message_to_discord(stake_events)
-        subtensor.wait_for_block()
+            
+            # Extract stake events from live data
+            stake_events = extract_stake_events_from_data(events)
+            send_message_to_discord(stake_events)
+            subtensor.wait_for_block()
+        except Exception as e:
+            print(f"Error: {e}")
+            time.sleep(1)
