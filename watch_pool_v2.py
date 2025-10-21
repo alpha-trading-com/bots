@@ -3,8 +3,8 @@ import threading
 import requests
 import re
 
-#NETWORK = "finney"
-NETWORK = "ws://161.97.128.68:9944"
+NETWORK = "finney"
+#NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
 
 def load_bots_from_gdoc():

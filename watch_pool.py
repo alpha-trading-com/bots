@@ -2,8 +2,8 @@ import bittensor as bt
 
 if __name__ == '__main__':
     threshold = int(input("Enter the threshold: "))
-    #NETWORK = "finney"
-    NETWORK = "ws://161.97.128.68:9944"
+    NETWORK = "finney"
+    #NETWORK = "ws://161.97.128.68:9944"
     subtensor = bt.subtensor(network=NETWORK)
     subnet_infos = subtensor.all_subnets()
     prev_tao_in = [subnet_info.tao_in for subnet_info in subnet_infos]

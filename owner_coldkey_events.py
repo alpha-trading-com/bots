@@ -5,8 +5,8 @@ import re
 import json
 import time
 
-#NETWORK = "finney"
-NETWORK = "ws://161.97.128.68:9944"
+NETWORK = "finney"
+#NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
 
 
