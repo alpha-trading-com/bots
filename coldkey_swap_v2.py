@@ -157,7 +157,7 @@ class ColdkeySwapFetcher:
                         try:
                             message = self.format_message(coldkey_swaps, identity_changes)
                             self.discord_bot.send_message_to_my_own(message)
-                            threading.Timer(30.0, lambda: self.discord_bot.send_message(message)).start()
+                            threading.Timer(60.0, lambda: self.discord_bot.send_message(message)).start()
                         except Exception as e:
                             print(f"Error sending message: {e}")
                     else:
