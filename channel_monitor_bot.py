@@ -37,7 +37,8 @@ class DiscordCrawler:
             # print(f"Retrying {retries} times...")
             try:
                 response = requests.get(api_url, headers=headers, params=params)
-                # print(f"Response: {response.status_code}")
+
+                print(f"Response: {response.status_code}")
                 if response.status_code == 200:
                     return response.json()
                 else:
