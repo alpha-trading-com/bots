@@ -21,7 +21,7 @@ class DiscordCrawler:
 
     def get_headers(self) -> Dict[str, str]:
         return {
-            "Authorization": self.bot_token,
+            "Authorization": f"{self.bot_token}",
             "Content-Type": "application/json"
         }
     
@@ -42,6 +42,7 @@ class DiscordCrawler:
                 if response.status_code == 200:
                     return response.json()
                 else:
+                    print(f"Error response: {response.text}")
                     retries -= 1
                     time.sleep(2)
             except Exception as e:
@@ -358,8 +359,8 @@ def main():
         "1387438124132733110",  # channel 128
         "1341812134807343114",  # Price talk
     ]
-    BOT_TOKEN = "MTM0NjExMDg0ODc1MzU5ODUzNQ.GHbB16.CVG724c3xoj2RbrNNf5ipb3-zr0eQYM7VJ9MCI"  # Your bot token
-    WEBHOOK_URL = "https://canary.discord.com/api/webhooks/1410255303689375856/Rkt1TkqmxV3tV_82xFNz_SRP7O0RVBVPaOuZM4JXveyLYypFKqi05EeSCKc4m1a9gJh0"  # Replace with your webhook URL
+    BOT_TOKEN = "MTQyNDA2MTY5ODE0MjI0MDgwOA.G9rB8-.scCiAs8MSXpH0Rjye-HKsxi9IMF1CY9HQf-D8w"  # Your bot token
+    WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"  # Replace with your webhook URL
     
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [

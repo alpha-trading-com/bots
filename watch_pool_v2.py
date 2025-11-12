@@ -45,7 +45,7 @@ def refresh_bots_periodically(interval_minutes=20):
         load_wallet_owners_from_gdoc()
         load_bots_from_gdoc()
     refresh_bots()
-    threading.Timer(interval_minutes * 60, refresh_bots, [interval_minutes]).start()
+    threading.Timer(interval_minutes * 60, refresh_bots, []).start()
 
 refresh_bots_periodically()
 
@@ -56,7 +56,7 @@ def refresh_owner_coldkeys_periodically(interval_minutes=20):
         subnet_infos = subtensor.all_subnets()
         owner_coldkeys = [subnet_info.owner_coldkey for subnet_info in subnet_infos]
     refresh_owner_coldkeys()
-    threading.Timer(interval_minutes * 60, refresh_owner_coldkeys, [interval_minutes]).start()
+    threading.Timer(interval_minutes * 60, refresh_owner_coldkeys, []).start()
 
 refresh_owner_coldkeys_periodically()
 
@@ -75,7 +75,7 @@ def get_coldkey_display_name(coldkey):
     
 
     if coldkey in wallet_owners:
-        return coldkey + f"{color} ({wallet_owners[coldkey]}){reset}"
+        return coldkey + f"{owner_color} ({wallet_owners[coldkey]}){reset}"
     
     return coldkey
 
@@ -219,9 +219,10 @@ def print_stake_events(stake_events, netuid):
                   
 if __name__ == "__main__":    
 
-    netuid = int(input("Enter the netuid: "))
-    threshold = float(input("Enter the threshold: "))
-    
+    #netuid = int(input("Enter the netuid: "))
+    #threshold = float(input("Enter the threshold: "))
+    netuid = -1
+    threshold = 0.5
     while True:
         block_number = subtensor.get_current_block()
         block_hash = subtensor.substrate.get_block_hash(block_id=block_number)
