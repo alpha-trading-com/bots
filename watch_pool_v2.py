@@ -3,6 +3,8 @@ import threading
 import requests
 import re
 
+
+REFRESH_INTERVAL = 20 # minutes
 NETWORK = "finney"
 #NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
@@ -41,7 +43,7 @@ def load_wallet_owners_from_gdoc():
     except Exception as e:
         print(f"Failed to load wallet owners from Google Doc: {e}")
 
-def refresh_bots_periodically(interval_minutes=20):
+def refresh_bots_periodically(interval_minutes=REFRESH_INTERVAL):
     def refresh_bots():
         load_wallet_owners_from_gdoc()  
         load_bots_from_gdoc()
@@ -52,7 +54,7 @@ def refresh_bots_periodically(interval_minutes=20):
 refresh_bots_periodically()
 
 
-def refresh_owner_coldkeys_periodically(interval_minutes=20):
+def refresh_owner_coldkeys_periodically(interval_minutes=REFRESH_INTERVAL):
     def refresh_owner_coldkeys():
         subnet_infos = subtensor_owner_coldkeys.all_subnets()
         global owner_coldkeys
