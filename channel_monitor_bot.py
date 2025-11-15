@@ -235,7 +235,7 @@ def main():
         "1161765008347254915",  # channel 4
         "1368959417936252998",  # channel 5
         "1209554949449457705",  # channel 6
-        "1215311984799653918",  # channel 7
+        "1437494877578330174",  # channel 7
         "1162384774170677318",  # channel 8
         "1162768567821930597",  # channel 9
         "1217952256306057298",  # channel 10
@@ -277,7 +277,7 @@ def main():
         "1397618038894759956",  # channel 46
         "1370452296940650656",  # channel 47
         "1407438037956427960",  # channel 48
-        "1353838885523820564",  # channel 49
+        "1434923225229295697",  # channel 49
         "1311109830282313781",  # channel 50
         "1291754566957928469",  # channel 51
         "1213131262483628102",  # channel 52
@@ -328,12 +328,12 @@ def main():
         "1366426210275692544",  # channel 97
         "1366426973781364816",  # channel 98
         "1366845111945658409",  # channel 99
-        "1366897804068393000",  # channel 100
+        "1429935142847381617",  # channel 100
         "1368946065738436749",  # channel 101
         "1375534889486778409",  # channel 102
         "1370083644818849955",  # channel 103
         "1370430761408139404",  # channel 104
-        "1329824417253167226",  # channel 105
+        "1437473346026475702",  # channel 105
         "1371902705605546075",  # channel 106
         "1372284562276745338",  # channel 107
         "1374389639225409598",  # channel 108
@@ -359,7 +359,7 @@ def main():
         "1387438124132733110",  # channel 128
         "1341812134807343114",  # Price talk
     ]
-    BOT_TOKEN = "MTQyNDA2MTY5ODE0MjI0MDgwOA.G9rB8-.scCiAs8MSXpH0Rjye-HKsxi9IMF1CY9HQf-D8w"  # Your bot token
+    BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  # Your bot token
     WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"  # Replace with your webhook URL
     
     # List of user IDs to monitor (from your output example)

@@ -6,6 +6,7 @@ import re
 NETWORK = "finney"
 #NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
+subtensor_owner_coldkeys = bt.subtensor(NETWORK)
 
 bots = []
 wallet_owners = {}
@@ -42,21 +43,23 @@ def load_wallet_owners_from_gdoc():
 
 def refresh_bots_periodically(interval_minutes=20):
     def refresh_bots():
-        load_wallet_owners_from_gdoc()
+        load_wallet_owners_from_gdoc()  
         load_bots_from_gdoc()
+        # Reschedule the timer to run again
+        threading.Timer(interval_minutes * 60, refresh_bots, []).start()
     refresh_bots()
-    threading.Timer(interval_minutes * 60, refresh_bots, []).start()
 
 refresh_bots_periodically()
 
 
 def refresh_owner_coldkeys_periodically(interval_minutes=20):
     def refresh_owner_coldkeys():
+        subnet_infos = subtensor_owner_coldkeys.all_subnets()
         global owner_coldkeys
-        subnet_infos = subtensor.all_subnets()
         owner_coldkeys = [subnet_info.owner_coldkey for subnet_info in subnet_infos]
+        # Reschedule the timer to run again
+        threading.Timer(interval_minutes * 60, refresh_owner_coldkeys, []).start()
     refresh_owner_coldkeys()
-    threading.Timer(interval_minutes * 60, refresh_owner_coldkeys, []).start()
 
 refresh_owner_coldkeys_periodically()
 

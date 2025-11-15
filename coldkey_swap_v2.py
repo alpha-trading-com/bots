@@ -10,7 +10,7 @@ import requests
 
 
 WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"
-WEBHOOK_URL_OWN = "https://canary.discord.com/api/webhooks/1410255303689375856/Rkt1TkqmxV3tV_82xFNz_SRP7O0RVBVPaOuZM4JXveyLYypFKqi05EeSCKc4m1a9gJh0"
+WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1438540561379492063/SygmMi_rqY-O3WMGW11HK0L10VL8jIjsGS2X-1-eapLGBhxkcgwNlaY0d3NiQ1v-WPSe"
 WEBHOOK_URL_AETH = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"
 NETWORK = "finney"
 #NETWORK = "ws://161.97.128.68:9944"
