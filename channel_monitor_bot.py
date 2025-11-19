@@ -360,7 +360,7 @@ def main():
         "1341812134807343114",  # Price talk
     ]
     BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  # Your bot token
-    WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"  # Replace with your webhook URL
+    WEBHOOK_URL = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"  # Replace with your webhook URL
     
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [

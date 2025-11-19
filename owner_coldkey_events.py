@@ -22,7 +22,7 @@ class DiscordBot:
         self.webhook_url = WEBHOOK_URL
 
     def send_message(self, content):
-        self.send_message_ours(content)
+        #self.send_message_ours(content)
         self.send_message_to_aeth(content)
 
     def send_message_ours(self, content):
