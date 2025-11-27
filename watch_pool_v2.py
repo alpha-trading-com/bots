@@ -42,26 +42,20 @@ def load_wallet_owners_from_gdoc():
             wallet_owners[address] = owner
     except Exception as e:
         print(f"Failed to load wallet owners from Google Doc: {e}")
-
+        
 def refresh_bots_periodically(interval_minutes=REFRESH_INTERVAL):
-    def refresh_bots():
-        load_wallet_owners_from_gdoc()  
-        load_bots_from_gdoc()
-        # Reschedule the timer to run again
-        threading.Timer(interval_minutes * 60, refresh_bots, []).start()
-    refresh_bots()
+    load_wallet_owners_from_gdoc()
+    load_bots_from_gdoc()
+    threading.Timer(interval_minutes * 60, refresh_bots_periodically, [interval_minutes]).start()
 
 refresh_bots_periodically()
 
 
 def refresh_owner_coldkeys_periodically(interval_minutes=REFRESH_INTERVAL):
-    def refresh_owner_coldkeys():
-        subnet_infos = subtensor_owner_coldkeys.all_subnets()
-        global owner_coldkeys
-        owner_coldkeys = [subnet_info.owner_coldkey for subnet_info in subnet_infos]
-        # Reschedule the timer to run again
-        threading.Timer(interval_minutes * 60, refresh_owner_coldkeys, []).start()
-    refresh_owner_coldkeys()
+    global owner_coldkeys
+    subnet_infos = subtensor_owner_coldkeys.all_subnets()
+    owner_coldkeys = [subnet_info.owner_coldkey for subnet_info in subnet_infos]
+    threading.Timer(interval_minutes * 60, refresh_owner_coldkeys_periodically, [interval_minutes]).start()
 
 refresh_owner_coldkeys_periodically()
 

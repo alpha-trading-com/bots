@@ -10,7 +10,7 @@ import requests
 
 
 WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"
-WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1438540561379492063/SygmMi_rqY-O3WMGW11HK0L10VL8jIjsGS2X-1-eapLGBhxkcgwNlaY0d3NiQ1v-WPSe"
+WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1442889980962803855/L-rzuMa5KjmOdW_tQHWFFAG7gMiYBJ6FE8NkuV-qFmWhwogDF_9sGSVzmbZwt0NsvUfa"
 WEBHOOK_URL_AETH = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"
 NETWORK = "finney"
 #NETWORK = "ws://161.97.128.68:9944"
@@ -77,6 +77,7 @@ class ColdkeySwapFetcher:
         self.last_checked_block = self.subtensor.get_current_block()
         self.discord_bot = DiscordBot()
         self.subnet_names = []
+        self.discord_bot.send_message_to_my_own("Coldkey Swap Bot is running")
   
     def fetch_extrinsic_data(self, block_number):
         """Extract ColdkeySwapScheduled events from the data"""
@@ -157,7 +158,7 @@ class ColdkeySwapFetcher:
                         try:
                             message = self.format_message(coldkey_swaps, identity_changes)
                             self.discord_bot.send_message_to_my_own(message)
-                            threading.Timer(60.0, lambda: self.discord_bot.send_message(message)).start()
+                            threading.Timer(150, lambda: self.discord_bot.send_message(message)).start()
                         except Exception as e:
                             print(f"Error sending message: {e}")
                     else:

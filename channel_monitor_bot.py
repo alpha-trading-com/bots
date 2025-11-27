@@ -227,140 +227,52 @@ class DiscordCrawler:
 
 def main():
     # Configuration - Replace these with your actual values
-    CHANNEL_LIST = [
-        "1161764746819805215",  # channel 0
-        "1161764867166961704",  # channel 1
-        "1220504695404236800",  # channel 2
-        "1222226314824777853",  # channel 3
-        "1161765008347254915",  # channel 4
-        "1368959417936252998",  # channel 5
-        "1209554949449457705",  # channel 6
-        "1437494877578330174",  # channel 7
-        "1162384774170677318",  # channel 8
-        "1162768567821930597",  # channel 9
-        "1217952256306057298",  # channel 10
-        "1232378968187867147",  # channel 11
-        "1201941624243109888",  # channel 12
-        "1185617142914236518",  # channel 13
-        "1364251338707570698",  # channel 14
-        "1366877131132375170",  # channel 15
-        "1407020346208682175",  # channel 16
-        "1179081290289528864",  # channel 17
-        "1335971614516576296",  # channel 18
-        "1414687189752746167",  # channel 19
-        "1416079117614448841",  # channel 20
-        "1240801129177157692",  # channel 21
-        "1189589759065067580",  # channel 22
-        "1191833510021955695",  # channel 23
-        "1214246819886931988",  # channel 24
-        "1234881153832321024",  # channel 25
-        "1321148494253264998",  # channel 26
-        "1174835090539433994",  # channel 27
-        "1343950080465698836",  # channel 28
-        "1263866060780605501",  # channel 29
-        "1255568373056671804",  # channel 30
-        "1361421560988041267",  # channel 31
-        "1215319932062011464",  # channel 32
-        "1233428828479819876",  # channel 33
-        "1247680967225905273",  # channel 34
-        "1415790978077556906",  # channel 35
-        "1339356060787408996",  # channel 36
-        "1420486463841374261",  # channel 37
-        "1281623984286334987",  # channel 38
-        "1387865673690251445",  # channel 39
-        "1371491429775446147",  # channel 40
-        "1263142301786574889",  # channel 41
-        "1275149537547391058",  # channel 42
-        "1263507367405031434",  # channel 43
-        "1271486854830755981",  # channel 44
-        "1267511824601976935",  # channel 45
-        "1397618038894759956",  # channel 46
-        "1370452296940650656",  # channel 47
-        "1407438037956427960",  # channel 48
-        "1434923225229295697",  # channel 49
-        "1311109830282313781",  # channel 50
-        "1291754566957928469",  # channel 51
-        "1213131262483628102",  # channel 52
-        "1302975822554202142",  # channel 53
-        "1351934165964296232",  # channel 54
-        "1320766712508977192",  # channel 55
-        "1311360495428702240",  # channel 56
-        "1310698546852528180",  # channel 57
-        "1304499133675081761",  # channel 58
-        "1407849009976053832",  # channel 59
-        "1300553352274382848",  # channel 60
-        "1319313447435108413",  # channel 61
-        "1320812830735339580",  # channel 62
-        "1387107117697073302",  # channel 63
-        "1320739778534047785",  # channel 64
-        "1342275465267642408",  # channel 65
-        "1392960766990221312",  # channel 66
-        "1412074718877581495",  # channel 67
-        "1345470582161936405",  # channel 68
-        "1349118519198875778",  # channel 69
-        "1349119225868058644",  # channel 70
-        "1349121405903573114",  # channel 71
-        "1349122541754515538",  # channel 72
-        "1351969903132938302",  # channel 73
-        "1349123574820245534",  # channel 74
-        "1349124437752152075",  # channel 75
-        "1264939518641963070",  # channel 76
-        "1351180132295118848",  # channel 77
-        "1351180661918142474",  # channel 78
-        "1353733356470276096",  # channel 79
-        "1353733529774723073",  # channel 80
-        "1354089114189955102",  # channel 81
-        "1354838433142542407",  # channel 82
-        "1355560253076410428",  # channel 83
-        "1408463235082092564",  # channel 84
-        "1342559689690583202",  # channel 85
-        "1358810927943782673",  # channel 86
-        "1347299108238397572",  # channel 87
-        "1358854051634221328",  # channel 88
-        "1359592408119120033",  # channel 89
-        "1361438967198908577",  # channel 90
-        "1361439346154016900",  # channel 91
-        "1361761424153645217",  # channel 92
-        "1362489640841380045",  # channel 93
-        "1343988268630409226",  # channel 94
-        "1364253568961609859",  # channel 95
-        "1364655778149171250",  # channel 96
-        "1366426210275692544",  # channel 97
-        "1366426973781364816",  # channel 98
-        "1366845111945658409",  # channel 99
-        "1429935142847381617",  # channel 100
-        "1368946065738436749",  # channel 101
-        "1375534889486778409",  # channel 102
-        "1370083644818849955",  # channel 103
-        "1370430761408139404",  # channel 104
-        "1437473346026475702",  # channel 105
-        "1371902705605546075",  # channel 106
-        "1372284562276745338",  # channel 107
-        "1374389639225409598",  # channel 108
-        "1374389869148770425",  # channel 109
-        "1374390003865747546",  # channel 110
-        "1375215258678857728",  # channel 111
-        "1376603375113863178",  # channel 112
-        "1363882173991747584",  # channel 113
-        "1418239987291525291",  # channel 114
-        "1379143301478744064",  # channel 115
-        "1379496997752410172",  # channel 116
-        "1380199829669416970",  # channel 117
-        "1381659575522033724",  # channel 118
-        "1381660350818029578",  # channel 119
-        "1381987595881414656",  # channel 120
-        "1382818027241738352",  # channel 121
-        "1375509743753236722",  # channel 122
-        "1384252267770806293",  # channel 123
-        "1385341501130801172",  # channel 124
-        "1386721054906646549",  # channel 125
-        "1386721120652361800",  # channel 126
-        "1387151679266230323",  # channel 127
-        "1387438124132733110",  # channel 128
-        "1341812134807343114",  # Price talk
-    ]
+    # Load Discord channel list from a Google Doc (expects one channel ID per line)
+    import requests
+
+    def load_channel_list_from_gdoc(doc_id: str, api_key: str = None) -> list:
+        """
+        Fetches the channel list from a public Google Doc.
+        The Google Doc should be published to the web as plain text, with each line having:
+            channel_id channel_name
+
+        Args:
+            doc_id: The Google Doc's ID (from its URL).
+            api_key: (Optional) Google API key if you want to use the API, otherwise None for published plain text.
+        Returns:
+            List of (channel_id, channel_name) tuples.
+        """
+        if api_key:
+            raise NotImplementedError("API key not supported in this loader - use published plain text.")
+        else:
+            url = f"https://docs.google.com/document/d/{doc_id}/export?format=txt"
+            resp = requests.get(url)
+            resp.raise_for_status()
+            # Remove UTF-8 BOM if present
+            text = resp.text
+            if text.startswith('\ufeff'):
+                text = text[1:]
+            lines = [
+                line.strip()
+                for line in text.splitlines()
+            ]
+            output = []
+            for line in lines:
+                # Expect lines in form: channel_id   #channel_name
+                channel_id = line.split(' ', 1)[0]  # split at first '#' character if present
+                # Strip any remaining BOM or whitespace
+                channel_id = channel_id.strip('\ufeff').strip()
+                output.append(channel_id)
+            return output
+
+    # Replace this with your Doc ID (publish it as plain text!)
+    GOOGLE_DOC_ID = "1c-KDhGKINbJRKlXBtsLahyuNIZg3ptRic1ZwM1PpWo4"
+
+    # Loads the channel list from the Google Doc
+    CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID)
+    print(CHANNEL_LIST)
     BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  # Your bot token
-    WEBHOOK_URL = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"  # Replace with your webhook URL
+    WEBHOOK_URL = "https://discord.com/api/webhooks/1440684964784902299/oqS9xREAL46lsroqnsKfjuJ35xFSmXGj135qKqHk_UKwQ0oB--GY20n9m38pjqBRx-Ip"  # Replace with your webhook URL
     
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [
