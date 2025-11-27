@@ -283,7 +283,7 @@ def send_famous_wallet_message(stake_events):
         owner_name = wallet_owners[coldkey]
         tao_amount = float(event['amount_tao'])
         netuid_val = int(event['netuid'])
-        message += f"{owner_name} ({coldkey}) is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
+        message += f"{owner_name} (`{coldkey}`) is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
 
     discord_bot.send_message_to_wallet_transactions(message)
 
@@ -294,7 +294,7 @@ def send_mini_wallet_message(stake_events):
         owner_name = mini_wallet_owners[coldkey]
         tao_amount = float(event['amount_tao'])
         netuid_val = int(event['netuid'])
-        message += f"{owner_name} ({coldkey}) is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
+        message += f"{owner_name} (`{coldkey}`) is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
     
     discord_bot.send_message_to_mini_wallet_transactions(message)
 
