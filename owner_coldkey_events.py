@@ -145,6 +145,8 @@ def load_wallet_owners_from_gdoc():
 
 
 load_wallet_owners_from_gdoc()
+print(wallet_owners)
+print(mini_wallet_owners)
 
 def extract_stake_events_from_data(events_data):
     """
@@ -289,10 +291,11 @@ def send_mini_wallet_message(stake_events):
     message = "Hey Guys! \n"
     for event in stake_events:
         coldkey = event['coldkey']
-        owner_name = wallet_owners[coldkey]
+        owner_name = mini_wallet_owners[coldkey]
         tao_amount = float(event['amount_tao'])
         netuid_val = int(event['netuid'])
         message += f"{owner_name} ({coldkey}) is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
+    
     discord_bot.send_message_to_mini_wallet_transactions(message)
 
 
