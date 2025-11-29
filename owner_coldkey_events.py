@@ -266,13 +266,22 @@ def send_owner_coldkey_message(stake_events):
 
     for event in stake_events:
         coldkey = event['coldkey']
-        tao_amount = float(event['amount_tao'])
+        tao_amount = round(float(event['amount_tao']), 2)
         netuid_val = int(event['netuid'])
         
         if coldkey not in owner_coldkeys:
             continue
 
-        message += f"Owner {owner_coldkeys.index(coldkey)} is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
+        if event['type'] == 'StakeAdded':
+            color = "🟢"
+        elif event['type'] == 'StakeRemoved':
+            color = "🔴"
+        else:
+            continue
+        message += (
+            f"**Owner {owner_coldkeys.index(coldkey)}**:"
+            f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
+        )
 
     discord_bot.send_message_to_aeth(message)
 
@@ -280,11 +289,20 @@ def send_famous_wallet_message(stake_events):
     message = "Hey @everyone! \n"
     for event in stake_events:
         coldkey = event['coldkey']
-        owner_name = wallet_owners[coldkey]
-        tao_amount = float(event['amount_tao'])
+        owner_name = wallet_owners[coldkey][4:]
+        tao_amount = round(float(event['amount_tao']), 2)
         netuid_val = int(event['netuid'])
-        message += f"{owner_name} (`{coldkey}`) is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
-
+        # Format: Event type bold, owner_name italic, subnet code highlighted
+        if event['type'] == 'StakeAdded':
+            color = "🟢"
+        elif event['type'] == 'StakeRemoved':
+            color = "🔴"
+        else:
+            continue
+        message += (
+            f"**{owner_name}**:"
+            f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`"
+        )
     discord_bot.send_message_to_wallet_transactions(message)
 
 def send_mini_wallet_message(stake_events):
@@ -292,10 +310,18 @@ def send_mini_wallet_message(stake_events):
     for event in stake_events:
         coldkey = event['coldkey']
         owner_name = mini_wallet_owners[coldkey]
-        tao_amount = float(event['amount_tao'])
+        tao_amount = round(float(event['amount_tao']), 2)
         netuid_val = int(event['netuid'])
-        message += f"{owner_name} (`{coldkey}`) is {event['type']} {tao_amount} TAO on Netuid {netuid_val}\n"
-    
+        if event['type'] == 'StakeAdded':
+            color = "🟢"
+        elif event['type'] == 'StakeRemoved':
+            color = "🔴"
+        else:
+            continue
+        message += (
+            f"**{owner_name}**:"
+            f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
+        )    
     discord_bot.send_message_to_mini_wallet_transactions(message)
 
 
