@@ -6,14 +6,22 @@ from datetime import datetime
 from typing import List, Dict, Set
 
 
+
+WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1444355854387253502/TzAaJT1a-Eya4PC49UamnXybEB6SthXgih8CclHarcXscTqSrI7D6OtTzhAyYf-wchCr"
+
+NETWORK = "finney"
+#NETWORK = "ws://34.30.248.57:9944"
+
+
 class DiscordCrawler:
-    def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str):
+    def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str, target_user_ids: List[str]):
         self.channel_list = channel_list
         self.bot_token = bot_token
         self.webhook_url = webhook_url
         self.seen_message_ids: List = []
         self.api_urls = []
         self.initial_messages = []
+        self.target_user_ids = target_user_ids
         for channel_id in self.channel_list:
             self.api_urls.append(f"https://discord.com/api/v10/channels/{channel_id}/messages")
             empty_set = set()
@@ -127,7 +135,35 @@ class DiscordCrawler:
         }
 
         return embed
-    
+
+    def create_embed_private(self, message: Dict, subnet_id: int) -> Dict:
+        """Create Discord embed from message data"""
+        author = message.get("author", {})
+        content = message.get("content", "")
+        timestamp = message.get("timestamp", "")
+        message_id = message.get("id", "")
+        
+        color = 0xffff00
+        title = f"New VIP Message from {author.get('global_name', author.get('username', 'Unknown'))}"
+        embed = {
+            "title": title,
+            "description": content[:4096] if content else "*No text content*",  # Discord embed limit
+            "color": color,
+            "timestamp": timestamp,
+            "author": {
+                "name": f"{author.get('global_name', author.get('username', 'Unknown'))}",
+                "icon_url": f"https://cdn.discordapp.com/avatars/{author.get('id')}/{author.get('avatar')}.png" if author.get('avatar') else None
+            },
+            "fields": [
+                {
+                    "name": "Channel",
+                    "value": f"<#{self.channel_list[subnet_id]}>",
+                    "inline": True
+                }
+            ]
+        }
+        return embed
+
     def send_webhook_message(self, embeds: List[Dict]):
         """Send message to webhook"""
         if not embeds:
@@ -157,13 +193,42 @@ class DiscordCrawler:
                 time.sleep(2)
         print("Failed to send webhook")
 
-    def process_new_messages(self, api_url: str, channel_name: int):
+    def send_webhook_message_private(self, embeds: List[Dict]):
+        """Send message to webhook"""
+        if not embeds:
+            return
+        payload = {
+            "content": "@everyone VIP message",
+            "embeds": embeds,
+            "username": "Message Monitor",
+            "avatar_url": "https://cdn.discordapp.com/embed/avatars/0.png"
+        }
+        retries = 5
+        while retries > 0:
+            try:
+                response = requests.post(WEBHOOK_URL_OWN, json=payload)
+                if response.status_code in [200, 204]:
+                    print(f"Successfully sent {len(embeds)} message(s) to webhook")
+                    return
+                else:
+                    print(f"Failed to send webhook: {response.status_code} {response.text}")
+                    retries -= 1
+                    time.sleep(2)
+            except Exception as e:
+                print(f"Error sending webhook: {e}")
+                retries -= 1
+                time.sleep(2)
+        print("Failed to send webhook")
+        return
+
+    def process_new_messages(self, api_url: str, channel_name: int, target_user_ids: List[str]):
         """Process new messages and send to webhook"""
         messages = self.fetch_messages(api_url=api_url)
         if not messages:
             return
 
         new_messages = []
+        new_vip_messages = []
         new_message_ids = set()
 
         for message in messages:
@@ -185,6 +250,12 @@ class DiscordCrawler:
         # for messages in new_message_ids:
         #     print(f"message = {messages}")
 
+            if (
+                message_id not in self.seen_message_ids[channel_name] and
+                any(target_user_id == message.get('author', {}).get('id') for target_user_id in target_user_ids)
+            ):
+                new_vip_messages.append(message)
+
         # Update seen message IDs
         self.seen_message_ids[channel_name].update(new_message_ids)
         
@@ -194,6 +265,13 @@ class DiscordCrawler:
             self.send_webhook_message(embeds)
         else:
             print(f"No new messages from {channel_name}")
+
+        if new_vip_messages:
+            embeds = [self.create_embed_private(message=msg, subnet_id=channel_name) for msg in new_vip_messages]
+            self.send_webhook_message_private(embeds)
+        else:
+            print(f"No new VIP messages from {channel_name}")
+        return
     
     def run(self, check_interval: int = 60):
         """Run the crawler with specified interval in seconds"""
@@ -214,7 +292,7 @@ class DiscordCrawler:
             try:
                 print(f"\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checking for new messages...")
                 for i, channel_id in enumerate(self.channel_list):
-                    self.process_new_messages(api_url=self.api_urls[i], channel_name=i)
+                    self.process_new_messages(api_url=self.api_urls[i], channel_name=i, target_user_ids=self.target_user_ids)
                 print(f"Waiting {check_interval} seconds until next check...")
             except KeyboardInterrupt:
                 print("\nCrawler stopped by user")
@@ -276,16 +354,16 @@ def main():
     
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [
-        "1213176263758319698",  # dt
-        "595372674121990144",  # adamw
-        "1209166548955041835",  # atel
+        "389189199514959893",  # const
+        "1438183192610734211",  # soon
     ]
     
     # Create and run crawler
     crawler = DiscordCrawler(
         channel_list=CHANNEL_LIST,
         bot_token=BOT_TOKEN,
-        webhook_url=WEBHOOK_URL
+        webhook_url=WEBHOOK_URL,
+        target_user_ids=TARGET_USER_IDS
     )
     
     crawler.run(check_interval=10)  # Check every 60 seconds
