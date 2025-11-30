@@ -355,7 +355,7 @@ def main():
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [
         "389189199514959893",  # const
-        "1438183192610734211",  # soon
+        #"1438183192610734211",  # soon
     ]
     
     # Create and run crawler
