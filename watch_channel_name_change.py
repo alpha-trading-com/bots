@@ -332,7 +332,7 @@ def main():
     
     # Optional: Add webhook URL for notifications
     # WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-    WEBHOOK_URL = None  # Set to None to disable webhook notifications
+    WEBHOOK_URL = "https://discord.com/api/webhooks/1442889980962803855/L-rzuMa5KjmOdW_tQHWFFAG7gMiYBJ6FE8NkuV-qFmWhwogDF_9sGSVzmbZwt0NsvUfa"  # Set to None to disable webhook notifications
     
     # Create and run the monitor
     monitor = ChannelMonitorBot(
