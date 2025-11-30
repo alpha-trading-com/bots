@@ -4,3 +4,4 @@ pm2 start  coldkey_swap.py --interpreter python3  --name "coldkey_swap" --interp
 pm2 start  aeth/coldkey_swap.py --interpreter python3  --name "aeth_coldkey_swap" --interpreter-args "-u"
 pm2 start  owner_coldkey_events.py --interpreter python3  --name "owner_coldkey_events" --interpreter-args "-u"
 pm2 start  channel_monitor_bot.py --interpreter python3  --name "channel_monitor_bot" --interpreter-args "-u"
+pm2 start  watch_channel_name_change.py --interpreter python3  --name "watch_channel_name_change" --interpreter-args "-u"
