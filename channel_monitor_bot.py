@@ -13,7 +13,7 @@ WEBHOOK_URL_SENSTIVE_MESSAGES = "https://discord.com/api/webhooks/14449023593806
 NETWORK = "finney"
 #NETWORK = "ws://34.30.248.57:9944"
 
-KEY_WORDS = ["new team", "ownership", "man in charge"]
+KEY_WORDS = ["new team", "ownership", "man in charge", "partner"]
 class DiscordCrawler:
     def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str, target_user_ids: List[str]):
         self.channel_list = channel_list
@@ -290,6 +290,7 @@ class DiscordCrawler:
         messages = self.fetch_messages(api_url=api_url)
         if not messages:
             return
+        global IMPORTANT_CHANNEL_LIST
 
         new_messages = []
         new_vip_messages = []
@@ -327,9 +328,9 @@ class DiscordCrawler:
             ):
                 new_sensitive_messages.append(message)
 
-
-        if channel_name in IMPORTANT_CHANNEL_LIST:
-            new_sensitive_messages.extend(new_messages)
+            if (message_id not in self.seen_message_ids[channel_name] and
+                self.channel_list[channel_name] in IMPORTANT_CHANNEL_LIST):
+                new_sensitive_messages.append(message)
         # Update seen message IDs
         self.seen_message_ids[channel_name].update(new_message_ids)
         
@@ -420,11 +421,12 @@ def main():
                 # Expect lines in form: channel_id   #channel_name
                 channel_id = line.split(' ', 1)[0]  # split at first '#' character if present
                 channel_name = line.split(' ', 1)[1]
-                if channel_name.endswith("important"):
-                    IMPORTANT_CHANNEL_LIST.append(channel_id)
+                
                 # Strip any remaining BOM or whitespace
                 channel_id = channel_id.strip('\ufeff').strip()
                 output.append(channel_id)
+                if channel_name.endswith("important"):
+                    IMPORTANT_CHANNEL_LIST.append(channel_id)
             return output
 
     # Replace this with your Doc ID (publish it as plain text!)
@@ -432,8 +434,6 @@ def main():
 
     # Loads the channel list from the Google Doc
     CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID)
-    print(IMPORTANT_CHANNEL_LIST)
-    print(CHANNEL_LIST)
     BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  # Your bot token
     WEBHOOK_URL = "https://discord.com/api/webhooks/1440684964784902299/oqS9xREAL46lsroqnsKfjuJ35xFSmXGj135qKqHk_UKwQ0oB--GY20n9m38pjqBRx-Ip"  # Replace with your webhook URL
     
