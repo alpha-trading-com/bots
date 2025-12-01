@@ -301,7 +301,7 @@ def send_famous_wallet_message(stake_events):
             continue
         message += (
             f"**{owner_name}**:"
-            f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`"
+            f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
         )
     discord_bot.send_message_to_wallet_transactions(message)
 
