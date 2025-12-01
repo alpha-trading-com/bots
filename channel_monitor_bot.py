@@ -6,13 +6,14 @@ from datetime import datetime
 from typing import List, Dict, Set
 
 
-
+IMPORTANT_CHANNEL_LIST = []
 WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1444355854387253502/TzAaJT1a-Eya4PC49UamnXybEB6SthXgih8CclHarcXscTqSrI7D6OtTzhAyYf-wchCr"
+WEBHOOK_URL_SENSTIVE_MESSAGES = "https://discord.com/api/webhooks/1444902359380656130/nIOCmE9Fn9_j13WXWY_ebm7Ai_YodKQGsSjSgZzCiW953g-uSQXVmlNy7O0aoo8-EBL1"
 
 NETWORK = "finney"
 #NETWORK = "ws://34.30.248.57:9944"
 
-
+KEY_WORDS = ["new team", "ownership", "man in charge"]
 class DiscordCrawler:
     def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str, target_user_ids: List[str]):
         self.channel_list = channel_list
@@ -86,6 +87,13 @@ class DiscordCrawler:
         if len(mention_roles) > 0:
             is_announcement = True
         return is_announcement
+
+    def is_sensitive_message(self, message: Dict) -> bool:
+        "Check if message is a sensitive message"
+        global KEY_WORDS
+        content = message.get("content", "")
+        # Assume KEY_WORDS is a list of sensitive words/phrases defined elsewhere, including phrases like "new team"
+        return any(re.search(rf'\b{re.escape(word)}\b', content, re.IGNORECASE) if " " not in word else re.search(rf'(?<!\w){re.escape(word)}(?!\w)', content, re.IGNORECASE) for word in KEY_WORDS)
 
     def create_embed(self, message: Dict, subnet_id: int) -> Dict:
         """Create Discord embed from message data"""
@@ -164,6 +172,34 @@ class DiscordCrawler:
         }
         return embed
 
+    def create_embed_sensitive(self, message: Dict, subnet_id: int) -> Dict:
+        """Create Discord embed from message data"""
+        author = message.get("author", {})
+        content = message.get("content", "")
+        timestamp = message.get("timestamp", "")
+        message_id = message.get("id", "")
+        
+        color = 0xffff00
+        title = f"New Sensitive Message from {author.get('global_name', author.get('username', 'Unknown'))}"
+        embed = {
+            "title": title,
+            "description": content[:4096] if content else "*No text content*",  # Discord embed limit
+            "color": color,
+            "timestamp": timestamp,
+            "author": {
+                "name": f"{author.get('global_name', author.get('username', 'Unknown'))}",
+                "icon_url": f"https://cdn.discordapp.com/avatars/{author.get('id')}/{author.get('avatar')}.png" if author.get('avatar') else None
+            },
+            "fields": [
+                {
+                    "name": "Channel",
+                    "value": f"<#{self.channel_list[subnet_id]}>",
+                    "inline": True
+                }
+            ]
+        }
+        return embed
+
     def send_webhook_message(self, embeds: List[Dict]):
         """Send message to webhook"""
         if not embeds:
@@ -221,6 +257,34 @@ class DiscordCrawler:
         print("Failed to send webhook")
         return
 
+    def send_webhook_message_sensitive(self, embeds: List[Dict]):
+        """Send message to webhook"""
+        if not embeds:
+            return
+        payload = {
+            "content": "@everyone Sensitive message",
+            "embeds": embeds,
+            "username": "Message Monitor",
+            "avatar_url": "https://cdn.discordapp.com/embed/avatars/0.png"
+        }
+        retries = 5
+        while retries > 0:
+            try:
+                response = requests.post(WEBHOOK_URL_SENSTIVE_MESSAGES, json=payload)
+                if response.status_code in [200, 204]:
+                    print(f"Successfully sent {len(embeds)} message(s) to webhook")
+                    return
+                else:
+                    print(f"Failed to send webhook: {response.status_code} {response.text}")
+                    retries -= 1
+                    time.sleep(2)
+            except Exception as e:
+                print(f"Error sending webhook: {e}")
+                retries -= 1
+                time.sleep(2)
+        print("Failed to send webhook")
+        return
+
     def process_new_messages(self, api_url: str, channel_name: int, target_user_ids: List[str]):
         """Process new messages and send to webhook"""
         messages = self.fetch_messages(api_url=api_url)
@@ -230,6 +294,7 @@ class DiscordCrawler:
         new_messages = []
         new_vip_messages = []
         new_message_ids = set()
+        new_sensitive_messages = []
 
         for message in messages:
             message_id = message.get("id")
@@ -256,6 +321,15 @@ class DiscordCrawler:
             ):
                 new_vip_messages.append(message)
 
+            if (
+                message_id not in self.seen_message_ids[channel_name] and
+                self.is_sensitive_message(message)
+            ):
+                new_sensitive_messages.append(message)
+
+
+        if channel_name in IMPORTANT_CHANNEL_LIST:
+            new_sensitive_messages.extend(new_messages)
         # Update seen message IDs
         self.seen_message_ids[channel_name].update(new_message_ids)
         
@@ -271,6 +345,12 @@ class DiscordCrawler:
             self.send_webhook_message_private(embeds)
         else:
             print(f"No new VIP messages from {channel_name}")
+
+        if new_sensitive_messages:
+            embeds = [self.create_embed_sensitive(message=msg, subnet_id=channel_name) for msg in new_sensitive_messages]
+            self.send_webhook_message_sensitive(embeds)
+        else:
+            print(f"No new sensitive messages from {channel_name}")
         return
     
     def run(self, check_interval: int = 60):
@@ -309,6 +389,7 @@ def main():
     import requests
 
     def load_channel_list_from_gdoc(doc_id: str, api_key: str = None) -> list:
+        global IMPORTANT_CHANNEL_LIST
         """
         Fetches the channel list from a public Google Doc.
         The Google Doc should be published to the web as plain text, with each line having:
@@ -338,6 +419,9 @@ def main():
             for line in lines:
                 # Expect lines in form: channel_id   #channel_name
                 channel_id = line.split(' ', 1)[0]  # split at first '#' character if present
+                channel_name = line.split(' ', 1)[1]
+                if channel_name.endswith("important"):
+                    IMPORTANT_CHANNEL_LIST.append(channel_id)
                 # Strip any remaining BOM or whitespace
                 channel_id = channel_id.strip('\ufeff').strip()
                 output.append(channel_id)
@@ -348,6 +432,7 @@ def main():
 
     # Loads the channel list from the Google Doc
     CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID)
+    print(IMPORTANT_CHANNEL_LIST)
     print(CHANNEL_LIST)
     BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  # Your bot token
     WEBHOOK_URL = "https://discord.com/api/webhooks/1440684964784902299/oqS9xREAL46lsroqnsKfjuJ35xFSmXGj135qKqHk_UKwQ0oB--GY20n9m38pjqBRx-Ip"  # Replace with your webhook URL
