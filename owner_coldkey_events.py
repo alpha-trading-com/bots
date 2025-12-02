@@ -16,6 +16,7 @@ WEBHOOK_URL_OWN = "https://canary.discord.com/api/webhooks/1410255303689375856/R
 WEBHOOK_URL_AETH = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"
 WEBHOOK_URL_WALLET_TRANSACTIONS = "https://discord.com/api/webhooks/1443556449165901864/Y80Cyvwlzr_Zb5iL1t1H7KPOnQUwYKt8TPho5XhjAbZXaoMIhqXW-LXV9OlxcL_a6ZOa"
 WEBHOOK_URL_MINI_WALLET_TRANSACTIONS = "https://discord.com/api/webhooks/1443556723133775902/zC_O25YvNxsMXrnRGEMQWe_vPypeA2LUg72X_vKcUchLy5FjtQbxDCwWikqBJWrD49fe"
+WEBHOOK_URL_TRANSFER_TRANSACTIONS = "https://discord.com/api/webhooks/1445165442925723660/rpQjJaewW0ZPTHs2KyHD1ClsXr0BDcmMcm1V9jviuwHcjP4TXVD9FU3Pg3ncNPMHwFXl"
 
 NETWORK = "finney"
 #NETWORK = "ws://34.30.248.57:9944"
@@ -97,6 +98,21 @@ class DiscordBot:
         }
         response = requests.post(WEBHOOK_URL_MINI_WALLET_TRANSACTIONS, data=json.dumps(data), headers={"Content-Type": "application/json"})
 
+
+        if response.status_code == 204:
+            print("Message sent successfully!")
+            return True
+        else:
+            print(f"Failed to send message: {response.status_code}, {response.text}")
+        return False
+
+    def send_message_to_transfer_transactions(self, content):
+        data = {
+            "content": content,
+            "username": "Transfer Transactions",  # Optional: Custom username for the webhook
+            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
+        }
+        response = requests.post(WEBHOOK_URL_TRANSFER_TRANSACTIONS, data=json.dumps(data), headers={"Content-Type": "application/json"})
 
         if response.status_code == 204:
             print("Message sent successfully!")
@@ -261,6 +277,45 @@ def extract_stake_events_from_data(events_data):
     
     return stake_events
 
+
+def extract_transfer_events_from_data(events_data):
+    # Extract events which transfer TAO, like StakeAdded, StakeRemoved, StakeMoved, and direct TAO transfers
+    transfer_events = []
+    for event in events_data:
+        event_info = event.get('event', {})
+        module_id = event_info.get('module_id')
+        event_id = event_info.get('event_id')
+        attributes = event_info.get('attributes', {})
+
+        # SubtensorMo
+
+        # Balances pallet (native TAO transfers)
+        if module_id == 'Balances' and event_id in ('Transfer', 'Deposit'):
+            # Transfer between accounts
+            if event_id == 'Transfer':
+                from_addr = attributes.get('from')
+                to_addr = attributes.get('to')
+                amount = attributes.get('amount')
+                transfer_events.append({
+                    'type': 'Transfer',
+                    'from': from_addr,
+                    'to': to_addr,
+                    'amount': amount,
+                    'amount_tao': amount / 1e9 if amount else 0,
+                })
+            # # Deposit event - typically corresponds to fee refund or reward
+            # elif event_id == 'Deposit':
+            #     to_addr = attributes.get('who')
+            #     amount = attributes.get('amount')
+            #     transfer_events.append({
+            #         'type': 'Deposit',
+            #         'to': to_addr,
+            #         'amount': amount,
+            #         'amount_tao': amount / 1e9 if amount else 0,
+            #     })
+
+    return transfer_events
+
 def send_owner_coldkey_message(stake_events):
     message = "Hey @everyone! \n"
 
@@ -355,6 +410,42 @@ def send_message_to_discord(stake_events):
     if mini_wallet_stake_events:
         send_mini_wallet_message(mini_wallet_stake_events)
 
+def send_message_to_discord_transfer(transfer_events):
+    message = "Hey @everyone! \n"
+    def get_owner_name(addr):
+        if addr in owner_coldkeys:
+            return f"Owner {owner_coldkeys.index(addr)}"
+        elif addr in wallet_owners:
+            return f"{wallet_owners[addr]}"
+        elif addr in mini_wallet_owners:
+            return f"{mini_wallet_owners[addr]}"
+        else:
+            return "Unknown"
+    exits_message = False
+    for event in transfer_events:
+        from_addr = event['from']
+        to_addr = event['to']
+        amount = event['amount']
+        amount_tao = event['amount_tao']
+        from_owner_name = get_owner_name(from_addr)
+        to_owner_name = get_owner_name(to_addr)
+        if from_owner_name == "Unknown" and to_owner_name == "Unknown":
+            continue
+
+        if amount_tao < 0.5:
+            continue
+
+        if from_owner_name == to_owner_name:
+            continue
+        
+        exits_message = True
+        message += (f"**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
+
+    if not exits_message:
+        return
+
+    discord_bot.send_message_to_transfer_transactions(message)
+
 if __name__ == "__main__":    
     
     while True:
@@ -366,7 +457,9 @@ if __name__ == "__main__":
             
             # Extract stake events from live data
             stake_events = extract_stake_events_from_data(events)
+            transfer_events = extract_transfer_events_from_data(events)
             send_message_to_discord(stake_events)
+            send_message_to_discord_transfer(transfer_events)
             subtensor.wait_for_block()
         except Exception as e:
             import traceback
