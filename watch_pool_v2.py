@@ -25,7 +25,6 @@ def load_bots_from_gdoc():
         bots = re.findall(r'5[1-9A-HJ-NP-Za-km-z]{47}', text)
     except Exception as e:
         print(f"Failed to load bots from Google Doc: {e}")
-   global wallet_owners
          
 def load_wallet_owners_from_gdoc():
     global wallet_owners
