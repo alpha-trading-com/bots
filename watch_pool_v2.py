@@ -25,23 +25,29 @@ def load_bots_from_gdoc():
         bots = re.findall(r'5[1-9A-HJ-NP-Za-km-z]{47}', text)
     except Exception as e:
         print(f"Failed to load bots from Google Doc: {e}")
-
+   global wallet_owners
+         
 def load_wallet_owners_from_gdoc():
-    url = "https://docs.google.com/document/d/1VUDA8mzHd_iUQEqiDWMORys6--2ab8nDSThGb--_PaQ/export?format=txt"
-    try:
-        global wallet_owners
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        text = response.text
-        # Each pair is like: <wallet_address> <owner_name>
-        # build a dict mapping wallet address to owner name
-        wallet_owners = {}
-        pattern = r'(5[1-9A-HJ-NP-Za-km-z]{47})\s+([^\s]+)'
-        for match in re.findall(pattern, text):
-            address, owner = match
-            wallet_owners[address] = owner
-    except Exception as e:
-        print(f"Failed to load wallet owners from Google Doc: {e}")
+    global wallet_owners
+    urls = [
+        "https://docs.google.com/document/d/1VUDA8mzHd_iUQEqiDWMORys6--2ab8nDSThGb--_PaQ/export?format=txt",
+        "https://docs.google.com/document/d/167NEkUZkpzZx1L-jDgjdDQNhu5rlddpV__rArvTfqoo/export?format=txt"
+    ]
+    for url in urls:    
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            text = response.text
+            # Each pair is like: <wallet_address> <owner_name>
+            # build a dict mapping wallet address to owner name
+            pattern = r'(5[1-9A-HJ-NP-Za-km-z]{47})\s+([^\s]+)'
+            for match in re.findall(pattern, text):
+                address, owner = match
+                wallet_owners[address] = owner
+
+        except Exception as e:
+            print(f"Failed to load wallet owners from Google Doc: {e}")
+
         
 def refresh_bots_periodically(interval_minutes=REFRESH_INTERVAL):
     load_wallet_owners_from_gdoc()
