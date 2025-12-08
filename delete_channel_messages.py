@@ -170,7 +170,7 @@ def main():
     """
     # Configuration - Replace these with your actual values
     BOT_TOKEN = "MTQyNDAzMzc4ODc1MjY5MTM5NA.GVCuvH.78NDc1Ifjkh3wVxlrVO7FYFLKU0ACkF22N0C50" # Your bot token
-    CHANNEL_ID = "1446474608747217032"  # Replace with the channel ID you want to delete messages from
+    CHANNEL_ID = "1420796398944649339"  # Replace with the channel ID you want to delete messages from
     
     if not CHANNEL_ID:
         print("Error: Please set CHANNEL_ID in the main() function")
