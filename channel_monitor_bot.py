@@ -206,7 +206,7 @@ class DiscordCrawler:
             return
         
         payload = {
-            "content": "@everyone Twitter posted",
+            "content": "@everyone ",
             "embeds": embeds,
             "username": "Message Monitor",
             "avatar_url": "https://cdn.discordapp.com/embed/avatars/0.png"
