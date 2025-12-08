@@ -440,6 +440,7 @@ def main():
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [
         "389189199514959893",  # const
+        "1020187154502144072", # Tegridy
         #"1438183192610734211",  # soon
     ]
     
