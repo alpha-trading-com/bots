@@ -410,6 +410,10 @@ def send_message_to_discord(stake_events):
     if mini_wallet_stake_events:
         send_mini_wallet_message(mini_wallet_stake_events)
 
+CEXS = {
+    "5FqBL928choLPmeFz5UVAvonBD5k7K2mZSXVC9RkFzLxoy2s": "MEXC",
+}
+
 def send_message_to_discord_transfer(transfer_events):
     message = "Hey @everyone! \n"
     def get_owner_name(addr):
@@ -421,6 +425,13 @@ def send_message_to_discord_transfer(transfer_events):
             return f"{mini_wallet_owners[addr]}"
         else:
             return "Unknown"
+
+    def get_cexs_name(addr):
+        if addr in CEXS:
+            return CEXS[addr]
+        else:
+            return "Unknown"
+
     exits_message = False
     for event in transfer_events:
         from_addr = event['from']
@@ -437,7 +448,13 @@ def send_message_to_discord_transfer(transfer_events):
 
         if from_owner_name == to_owner_name:
             continue
+
+        if from_owner_name == "Unknown":
+            from_owner_name = get_cexs_name(from_addr)
         
+        if to_owner_name == "Unknown":
+            to_owner_name = get_cexs_name(to_addr)
+
         exits_message = True
         message += (f"**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
 

@@ -134,6 +134,7 @@ class ChannelMonitorBot:
             return
         
         payload = {
+            "content": "@everyone ",
             "embeds": embeds,
             "username": "Channel Monitor",
             "avatar_url": "https://cdn.discordapp.com/embed/avatars/1.png"
