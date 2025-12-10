@@ -11,6 +11,7 @@ from modules.constants import (
     WEBHOOK_URL_SS_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_MINI_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS,
+    GOOGLE_DOC_ID_OWNER_WALLETS_SS,
     NETWORK,
     CEXS,
 )
@@ -28,7 +29,7 @@ refresh_owner_coldkeys_periodically()
 
 
 def load_wallet_owners_from_gdoc():
-    url = "https://docs.google.com/document/d/167NEkUZkpzZx1L-jDgjdDQNhu5rlddpV__rArvTfqoo/export?format=txt"
+    url = f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_OWNER_WALLETS_SS}/export?format=txt"
     try:
         global wallet_owners, mini_wallet_owners
         response = requests.get(url, timeout=10)

@@ -4,9 +4,14 @@ import requests
 import re
 
 
+from modules.constants import (
+    GOOGLE_DOC_ID_BOTS,
+    GOOGLE_DOC_ID_OWNER_WALLETS,
+    GOOGLE_DOC_ID_OWNER_WALLETS_SS,
+    NETWORK,
+)
+
 REFRESH_INTERVAL = 20 # minutes
-NETWORK = "finney"
-#NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
 subtensor_owner_coldkeys = bt.subtensor(NETWORK)
 
@@ -16,7 +21,7 @@ owner_coldkeys = []
 
 
 def load_bots_from_gdoc():
-    url = "https://docs.google.com/document/d/1Vdm20cXVAK-kjgjBw9XcbVYaAvvCWyY8IuPLAE2aRBI/export?format=txt"
+    url = f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_BOTS}/export?format=txt"
     try:
         global bots
         response = requests.get(url, timeout=10)
@@ -29,8 +34,8 @@ def load_bots_from_gdoc():
 def load_wallet_owners_from_gdoc():
     global wallet_owners
     urls = [
-        "https://docs.google.com/document/d/1VUDA8mzHd_iUQEqiDWMORys6--2ab8nDSThGb--_PaQ/export?format=txt",
-        "https://docs.google.com/document/d/167NEkUZkpzZx1L-jDgjdDQNhu5rlddpV__rArvTfqoo/export?format=txt"
+        f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_OWNER_WALLETS}/export?format=txt",
+        f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_OWNER_WALLETS_SS}/export?format=txt"
     ]
     for url in urls:    
         try:

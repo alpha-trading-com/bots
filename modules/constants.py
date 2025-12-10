@@ -22,3 +22,8 @@ CEXS = {
 KEY_WORDS = ["new team", "ownership", "man in charge", "partner", "launch", "product"]
 
 BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  
+
+GOOGLE_DOC_ID_OWNER_WALLETS = "1VUDA8mzHd_iUQEqiDWMORys6--2ab8nDSThGb--_PaQ"
+GOOGLE_DOC_ID_BOTS = "1Vdm20cXVAK-kjgjBw9XcbVYaAvvCWyY8IuPLAE2aRBI"
+GOOGLE_DOC_ID_CHANNELS = "1c-KDhGKINbJRKlXBtsLahyuNIZg3ptRic1ZwM1PpWo4"
+GOOGLE_DOC_ID_OWNER_WALLETS_SS = "167NEkUZkpzZx1L-jDgjdDQNhu5rlddpV__rArvTfqoo"

@@ -17,6 +17,7 @@ from modules.constants import (
     KEY_WORDS,
     NETWORK,
     BOT_TOKEN,
+    GOOGLE_DOC_ID_CHANNELS,
 )
 from modules.discord import send_webhook_message, create_embed
 
@@ -261,11 +262,9 @@ def main():
                     IMPORTANT_CHANNEL_LIST.append(channel_id)
             return output
 
-    # Replace this with your Doc ID (publish it as plain text!)
-    GOOGLE_DOC_ID = "1c-KDhGKINbJRKlXBtsLahyuNIZg3ptRic1ZwM1PpWo4"
 
     # Loads the channel list from the Google Doc
-    CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID)
+    CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID_CHANNELS)
    
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [
