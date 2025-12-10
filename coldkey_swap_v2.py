@@ -142,20 +142,6 @@ class ColdkeySwapFetcher:
                     coldkey_swaps, identity_changes = self.fetch_extrinsic_data(self.last_checked_block)
                     if len(coldkey_swaps) > 0 or len(identity_changes) > 0:
                         try:
-                            with open("coldkey_swaps.log", "a") as f:
-                                for swap in coldkey_swaps:
-                                    f.write(f"{swap}\n")
-                        except Exception as e:
-                            print(f"Error writing to file: {e}")
-        
-                        try:
-                            with open("identity_changes.log", "a") as f:
-                                for change in identity_changes:
-                                    f.write(f"{change}\n")
-                        except Exception as e:
-                            print(f"Error writing to file: {e}")
-
-                        try:
                             message = self.format_message(coldkey_swaps, identity_changes)
                             self.discord_bot.send_message_to_my_own(message)
                             threading.Timer(150, lambda: self.discord_bot.send_message(message)).start()

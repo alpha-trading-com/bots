@@ -6,9 +6,12 @@ from datetime import datetime
 from typing import List, Dict, Set
 
 
+from modules.discord import send_webhook_message, create_embed
+
 IMPORTANT_CHANNEL_LIST = []
 WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1444355854387253502/TzAaJT1a-Eya4PC49UamnXybEB6SthXgih8CclHarcXscTqSrI7D6OtTzhAyYf-wchCr"
 WEBHOOK_URL_SENSTIVE_MESSAGES = "https://discord.com/api/webhooks/1444902359380656130/nIOCmE9Fn9_j13WXWY_ebm7Ai_YodKQGsSjSgZzCiW953g-uSQXVmlNy7O0aoo8-EBL1"
+WEBHOOK_URL = "https://discord.com/api/webhooks/1440684964784902299/oqS9xREAL46lsroqnsKfjuJ35xFSmXGj135qKqHk_UKwQ0oB--GY20n9m38pjqBRx-Ip"
 
 NETWORK = "finney"
 #NETWORK = "ws://34.30.248.57:9944"
@@ -18,7 +21,6 @@ class DiscordCrawler:
     def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str, target_user_ids: List[str]):
         self.channel_list = channel_list
         self.bot_token = bot_token
-        self.webhook_url = webhook_url
         self.seen_message_ids: List = []
         self.api_urls = []
         self.initial_messages = []
@@ -95,195 +97,6 @@ class DiscordCrawler:
         # Assume KEY_WORDS is a list of sensitive words/phrases defined elsewhere, including phrases like "new team"
         return any(re.search(rf'\b{re.escape(word)}\b', content, re.IGNORECASE) if " " not in word else re.search(rf'(?<!\w){re.escape(word)}(?!\w)', content, re.IGNORECASE) for word in KEY_WORDS)
 
-    def create_embed(self, message: Dict, subnet_id: int) -> Dict:
-        """Create Discord embed from message data"""
-        author = message.get("author", {})
-        content = message.get("content", "")
-        timestamp = message.get("timestamp", "")
-        message_id = message.get("id", "")
-        
-        # Format timestamp
-        try:
-            dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-            formatted_time = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
-        except:
-            formatted_time = timestamp
-
-        color = 0xffff00
-        if self.is_twitter_hold(message):
-            title = f"New Twitter Posted from **Subnet {subnet_id}**" if subnet_id != 129 else f"New Twitter Posted from **Price-talk**"
-            color = 0xffff00
-        elif self.is_owner_claimed_message(message):
-            title = f"New Owner Claimed Message from **Subnet {subnet_id}**" if subnet_id != 129 else f"New Owner Claimed Message from **Price-talk**"
-            color = 0xa832a8
-        elif self.is_announcement_message(message):
-            title = f"New Announcement Message from **Subnet {subnet_id}**" if subnet_id != 129 else f"New Announcement Message from **Price-talk**"
-            color = 0x66aaff
-        else:
-            title = f"New Unknown Type Message from **Subnet {subnet_id}**" if subnet_id != 129 else f"New Unknown Type Message from **Price-talk**"
-
-
-        # Create embed
-        embed = {
-            "title": title,
-            "description": content[:4096] if content else "*No text content*",  # Discord embed limit
-            "color": color,
-            "timestamp": timestamp,
-            "author": {
-                "name": f"{author.get('global_name', author.get('username', 'Unknown'))}",
-                "icon_url": f"https://cdn.discordapp.com/avatars/{author.get('id')}/{author.get('avatar')}.png" if author.get('avatar') else None
-            },
-            "fields": [
-                {
-                    "name": "Channel",
-                    "value": f"<#{self.channel_list[subnet_id]}>",
-                    "inline": True
-                }
-            ]
-        }
-
-        return embed
-
-    def create_embed_private(self, message: Dict, subnet_id: int) -> Dict:
-        """Create Discord embed from message data"""
-        author = message.get("author", {})
-        content = message.get("content", "")
-        timestamp = message.get("timestamp", "")
-        message_id = message.get("id", "")
-        
-        color = 0xffff00
-        title = f"New VIP Message from {author.get('global_name', author.get('username', 'Unknown'))}"
-        embed = {
-            "title": title,
-            "description": content[:4096] if content else "*No text content*",  # Discord embed limit
-            "color": color,
-            "timestamp": timestamp,
-            "author": {
-                "name": f"{author.get('global_name', author.get('username', 'Unknown'))}",
-                "icon_url": f"https://cdn.discordapp.com/avatars/{author.get('id')}/{author.get('avatar')}.png" if author.get('avatar') else None
-            },
-            "fields": [
-                {
-                    "name": "Channel",
-                    "value": f"<#{self.channel_list[subnet_id]}>",
-                    "inline": True
-                }
-            ]
-        }
-        return embed
-
-    def create_embed_sensitive(self, message: Dict, subnet_id: int) -> Dict:
-        """Create Discord embed from message data"""
-        author = message.get("author", {})
-        content = message.get("content", "")
-        timestamp = message.get("timestamp", "")
-        message_id = message.get("id", "")
-        
-        color = 0xffff00
-        title = f"New Sensitive Message from {author.get('global_name', author.get('username', 'Unknown'))}"
-        embed = {
-            "title": title,
-            "description": content[:4096] if content else "*No text content*",  # Discord embed limit
-            "color": color,
-            "timestamp": timestamp,
-            "author": {
-                "name": f"{author.get('global_name', author.get('username', 'Unknown'))}",
-                "icon_url": f"https://cdn.discordapp.com/avatars/{author.get('id')}/{author.get('avatar')}.png" if author.get('avatar') else None
-            },
-            "fields": [
-                {
-                    "name": "Channel",
-                    "value": f"<#{self.channel_list[subnet_id]}>",
-                    "inline": True
-                }
-            ]
-        }
-        return embed
-
-    def send_webhook_message(self, embeds: List[Dict]):
-        """Send message to webhook"""
-        if not embeds:
-            return
-        
-        payload = {
-            "content": "@everyone ",
-            "embeds": embeds,
-            "username": "Message Monitor",
-            "avatar_url": "https://cdn.discordapp.com/embed/avatars/0.png"
-        }
-        
-        retries = 5
-        while retries > 0:
-            try:
-                response = requests.post(self.webhook_url, json=payload)
-                if response.status_code in [200, 204]:
-                    print(f"Successfully sent {len(embeds)} message(s) to webhook")
-                    return
-                else:
-                    print(f"Failed to send webhook: {response.status_code} {response.text}")
-                    retries -= 1
-                    time.sleep(2)
-            except Exception as e:
-                print(f"Error sending webhook: {e}")
-                retries -= 1
-                time.sleep(2)
-        print("Failed to send webhook")
-
-    def send_webhook_message_private(self, embeds: List[Dict]):
-        """Send message to webhook"""
-        if not embeds:
-            return
-        payload = {
-            "content": "@everyone VIP message",
-            "embeds": embeds,
-            "username": "Message Monitor",
-            "avatar_url": "https://cdn.discordapp.com/embed/avatars/0.png"
-        }
-        retries = 5
-        while retries > 0:
-            try:
-                response = requests.post(WEBHOOK_URL_OWN, json=payload)
-                if response.status_code in [200, 204]:
-                    print(f"Successfully sent {len(embeds)} message(s) to webhook")
-                    return
-                else:
-                    print(f"Failed to send webhook: {response.status_code} {response.text}")
-                    retries -= 1
-                    time.sleep(2)
-            except Exception as e:
-                print(f"Error sending webhook: {e}")
-                retries -= 1
-                time.sleep(2)
-        print("Failed to send webhook")
-        return
-
-    def send_webhook_message_sensitive(self, embeds: List[Dict]):
-        """Send message to webhook"""
-        if not embeds:
-            return
-        payload = {
-            "content": "@everyone Sensitive message",
-            "embeds": embeds,
-            "username": "Message Monitor",
-            "avatar_url": "https://cdn.discordapp.com/embed/avatars/0.png"
-        }
-        retries = 5
-        while retries > 0:
-            try:
-                response = requests.post(WEBHOOK_URL_SENSTIVE_MESSAGES, json=payload)
-                if response.status_code in [200, 204]:
-                    print(f"Successfully sent {len(embeds)} message(s) to webhook")
-                    return
-                else:
-                    print(f"Failed to send webhook: {response.status_code} {response.text}")
-                    retries -= 1
-                    time.sleep(2)
-            except Exception as e:
-                print(f"Error sending webhook: {e}")
-                retries -= 1
-                time.sleep(2)
-        print("Failed to send webhook")
-        return
 
     def process_new_messages(self, api_url: str, channel_name: int, target_user_ids: List[str]):
         """Process new messages and send to webhook"""
@@ -313,8 +126,6 @@ class DiscordCrawler:
             ):
                 new_messages.append(message)
                 print(f"Found new message from {message.get('author', {}).get('username', 'Unknown')}: {message.get('content', '')[:50]}...")
-        # for messages in new_message_ids:
-        #     print(f"message = {messages}")
 
             if (
                 message_id not in self.seen_message_ids[channel_name] and
@@ -336,20 +147,35 @@ class DiscordCrawler:
         
         # Send new messages to webhook
         if new_messages:
-            embeds = [self.create_embed(message=msg, subnet_id=channel_name) for msg in new_messages]
-            self.send_webhook_message(embeds)
+            embeds = [
+                create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New Message", color=0xffff00) for msg in new_messages]
+            send_webhook_message(
+                webhook_url=WEBHOOK_URL, 
+                content="@everyone New Message",
+                embeds=embeds, 
+            )
         else:
             print(f"No new messages from {channel_name}")
 
         if new_vip_messages:
-            embeds = [self.create_embed_private(message=msg, subnet_id=channel_name) for msg in new_vip_messages]
-            self.send_webhook_message_private(embeds)
+            embeds = [
+                create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New VIP Message", color=0xffff00) for msg in new_vip_messages]
+            send_webhook_message(
+                webhook_url=WEBHOOK_URL_OWN, 
+                content="@everyone New VIP Message",
+                embeds=embeds, 
+            )
         else:
             print(f"No new VIP messages from {channel_name}")
 
         if new_sensitive_messages:
-            embeds = [self.create_embed_sensitive(message=msg, subnet_id=channel_name) for msg in new_sensitive_messages]
-            self.send_webhook_message_sensitive(embeds)
+            embeds = [
+                create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New Sensitive Message", color=0xffff00) for msg in new_sensitive_messages]
+            send_webhook_message(
+                webhook_url=WEBHOOK_URL_SENSTIVE_MESSAGES, 
+                content="@everyone New Sensitive Message",
+                embeds=embeds, 
+            )
         else:
             print(f"No new sensitive messages from {channel_name}")
         return
@@ -448,7 +274,6 @@ def main():
     crawler = DiscordCrawler(
         channel_list=CHANNEL_LIST,
         bot_token=BOT_TOKEN,
-        webhook_url=WEBHOOK_URL,
         target_user_ids=TARGET_USER_IDS
     )
     
