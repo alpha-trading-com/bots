@@ -5,6 +5,9 @@ import re
 import json
 import time
 
+from modules.discord import send_webhook_message, create_embed
+from modules.bt_utils import get_owner_coldkeys
+
 NETWORK = "finney"
 #NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
@@ -19,114 +22,7 @@ WEBHOOK_URL_MINI_WALLET_TRANSACTIONS = "https://discord.com/api/webhooks/1443556
 WEBHOOK_URL_TRANSFER_TRANSACTIONS = "https://discord.com/api/webhooks/1445165442925723660/rpQjJaewW0ZPTHs2KyHD1ClsXr0BDcmMcm1V9jviuwHcjP4TXVD9FU3Pg3ncNPMHwFXl"
 
 NETWORK = "finney"
-#NETWORK = "ws://34.30.248.57:9944"
 
-class DiscordBot:
-    def __init__(self):
-        self.webhook_url = WEBHOOK_URL
-
-    def send_message(self, content):
-        #self.send_message_ours(content)
-        self.send_message_to_aeth(content)
-
-    def send_message_ours(self, content):
-        data = {
-            "content": content,
-            "username": "Coldkey Swap Bot",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(self.webhook_url, data=json.dumps(data), headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-    def send_message_to_aeth(self, content):
-        data = {
-            "content": content,
-            "username": "Aeth Bot",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(WEBHOOK_URL_AETH, data=json.dumps(data), headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-    def send_message_to_my_own(self, content):
-        data = {
-            "content": content,
-            "username": "Coldkey Swap Bot",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(WEBHOOK_URL_OWN, data=json.dumps(data), headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-    def send_message_to_wallet_transactions(self, content):
-        data = {
-            "content": content,
-            "username": "Wallet Transactions",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(WEBHOOK_URL_WALLET_TRANSACTIONS, data=json.dumps(data), headers={"Content-Type": "application/json"})
-
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-    def send_message_to_mini_wallet_transactions(self, content):
-
-        data = {
-            "content": content,
-            "username": "Mini Wallet Transactions",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(WEBHOOK_URL_MINI_WALLET_TRANSACTIONS, data=json.dumps(data), headers={"Content-Type": "application/json"})
-
-
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-    def send_message_to_transfer_transactions(self, content):
-        data = {
-            "content": content,
-            "username": "Transfer Transactions",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(WEBHOOK_URL_TRANSFER_TRANSACTIONS, data=json.dumps(data), headers={"Content-Type": "application/json"})
-
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-discord_bot = DiscordBot()
-
-def get_owner_coldkeys():
-    subtensor = bt.subtensor("finney")
-    subnet_infos = subtensor.all_subnets()
-    return [subnet_info.owner_coldkey for subnet_info in subnet_infos]
 
 def refresh_owner_coldkeys_periodically(interval_minutes=20):
     global owner_coldkeys
@@ -134,7 +30,6 @@ def refresh_owner_coldkeys_periodically(interval_minutes=20):
     threading.Timer(interval_minutes * 60, refresh_owner_coldkeys_periodically, [interval_minutes]).start()
 
 refresh_owner_coldkeys_periodically()
-
 
 
 def load_wallet_owners_from_gdoc():
@@ -161,7 +56,6 @@ def load_wallet_owners_from_gdoc():
 
 
 load_wallet_owners_from_gdoc()
-print(wallet_owners)
 print(mini_wallet_owners)
 
 def extract_stake_events_from_data(events_data):
@@ -338,7 +232,10 @@ def send_owner_coldkey_message(stake_events):
             f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
         )
 
-    discord_bot.send_message_to_aeth(message)
+    send_webhook_message(
+        webhook_url=WEBHOOK_URL_AETH, 
+        content=message,
+    )
 
 def send_famous_wallet_message(stake_events):
     message = "Hey @everyone! \n"
@@ -358,7 +255,10 @@ def send_famous_wallet_message(stake_events):
             f"**{owner_name}**:"
             f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
         )
-    discord_bot.send_message_to_wallet_transactions(message)
+    send_webhook_message(
+        webhook_url=WEBHOOK_URL_WALLET_TRANSACTIONS, 
+        content=message,
+    )
 
 def send_mini_wallet_message(stake_events):
     message = "Hey Guys! \n"
@@ -377,7 +277,10 @@ def send_mini_wallet_message(stake_events):
             f"**{owner_name}**:"
             f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
         )    
-    discord_bot.send_message_to_mini_wallet_transactions(message)
+    send_webhook_message(
+        webhook_url=WEBHOOK_URL_MINI_WALLET_TRANSACTIONS, 
+        content=message,
+    )
 
 
 def send_message_to_discord(stake_events):
@@ -389,25 +292,30 @@ def send_message_to_discord(stake_events):
         if coldkey in owner_coldkeys:
             netuid = owner_coldkeys.index(coldkey)
             if netuid != 20:
+                print("Found stake event for owner coldkey")
                 owner_coldkey_stake_events.append(event)
             
         if coldkey in wallet_owners:
+            print("Found stake event for famous wallet")
             famous_wallet_stake_events.append(event)
 
         if coldkey in mini_wallet_owners:
+            print("Found stake event for mini wallet")
             mini_wallet_stake_events.append(event)
 
     if not owner_coldkey_stake_events and not famous_wallet_stake_events and not mini_wallet_stake_events:
         print("No stake events found")
         return
-
     if owner_coldkey_stake_events:
+        print("owner_coldkey_stake_events")
         send_owner_coldkey_message(owner_coldkey_stake_events)
 
     if famous_wallet_stake_events:
+        print("famous_wallet_stake_events")
         send_famous_wallet_message(famous_wallet_stake_events)
 
     if mini_wallet_stake_events:
+        print("mini_wallet_stake_events")
         send_mini_wallet_message(mini_wallet_stake_events)
 
 CEXS = {
@@ -462,10 +370,12 @@ def send_message_to_discord_transfer(transfer_events):
     if not exits_message:
         return
 
-    discord_bot.send_message_to_transfer_transactions(message)
+    send_webhook_message(
+        webhook_url=WEBHOOK_URL_TRANSFER_TRANSACTIONS, 
+        content=message,
+    )
 
 if __name__ == "__main__":    
-    
     while True:
         try:
             block_number = subtensor.get_current_block()
@@ -477,6 +387,7 @@ if __name__ == "__main__":
             stake_events = extract_stake_events_from_data(events)
             transfer_events = extract_transfer_events_from_data(events)
             send_message_to_discord(stake_events)
+
             send_message_to_discord_transfer(transfer_events)
             subtensor.wait_for_block()
         except Exception as e:

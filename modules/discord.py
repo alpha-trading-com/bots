@@ -5,17 +5,15 @@ from typing import List, Dict
 def send_webhook_message(
     webhook_url: str, 
     content: str,
-    embeds: List[Dict] = None, 
+    embeds: List[Dict] = [], 
     username: str = "Message Monitor",
     avatar_url: str = "https://cdn.discordapp.com/embed/avatars/0.png"
 ):
     """Send message to webhook"""
-    if not embeds:
-        return
-    
+
     payload = {
         "content": content,
-        "embeds": embeds if embeds else [],
+        "embeds": embeds,
         "username": username,
         "avatar_url": avatar_url
     }
@@ -25,7 +23,7 @@ def send_webhook_message(
         try:
             response = requests.post(webhook_url, json=payload)
             if response.status_code in [200, 204]:
-                print(f"Successfully sent {len(embeds)} message(s) to webhook")
+                print(f"Successfully sent message(s) to webhook")
                 return
             else:
                 print(f"Failed to send webhook: {response.status_code} {response.text}")
