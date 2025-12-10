@@ -8,66 +8,12 @@ import time
 import threading
 import requests
 
-
-WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"
-WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1442889980962803855/L-rzuMa5KjmOdW_tQHWFFAG7gMiYBJ6FE8NkuV-qFmWhwogDF_9sGSVzmbZwt0NsvUfa"
-WEBHOOK_URL_AETH = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"
-NETWORK = "finney"
-#NETWORK = "ws://161.97.128.68:9944"
-
-class DiscordBot:
-    def __init__(self):
-        self.webhook_url = WEBHOOK_URL
-
-    def send_message(self, content):
-        #self.send_message_ours(content)
-        self.send_message_to_aeth(content)
-
-    def send_message_ours(self, content):
-        data = {
-            "content": content,
-            "username": "Coldkey Swap Bot",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(self.webhook_url, data=json.dumps(data), headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-    def send_message_to_aeth(self, content):
-        data = {
-            "content": content,
-            "username": "Aeth Bot",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(WEBHOOK_URL_AETH, data=json.dumps(data), headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
-    def send_message_to_my_own(self, content):
-        data = {
-            "content": content,
-            "username": "Coldkey Swap Bot",  # Optional: Custom username for the webhook
-            "avatar_url": "https://vidaio-justin.s3.us-east-2.amazonaws.com/favicon.ico"  # Optional: Custom avatar for the webhook
-        }
-        response = requests.post(WEBHOOK_URL_OWN, data=json.dumps(data), headers={"Content-Type": "application/json"})
-        
-        if response.status_code == 204:
-            print("Message sent successfully!")
-            return True
-        else:
-            print(f"Failed to send message: {response.status_code}, {response.text}")
-        return False
-
+from modules.discord import send_webhook_message
+from modules.constants import (
+    NETWORK,
+    WEBHOOK_URL_AETH_CHAIN_EVENT,
+    WEBHOOK_URL_SS_EVENTS,
+)
 
 class ColdkeySwapFetcher:
     def __init__(self):
@@ -75,9 +21,11 @@ class ColdkeySwapFetcher:
         self.subtensor_finney = bt.subtensor("finney")
 
         self.last_checked_block = self.subtensor.get_current_block()
-        self.discord_bot = DiscordBot()
         self.subnet_names = []
-        self.discord_bot.send_message_to_my_own("Coldkey Swap Bot is running")
+        send_webhook_message(
+            webhook_url=WEBHOOK_URL_SS_EVENTS,
+            content="Coldkey Swap Bot is running"
+        )
   
     def fetch_extrinsic_data(self, block_number):
         """Extract ColdkeySwapScheduled events from the data"""
@@ -143,8 +91,14 @@ class ColdkeySwapFetcher:
                     if len(coldkey_swaps) > 0 or len(identity_changes) > 0:
                         try:
                             message = self.format_message(coldkey_swaps, identity_changes)
-                            self.discord_bot.send_message_to_my_own(message)
-                            threading.Timer(150, lambda: self.discord_bot.send_message(message)).start()
+                            send_webhook_message(
+                                webhook_url=WEBHOOK_URL_SS_EVENTS,
+                                content=message
+                            )
+                            threading.Timer(50, lambda: send_webhook_message(
+                                webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT,
+                                content=message
+                            )).start()
                         except Exception as e:
                             print(f"Error sending message: {e}")
                     else:
