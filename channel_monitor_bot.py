@@ -26,7 +26,7 @@ from modules.discord import send_webhook_message, create_embed
 
 IMPORTANT_CHANNEL_LIST = []
 class DiscordCrawler:
-    def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str, target_user_ids: List[str]):
+    def __init__(self, channel_list: List[str], bot_token: str, target_user_ids: List[str]):
         self.channel_list = channel_list
         self.bot_token = bot_token
         self.seen_message_ids: List = []
