@@ -18,6 +18,7 @@ from modules.constants import (
     NETWORK,
     BOT_TOKEN,
     GOOGLE_DOC_ID_CHANNELS,
+    TARGET_USER_IDS,
 )
 from modules.discord import send_webhook_message, create_embed
 
@@ -266,12 +267,7 @@ def main():
     # Loads the channel list from the Google Doc
     CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID_CHANNELS)
    
-    # List of user IDs to monitor (from your output example)
-    TARGET_USER_IDS = [
-        "389189199514959893",  # const
-        #"1020187154502144072", # Tegridy
-        #"1438183192610734211",  # soon
-    ]
+    
     
     # Create and run crawler
     crawler = DiscordCrawler(

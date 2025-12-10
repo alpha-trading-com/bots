@@ -1,12 +1,6 @@
 import bittensor as bt
-import os
-import requests
-import json
-from constants import USERS, WEBHOOK_URL
-from twitter_bot.twitter_bot_x import TwitterBotX
 import time
 import threading
-import requests
 
 from modules.discord import send_webhook_message
 from modules.constants import (
