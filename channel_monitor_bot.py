@@ -6,17 +6,23 @@ from datetime import datetime
 from typing import List, Dict, Set
 
 
+from modules.constants import (
+    WEBHOOK_URL_AETH_VIP_MESSAGES,
+    WEBHOOK_URL_SS_SENSTIVE_MESSAGES,
+    WEBHOOK_URL_AETH_NEWS,
+    WEBHOOK_URL_AETH_CHAIN_EVENT,
+    WEBHOOK_URL_SS_WALLET_TRANSACTIONS,
+    WEBHOOK_URL_SS_MINI_WALLET_TRANSACTIONS,
+    WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS,
+    KEY_WORDS,
+    NETWORK,
+    BOT_TOKEN,
+)
 from modules.discord import send_webhook_message, create_embed
 
+
+
 IMPORTANT_CHANNEL_LIST = []
-WEBHOOK_URL_OWN = "https://discord.com/api/webhooks/1444355854387253502/TzAaJT1a-Eya4PC49UamnXybEB6SthXgih8CclHarcXscTqSrI7D6OtTzhAyYf-wchCr"
-WEBHOOK_URL_SENSTIVE_MESSAGES = "https://discord.com/api/webhooks/1444902359380656130/nIOCmE9Fn9_j13WXWY_ebm7Ai_YodKQGsSjSgZzCiW953g-uSQXVmlNy7O0aoo8-EBL1"
-WEBHOOK_URL = "https://discord.com/api/webhooks/1440684964784902299/oqS9xREAL46lsroqnsKfjuJ35xFSmXGj135qKqHk_UKwQ0oB--GY20n9m38pjqBRx-Ip"
-
-NETWORK = "finney"
-#NETWORK = "ws://34.30.248.57:9944"
-
-KEY_WORDS = ["new team", "ownership", "man in charge", "partner", "launch", "product"]
 class DiscordCrawler:
     def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str, target_user_ids: List[str]):
         self.channel_list = channel_list
@@ -150,7 +156,7 @@ class DiscordCrawler:
             embeds = [
                 create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New Message", color=0xffff00) for msg in new_messages]
             send_webhook_message(
-                webhook_url=WEBHOOK_URL, 
+                webhook_url=WEBHOOK_URL_AETH_NEWS, 
                 content="@everyone New Message",
                 embeds=embeds, 
             )
@@ -161,7 +167,7 @@ class DiscordCrawler:
             embeds = [
                 create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New VIP Message", color=0xffff00) for msg in new_vip_messages]
             send_webhook_message(
-                webhook_url=WEBHOOK_URL_OWN, 
+                webhook_url=WEBHOOK_URL_AETH_VIP_MESSAGES, 
                 content="@everyone New VIP Message",
                 embeds=embeds, 
             )
@@ -172,7 +178,7 @@ class DiscordCrawler:
             embeds = [
                 create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New Sensitive Message", color=0xffff00) for msg in new_sensitive_messages]
             send_webhook_message(
-                webhook_url=WEBHOOK_URL_SENSTIVE_MESSAGES, 
+                webhook_url=WEBHOOK_URL_SS_SENSTIVE_MESSAGES, 
                 content="@everyone New Sensitive Message",
                 embeds=embeds, 
             )
@@ -260,9 +266,7 @@ def main():
 
     # Loads the channel list from the Google Doc
     CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID)
-    BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  # Your bot token
-    WEBHOOK_URL = "https://discord.com/api/webhooks/1440684964784902299/oqS9xREAL46lsroqnsKfjuJ35xFSmXGj135qKqHk_UKwQ0oB--GY20n9m38pjqBRx-Ip"  # Replace with your webhook URL
-    
+   
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [
         "389189199514959893",  # const

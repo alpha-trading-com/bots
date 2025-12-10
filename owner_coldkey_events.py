@@ -5,24 +5,19 @@ import re
 import json
 import time
 
+
+from modules.constants import (
+    WEBHOOK_URL_AETH_CHAIN_EVENT,
+    WEBHOOK_URL_SS_WALLET_TRANSACTIONS,
+    WEBHOOK_URL_SS_MINI_WALLET_TRANSACTIONS,
+    WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS,
+    NETWORK,
+    CEXS,
+)
 from modules.discord import send_webhook_message, create_embed
 from modules.bt_utils import get_owner_coldkeys
 
-NETWORK = "finney"
-#NETWORK = "ws://161.97.128.68:9944"
 subtensor = bt.subtensor(NETWORK)
-
-
-
-WEBHOOK_URL = "https://discord.com/api/webhooks/1396875737952292936/Bggfi9QEHVljmOxaqzJniLwQ70oCjnlj0lb7nIBq4avsVya_dkGNfjOKaGlOt_urwdul"
-WEBHOOK_URL_OWN = "https://canary.discord.com/api/webhooks/1410255303689375856/Rkt1TkqmxV3tV_82xFNz_SRP7O0RVBVPaOuZM4JXveyLYypFKqi05EeSCKc4m1a9gJh0"
-WEBHOOK_URL_AETH = "https://discord.com/api/webhooks/1420813134410682378/KXZ6CZeoPDr-h_balb62sZA_xnVtUsAyaNU1udShLzJfW7chTUwzd83IxfPS_1XaUBS0"
-WEBHOOK_URL_WALLET_TRANSACTIONS = "https://discord.com/api/webhooks/1443556449165901864/Y80Cyvwlzr_Zb5iL1t1H7KPOnQUwYKt8TPho5XhjAbZXaoMIhqXW-LXV9OlxcL_a6ZOa"
-WEBHOOK_URL_MINI_WALLET_TRANSACTIONS = "https://discord.com/api/webhooks/1443556723133775902/zC_O25YvNxsMXrnRGEMQWe_vPypeA2LUg72X_vKcUchLy5FjtQbxDCwWikqBJWrD49fe"
-WEBHOOK_URL_TRANSFER_TRANSACTIONS = "https://discord.com/api/webhooks/1445165442925723660/rpQjJaewW0ZPTHs2KyHD1ClsXr0BDcmMcm1V9jviuwHcjP4TXVD9FU3Pg3ncNPMHwFXl"
-
-NETWORK = "finney"
-
 
 def refresh_owner_coldkeys_periodically(interval_minutes=20):
     global owner_coldkeys
@@ -233,7 +228,7 @@ def send_owner_coldkey_message(stake_events):
         )
 
     send_webhook_message(
-        webhook_url=WEBHOOK_URL_AETH, 
+        webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT, 
         content=message,
     )
 
@@ -256,7 +251,7 @@ def send_famous_wallet_message(stake_events):
             f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
         )
     send_webhook_message(
-        webhook_url=WEBHOOK_URL_WALLET_TRANSACTIONS, 
+        webhook_url=WEBHOOK_URL_SS_WALLET_TRANSACTIONS, 
         content=message,
     )
 
@@ -278,7 +273,7 @@ def send_mini_wallet_message(stake_events):
             f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
         )    
     send_webhook_message(
-        webhook_url=WEBHOOK_URL_MINI_WALLET_TRANSACTIONS, 
+        webhook_url=WEBHOOK_URL_SS_MINI_WALLET_TRANSACTIONS, 
         content=message,
     )
 
@@ -318,10 +313,6 @@ def send_message_to_discord(stake_events):
         print("mini_wallet_stake_events")
         send_mini_wallet_message(mini_wallet_stake_events)
 
-CEXS = {
-    "5FqBL928choLPmeFz5UVAvonBD5k7K2mZSXVC9RkFzLxoy2s": "MEXC",
-    "5GBnPzvPghS8AuCoo6bfnK7JUFHuyUhWSFD4woBNsKnPiEUi": "Binance",
-}
 
 def send_message_to_discord_transfer(transfer_events):
     message = "Hey @everyone! \n"
@@ -371,7 +362,7 @@ def send_message_to_discord_transfer(transfer_events):
         return
 
     send_webhook_message(
-        webhook_url=WEBHOOK_URL_TRANSFER_TRANSACTIONS, 
+        webhook_url=WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS, 
         content=message,
     )
 
