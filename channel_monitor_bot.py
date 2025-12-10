@@ -13,7 +13,7 @@ WEBHOOK_URL_SENSTIVE_MESSAGES = "https://discord.com/api/webhooks/14449023593806
 NETWORK = "finney"
 #NETWORK = "ws://34.30.248.57:9944"
 
-KEY_WORDS = ["new team", "ownership", "man in charge", "partner"]
+KEY_WORDS = ["new team", "ownership", "man in charge", "partner", "launch", "product"]
 class DiscordCrawler:
     def __init__(self, channel_list: List[str], bot_token: str, webhook_url: str, target_user_ids: List[str]):
         self.channel_list = channel_list
@@ -440,7 +440,7 @@ def main():
     # List of user IDs to monitor (from your output example)
     TARGET_USER_IDS = [
         "389189199514959893",  # const
-        "1020187154502144072", # Tegridy
+        #"1020187154502144072", # Tegridy
         #"1438183192610734211",  # soon
     ]
     

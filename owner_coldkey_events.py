@@ -412,6 +412,7 @@ def send_message_to_discord(stake_events):
 
 CEXS = {
     "5FqBL928choLPmeFz5UVAvonBD5k7K2mZSXVC9RkFzLxoy2s": "MEXC",
+    "5GBnPzvPghS8AuCoo6bfnK7JUFHuyUhWSFD4woBNsKnPiEUi": "Binance",
 }
 
 def send_message_to_discord_transfer(transfer_events):
