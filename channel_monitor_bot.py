@@ -14,6 +14,7 @@ from modules.constants import (
     WEBHOOK_URL_SS_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_MINI_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS,
+    WEBHOOK_URL_SS_INFOS,
     KEY_WORDS,
     NETWORK,
     BOT_TOKEN,
@@ -112,11 +113,16 @@ class DiscordCrawler:
         if not messages:
             return
         global IMPORTANT_CHANNEL_LIST
-
+        private_track_lists = [
+            "1424029936527741043",
+            "1316942343466909777",
+            "1273724526190006467",
+        ]
         new_messages = []
         new_vip_messages = []
         new_message_ids = set()
         new_sensitive_messages = []
+        new_infos_messages = []
 
         for message in messages:
             message_id = message.get("id")
@@ -143,6 +149,12 @@ class DiscordCrawler:
 
             if (
                 message_id not in self.seen_message_ids[channel_name] and
+                any(target_user_id == message.get('author', {}).get('id') for target_user_id in private_track_lists)
+            ):
+                new_infos_messages.append(message)
+
+            if (
+                message_id not in self.seen_message_ids[channel_name] and
                 self.is_sensitive_message(message)
             ):
                 new_sensitive_messages.append(message)
@@ -150,6 +162,9 @@ class DiscordCrawler:
             if (message_id not in self.seen_message_ids[channel_name] and
                 self.channel_list[channel_name] in IMPORTANT_CHANNEL_LIST):
                 new_sensitive_messages.append(message)
+            
+
+
         # Update seen message IDs
         self.seen_message_ids[channel_name].update(new_message_ids)
         
@@ -186,6 +201,17 @@ class DiscordCrawler:
             )
         else:
             print(f"No new sensitive messages from {channel_name}")
+
+        if new_infos_messages:
+            embeds = [
+                create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New Infos Message", color=0xffff00) for msg in new_infos_messages]
+            send_webhook_message(
+                webhook_url=WEBHOOK_URL_SS_INFOS, 
+                content="@everyone New Infos Message",
+                embeds=embeds, 
+            )
+        else:
+            print(f"No new infos messages from {channel_name}")
         return
     
     def run(self, check_interval: int = 60):
