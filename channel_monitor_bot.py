@@ -207,7 +207,7 @@ class DiscordCrawler:
                 create_embed(message=msg, channel_id=self.channel_list[channel_name], title="New Infos Message", color=0xffff00) for msg in new_infos_messages]
             send_webhook_message(
                 webhook_url=WEBHOOK_URL_SS_INFOS, 
-                content="@everyone New Infos Message",
+                content="New Infos Message",
                 embeds=embeds, 
             )
         else:
