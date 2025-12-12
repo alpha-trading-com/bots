@@ -344,7 +344,7 @@ def send_message_to_discord_transfer(transfer_events):
         if from_owner_name == "Unknown" and to_owner_name == "Unknown":
             continue
 
-        if amount_tao < 0.5:
+        if amount_tao < 0.001:
             continue
 
         if from_owner_name == to_owner_name:
