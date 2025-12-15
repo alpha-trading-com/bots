@@ -5,16 +5,20 @@ def get_owner_coldkeys():
     subnet_infos = subtensor.all_subnets()
     return [subnet_info.owner_coldkey for subnet_info in subnet_infos]
 
-def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cash):
-    cache_key = f"{wallet_ss58}_{current_netuid}"
-    if cache_key in cash:
-        return cash[cache_key]
-
+def get_balance_and_stake_infos(subtensor, wallet_ss58, cache):
+    if wallet_ss58 in cache:
+        balance, stake_infos = cache[wallet_ss58]
     stake_infos = subtensor.get_stake_for_coldkey(
         coldkey_ss58=wallet_ss58
     )
     # stake_infos is a list of StakeInfo objects
     balance = subtensor.get_balance(wallet_ss58)
+
+    cache[wallet_ss58] = balance, stake_infos
+    return cache[wallet_ss58]
+
+def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cache):
+    balance, stake_infos = get_balance_and_stake_infos(subtensor, wallet_ss58, cache)
     free_value = balance.tao
     now_subnet_stake_value = 0
     other_subnet_staked_value = 0
@@ -52,7 +56,6 @@ def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cash):
         f"{other_color}{format_value(other_subnet_staked_value)}{reset})"
     )
 
-    cash[cache_key] = result
 
     return result
 
