@@ -229,7 +229,7 @@ def print_stake_events(stake_events, netuid, show_balance):
             total_value_str = ""
             if show_balance:
                 total_value = get_total_value(subtensor, old_coldkey, now_subnet_infos)
-                total_value_str = f" < τ{total_value:.2f} >"
+                total_value_str = f" τ{total_value:.2f} "
 
             print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
 
