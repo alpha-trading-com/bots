@@ -16,6 +16,7 @@ class ColdkeySwapFetcher:
 
         self.last_checked_block = self.subtensor.get_current_block()
         self.subnet_names = []
+        self.owner_coldkeys = []
         send_webhook_message(
             webhook_url=WEBHOOK_URL_SS_EVENTS,
             content="Coldkey Swap Bot is running"
@@ -64,10 +65,13 @@ class ColdkeySwapFetcher:
                     'subnet': i,
                     'old_identity': self.subnet_names[i],
                     'new_identity': subnet_names[i],
+                    'old_owner_coldkey': self.owner_coldkeys[i],
+                    'new_owner_coldkey': owner_coldkeys[i],
                 }
                 identity_changes.append(identity_change_info)
 
         self.subnet_names = subnet_names
+        self.owner_coldkeys = owner_coldkeys
         return coldkey_swaps, identity_changes
  
     def run(self):
@@ -112,7 +116,10 @@ class ColdkeySwapFetcher:
             message += f"Subnet {swap['subnet']} is swapping coldkey from {swap['old_coldkey']} to {swap['new_coldkey']}\n"
 
         for change in identity_changes:
-            message += f"Subnet {change['subnet']} has changed identity from {change['old_identity']} to {change['new_identity']}\n"
+            if change['old_owner_coldkey'] != change['new_owner_coldkey']:
+                message += f"Subnet {change['subnet']} has deregistered from the network. :cry:\n"
+            else:   
+                message += f"Subnet {change['subnet']} has changed identity from {change['old_identity']} to {change['new_identity']}\n"
         return message
 
 
