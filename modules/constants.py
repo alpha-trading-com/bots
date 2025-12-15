@@ -20,7 +20,16 @@ CEXS = {
 }
 
 
-KEY_WORDS = ["new team", "ownership", "man in charge", "partner", "launch", "product"]
+KEY_WORDS = [
+    "new team", 
+    "ownership", 
+    "man in charge", 
+    "partner", 
+    "launch", 
+    "product",
+    "phase",
+    "live",
+]
 
 BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"  
 
