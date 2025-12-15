@@ -7,7 +7,7 @@ def get_owner_coldkeys():
     subnet_infos = subtensor.all_subnets()
     return [subnet_info.owner_coldkey for subnet_info in subnet_infos]
 
-def get_stake_list(subtensor, wallet_ss58, subnet_infos):
+def get_total_value(subtensor, wallet_ss58, subnet_infos):
     if wallet_ss58 in total_value_dict:
         return total_value_dict[wallet_ss58]
 
@@ -16,7 +16,7 @@ def get_stake_list(subtensor, wallet_ss58, subnet_infos):
     )
     # stake_infos is a list of StakeInfo objects
     balance = subtensor.get_balance(wallet_ss58)
-    total_value = balance
+    total_value = balance.tao
     for info in stake_infos:
         subnet_info = subnet_infos[info.netuid]
         value = subnet_info.price.tao * info.stake.tao

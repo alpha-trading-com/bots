@@ -4,6 +4,9 @@ import requests
 import re
 
 
+from modules.bt_utils import get_total_value
+
+
 from modules.constants import (
     GOOGLE_DOC_ID_BOTS,
     GOOGLE_DOC_ID_OWNER_WALLETS,
@@ -202,14 +205,14 @@ def extract_stake_events_from_data(events_data):
                 })
     
     return stake_events
-def print_stake_events(stake_events, netuid):
+def print_stake_events(stake_events, netuid, show_balance):
     now_subnet_infos = subtensor.all_subnets()
     prices = [float(subnet_info.price) for subnet_info in now_subnet_infos]
     for event in stake_events:
         netuid_val = int(event['netuid'])
         tao_amount = float(event['amount_tao'])
-        coldkey = event['coldkey']
-        coldkey = get_coldkey_display_name(coldkey)
+        old_coldkey = event['coldkey']
+        coldkey = get_coldkey_display_name(old_coldkey)
 
         color = get_color(event['type'], coldkey)    
 
@@ -223,15 +226,24 @@ def print_stake_events(stake_events, netuid):
 
         reset = "\033[0m"
         if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
-            print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset}")
+            total_value_str = ""
+            if show_balance:
+                total_value = get_total_value(subtensor, old_coldkey, now_subnet_infos)
+                total_value_str = f" < τ{total_value:.2f} >"
+
+            print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
 
                   
 if __name__ == "__main__":    
 
     #netuid = int(input("Enter the netuid: "))
     #threshold = float(input("Enter the threshold: "))
+    show_balance = float(input("Enter whether you want to show wallet balance (yes or no)") == "yes")
+
     netuid = -1
     threshold = 0.5
+    #show_balance = True
+    
     while True:
         block_number = subtensor.get_current_block()
         block_hash = subtensor.substrate.get_block_hash(block_id=block_number)
@@ -242,6 +254,6 @@ if __name__ == "__main__":
         stake_events = extract_stake_events_from_data(events)
         if stake_events:
             print(f"*{'*'*40}")
-            print_stake_events(stake_events, netuid)
+            print_stake_events(stake_events, netuid, show_balance)
         
         subtensor.wait_for_block()
