@@ -46,11 +46,11 @@ def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cache)
     def format_value(value):
         if value < 0.5:
             return "---"
-        return f"τ{value:.2f}"
+        return f"τ{round(value)}"
     
     result = (
         f"-> "
-        f"{total_color}{format_value(total_value)}{reset} "
+        f"{total_color}{format_value(total_value)}{reset}"
         f"({free_color}{format_value(free_value)}{reset} | "
         f"{current_color}{format_value(now_subnet_stake_value)} SN{current_netuid}{reset} | "
         f"{other_color}{format_value(other_subnet_staked_value)}{reset})"
