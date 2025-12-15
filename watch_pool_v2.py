@@ -208,6 +208,7 @@ def extract_stake_events_from_data(events_data):
 def print_stake_events(stake_events, netuid, show_balance):
     now_subnet_infos = subtensor.all_subnets()
     prices = [float(subnet_info.price) for subnet_info in now_subnet_infos]
+    cash = {}
     for event in stake_events:
         netuid_val = int(event['netuid'])
         tao_amount = float(event['amount_tao'])
@@ -228,9 +229,8 @@ def print_stake_events(stake_events, netuid, show_balance):
         if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
             total_value_str = ""
             if show_balance:
-                total_value = get_total_value(subtensor, old_coldkey, now_subnet_infos)
-                total_value_str = f" τ{total_value:.2f} "
-
+                total_value_str = get_total_value(subtensor, old_coldkey, now_subnet_infos, netuid_val, cash)
+    
             print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
 
                   

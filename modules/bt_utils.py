@@ -1,29 +1,53 @@
 import bittensor as bt
 
-total_value_dict = {}
-
 def get_owner_coldkeys():
     subtensor = bt.subtensor("finney")
     subnet_infos = subtensor.all_subnets()
     return [subnet_info.owner_coldkey for subnet_info in subnet_infos]
 
-def get_total_value(subtensor, wallet_ss58, subnet_infos):
-    if wallet_ss58 in total_value_dict:
-        return total_value_dict[wallet_ss58]
+def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cash):
+    cache_key = f"{wallet_ss58}_{current_netuid}"
+    if cache_key in cash:
+        return cash[cache_key]
 
     stake_infos = subtensor.get_stake_for_coldkey(
         coldkey_ss58=wallet_ss58
     )
     # stake_infos is a list of StakeInfo objects
     balance = subtensor.get_balance(wallet_ss58)
-    total_value = balance.tao
+    free_value = balance.tao
+    now_subnet_stake_value = 0
+    other_subnet_staked_value = 0
+
     for info in stake_infos:
         subnet_info = subnet_infos[info.netuid]
         value = subnet_info.price.tao * info.stake.tao
-        total_value += value
-
-    total_value_dict[wallet_ss58] = total_value
+        if info.netuid == 0:
+            free_value += value
+        elif current_netuid == info.netuid:
+            now_subnet_stake_value += value
+        else:
+            other_subnet_staked_value += value
     
-    return total_value
+    total_value = free_value + now_subnet_stake_value + other_subnet_staked_value
+
+    # ANSI color codes
+    reset = "\033[0m"
+    total_color = "\033[96m"  # Bright cyan for total
+    free_color = "\033[92m"   # Green for free
+    current_color = "\033[94m"  # Blue for current subnet
+    other_color = "\033[93m"  # Yellow for other subnets
+    
+    result = (
+        f"-> "
+        f"{total_color}τ{total_value:.2f}{reset}"
+        f"({free_color}τ{free_value:.2f}{reset} | "
+        f"{current_color}τ{now_subnet_stake_value:.2f} SN{current_netuid}{reset} | "
+        f"{other_color}τ{other_subnet_staked_value:.2f}{reset})"
+    )
+
+    cash[cache_key] = result
+
+    return result
 
 
