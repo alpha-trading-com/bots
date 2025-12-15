@@ -38,12 +38,18 @@ def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cash):
     current_color = "\033[94m"  # Blue for current subnet
     other_color = "\033[93m"  # Yellow for other subnets
     
+    # Format value: show "---" if value < 0.5, otherwise show formatted float
+    def format_value(value):
+        if value < 0.5:
+            return "---"
+        return f"τ{value:.2f}"
+    
     result = (
         f"-> "
-        f"{total_color}τ{total_value:.2f}{reset}"
-        f"({free_color}τ{free_value:.2f}{reset} | "
-        f"{current_color}τ{now_subnet_stake_value:.2f} SN{current_netuid}{reset} | "
-        f"{other_color}τ{other_subnet_staked_value:.2f}{reset})"
+        f"{total_color}{format_value(total_value)}{reset} "
+        f"({free_color}{format_value(free_value)}{reset} | "
+        f"{current_color}{format_value(now_subnet_stake_value)} SN{current_netuid}{reset} | "
+        f"{other_color}{format_value(other_subnet_staked_value)}{reset})"
     )
 
     cash[cache_key] = result
