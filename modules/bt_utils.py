@@ -18,6 +18,10 @@ def get_balance_and_stake_infos(subtensor, wallet_ss58, cache):
     return cache[wallet_ss58]
 
 def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cache):
+    cache_key = f"{wallet_ss58}_{current_netuid}"
+    if cache_key in cache:
+        return cache[cache_key]
+    
     balance, stake_infos = get_balance_and_stake_infos(subtensor, wallet_ss58, cache)
     free_value = balance.tao
     now_subnet_stake_value = 0
@@ -56,7 +60,7 @@ def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cache)
         f"{other_color}{format_value(other_subnet_staked_value)}{reset})"
     )
 
-
+    cache[cache_key] = result
     return result
 
 
