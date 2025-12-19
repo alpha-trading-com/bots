@@ -125,7 +125,7 @@ class ColdkeySwapFetcherFromMemPool:
 
 
     def format_message(self, events):
-        message = "Hey @everyone! \n"
+        message = "Hey @everyone! Mempool events:\n"
         for event in events:
             if event['event_type'] == COLDKEY_SWAP_EVENT_TYPE:
                 message += f"Subnet {event['subnet']} is swapping coldkey from {event['old_coldkey']} to {event['new_coldkey']}\n"
