@@ -40,6 +40,7 @@ class ColdkeySwapFetcherFromMemPool:
         for ex in extrinsics:
             call = ex.value.get('call', {})
             extrinsic_hash = ex.value.get('extrinsic_hash', None)
+            print(f"Extrinsic hash: {extrinsic_hash}")
             if extrinsic_hash in self.cache:
                 continue
             self.cache.append(extrinsic_hash)
@@ -101,38 +102,26 @@ class ColdkeySwapFetcherFromMemPool:
  
     def run(self):
         while True:
-            current_block = self.subtensor.get_current_block()
-            print(f"Current block: {current_block}")
-            if current_block < self.last_checked_block:
-                time.sleep(2)
-                continue
-
-            print(f"Fetching coldkey swaps for block {self.last_checked_block}")
-            while True:
-                try:
-                    events = self.fetch_extrinsic_data(self.last_checked_block)
-                    if len(events) > 0:
-                        try:
-                            message = self.format_message(events)
-                            send_webhook_message(
-                                webhook_url=WEBHOOK_URL_SS_EVENTS,
-                                content=message
-                            )
-                            # threading.Timer(30, lambda: send_webhook_message(
-                            #     webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT,
-                            #     content=message
-                            # )).start()
-                        except Exception as e:
-                            print(f"Error sending message: {e}")
-                    else:
-                        print("No coldkey swaps found")
-                    
-                    self.last_checked_block += 1
-                    break
-
-                except Exception as e:
-                    print(f"Error fetching coldkey swaps: {e}")
-                    time.sleep(1)
+            try:
+                events = self.fetch_extrinsic_data(self.last_checked_block)
+                if len(events) > 0:
+                    try:
+                        message = self.format_message(events)
+                        send_webhook_message(
+                            webhook_url=WEBHOOK_URL_SS_EVENTS,
+                            content=message
+                        )
+                        # threading.Timer(30, lambda: send_webhook_message(
+                        #     webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT,
+                        #     content=message
+                        # )).start()
+                    except Exception as e:
+                        print(f"Error sending message: {e}")
+                else:
+                    print("No coldkey swaps found")
+            except Exception as e:
+                print(f"Error fetching coldkey swaps: {e}")
+                time.sleep(1)
 
 
     def format_message(self, events):
