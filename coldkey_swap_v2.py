@@ -125,10 +125,10 @@ class ColdkeySwapFetcher:
                                 webhook_url=WEBHOOK_URL_SS_EVENTS,
                                 content=message
                             )
-                            threading.Timer(30, lambda: send_webhook_message(
-                                webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT,
-                                content=message
-                            )).start()
+                            # threading.Timer(30, lambda: send_webhook_message(
+                            #     webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT,
+                            #     content=message
+                            # )).start()
                         except Exception as e:
                             print(f"Error sending message: {e}")
                     else:
