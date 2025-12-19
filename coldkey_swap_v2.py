@@ -9,6 +9,11 @@ from modules.constants import (
     WEBHOOK_URL_SS_EVENTS,
 )
 
+COLDKEY_SWAP_EVENT_TYPE = "COLDKEY_SWAP"
+IDENTITY_CHANGE_EVENT_TYPE = "IDENTITY_CHANGE"
+COLDKEY_SWAP_FINISHED_EVENT_TYPE = "COLDKEY_SWAP_FINISHED"
+DEREGISTERED_EVENT_TYPE = "DEREGISTERED"
+
 class ColdkeySwapFetcher:
     def __init__(self):
         self.subtensor = bt.subtensor(NETWORK)
@@ -24,8 +29,7 @@ class ColdkeySwapFetcher:
   
     def fetch_extrinsic_data(self, block_number):
         """Extract ColdkeySwapScheduled events from the data"""
-        coldkey_swaps = []
-        identity_changes = []
+        events = []
         print(f"Fetching events from chain")
         block_hash = self.subtensor.substrate.get_block_hash(block_id=block_number)
         extrinsics = self.subtensor.substrate.get_extrinsics(block_hash=block_hash)
@@ -48,31 +52,59 @@ class ColdkeySwapFetcher:
                 
                 try:
                     subnet_id = owner_coldkeys.index(from_coldkey)
-                    swap_info = {
+                    event_info = {
+                        'event_type': COLDKEY_SWAP_EVENT_TYPE,
                         'old_coldkey': from_coldkey,
                         'new_coldkey': new_coldkey,
                         'subnet': subnet_id,
                     }
                     
-                    coldkey_swaps.append(swap_info)
+                    events.append(event_info)
                 except ValueError:
                     print(f"From coldkey {from_coldkey} not found in owner coldkeys")
+
+            if (
+                call.get('call_module') == 'SubtensorModule' and
+                call.get('call_function') == 'set_subnet_identity'
+            ):
                 
-        subnet_count = len(self.subnet_names)
-        for i in range(subnet_count):
-            if subnet_names[i] != self.subnet_names[i]:
-                identity_change_info = {
-                    'subnet': i,
-                    'old_identity': self.subnet_names[i],
-                    'new_identity': subnet_names[i],
-                    'old_owner_coldkey': self.owner_coldkeys[i],
-                    'new_owner_coldkey': owner_coldkeys[i],
-                }
-                identity_changes.append(identity_change_info)
+                # Get the new coldkey from call_args
+                address = ex.value.get('address', None)
+                subnet_id = owner_coldkeys.index(address)
+                # To get the old identity, use the current subnet identity from subnet_infos[subnet_id].
+                # To get the new identity, get from call_args['subnet_name'].
+                try:
+                    old_identity = subnet_infos[subnet_id].subnet_name
+                    call_args = call.get('call_args', [])
+                    new_identity = next((a['value'] for a in call_args if a['name'] == 'subnet_name'), None)
+                    event_info = {
+                        'event_type': IDENTITY_CHANGE_EVENT_TYPE,
+                        'subnet': subnet_id,
+                        'old_identity': old_identity,
+                        'new_identity': new_identity,
+                    }
+                    events.append(event_info)
+                except ValueError:
+                    print(f"Address {address} not found in owner coldkeys")
+
+        for i in range(len(subnet_names)):
+            if owner_coldkeys[i] != self.owner_coldkeys[i]:
+                if subnet_names[i] != self.subnet_names[i]:
+                    event_info = {
+                        'event_type': DEREGISTERED_EVENT_TYPE,
+                        'subnet': i,
+                    }
+                    events.append(event_info)
+                else:
+                    event_info = {
+                        'event_type': COLDKEY_SWAP_FINISHED_EVENT_TYPE,
+                        'subnet': i,
+                    }
+                    events.append(event_info)
 
         self.subnet_names = subnet_names
         self.owner_coldkeys = owner_coldkeys
-        return coldkey_swaps, identity_changes
+        return events
  
     def run(self):
         while True:
@@ -85,10 +117,10 @@ class ColdkeySwapFetcher:
             print(f"Fetching coldkey swaps for block {self.last_checked_block}")
             while True:
                 try:
-                    coldkey_swaps, identity_changes = self.fetch_extrinsic_data(self.last_checked_block)
-                    if len(coldkey_swaps) > 0 or len(identity_changes) > 0:
+                    events = self.fetch_extrinsic_data(self.last_checked_block)
+                    if len(events) > 0:
                         try:
-                            message = self.format_message(coldkey_swaps, identity_changes)
+                            message = self.format_message(events)
                             send_webhook_message(
                                 webhook_url=WEBHOOK_URL_SS_EVENTS,
                                 content=message
@@ -110,16 +142,17 @@ class ColdkeySwapFetcher:
                     time.sleep(1)
 
 
-    def format_message(self, coldkey_swaps, identity_changes):
+    def format_message(self, events):
         message = "Hey @everyone! \n"
-        for swap in coldkey_swaps:
-            message += f"Subnet {swap['subnet']} is swapping coldkey from {swap['old_coldkey']} to {swap['new_coldkey']}\n"
-
-        for change in identity_changes:
-            if change['old_owner_coldkey'] != change['new_owner_coldkey']:
-                message += f"Subnet {change['subnet']} has deregistered from the network. :cry:\n"
-            else:   
-                message += f"Subnet {change['subnet']} has changed identity from {change['old_identity']} to {change['new_identity']}\n"
+        for event in events:
+            if event['event_type'] == COLDKEY_SWAP_EVENT_TYPE:
+                message += f"Subnet {event['subnet']} is swapping coldkey from {event['old_coldkey']} to {event['new_coldkey']}\n"
+            elif event['event_type'] == IDENTITY_CHANGE_EVENT_TYPE:
+                message += f"Subnet {event['subnet']} has changed identity from {event['old_identity']} to {event['new_identity']}\n"
+            elif event['event_type'] == COLDKEY_SWAP_FINISHED_EVENT_TYPE:
+                message += f"Subnet {event['subnet']} has finished swapping coldkey\n"
+            elif event['event_type'] == DEREGISTERED_EVENT_TYPE:
+                message += f"Subnet {event['subnet']} has deregistered from the network. :cry:\n"
         return message
 
 
