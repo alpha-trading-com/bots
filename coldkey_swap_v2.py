@@ -87,9 +87,9 @@ class ColdkeySwapFetcher:
                 except ValueError:
                     print(f"Address {address} not found in owner coldkeys")
 
-        for i in range(len(subnet_names)):
-            if owner_coldkeys[i] != self.owner_coldkeys[i]:
-                if subnet_names[i] != self.subnet_names[i]:
+        for i in range(len(self.subnet_names)):
+            if self.owner_coldkeys[i] != owner_coldkeys[i]:
+                if self.subnet_names[i] != subnet_names[i]:
                     event_info = {
                         'event_type': DEREGISTERED_EVENT_TYPE,
                         'subnet': i,
