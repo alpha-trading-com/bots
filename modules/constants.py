@@ -40,6 +40,7 @@ GOOGLE_DOC_ID_OWNER_WALLETS_SS = "167NEkUZkpzZx1L-jDgjdDQNhu5rlddpV__rArvTfqoo"
 
 TARGET_USER_IDS = [
     "389189199514959893",  # const
+    "346765365642133514",  # siam kidd
     #"1020187154502144072", # Tegridy
     #"1438183192610734211",  # soon
 ]

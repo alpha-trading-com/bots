@@ -223,8 +223,11 @@ def send_owner_coldkey_message(stake_events):
             color = "🔴"
         else:
             continue
+        owner_index = owner_coldkeys.index(coldkey)
+        if owner_index == 109:
+            continue
         message += (
-            f"**Owner {owner_coldkeys.index(coldkey)}**:"
+            f"**Owner {owner_index}**:"
             f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
         )
 
