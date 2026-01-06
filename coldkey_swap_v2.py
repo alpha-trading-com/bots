@@ -148,7 +148,7 @@ class ColdkeySwapFetcher:
             if event['event_type'] == COLDKEY_SWAP_EVENT_TYPE:
                 message += f"Subnet {event['subnet']} is swapping coldkey from {event['old_coldkey']} to {event['new_coldkey']}\n"
             elif event['event_type'] == IDENTITY_CHANGE_EVENT_TYPE:
-                message += f"Subnet {event['subnet']} has changed identity from {event['old_identity']} to {event['new_identity']}\n"
+                message += f"Subnet {event['subnet']} has changed identity to {event['new_identity']}\n"
             elif event['event_type'] == COLDKEY_SWAP_FINISHED_EVENT_TYPE:
                 message += f"Subnet {event['subnet']} has finished swapping coldkey\n"
             elif event['event_type'] == DEREGISTERED_EVENT_TYPE:
