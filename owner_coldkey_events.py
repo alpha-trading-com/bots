@@ -223,9 +223,7 @@ def send_owner_coldkey_message(stake_events):
             color = "🔴"
         else:
             continue
-        owner_index = owner_coldkeys.index(coldkey)
-        if owner_index == 109:
-            continue
+    
         message += (
             f"**Owner {owner_index}**:"
             f"**`{color} {event['type']}`**: {tao_amount} TAO on subnet `#{netuid_val}` from `{coldkey}`\n"
@@ -290,7 +288,7 @@ def send_message_to_discord(stake_events):
         coldkey = event['coldkey']
         if coldkey in owner_coldkeys:
             netuid = owner_coldkeys.index(coldkey)
-            if netuid != 20:
+            if netuid != 20 and netuid != 109:
                 print("Found stake event for owner coldkey")
                 owner_coldkey_stake_events.append(event)
             
