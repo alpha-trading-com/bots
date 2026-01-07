@@ -7,7 +7,7 @@ import time
 
 
 from modules.constants import (
-    WEBHOOK_URL_AETH_CHAIN_EVENT,
+    WEBHOOK_URL_AETH_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_MINI_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS,
@@ -230,7 +230,7 @@ def send_owner_coldkey_message(stake_events):
         )
 
     send_webhook_message(
-        webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT, 
+        webhook_url=WEBHOOK_URL_AETH_WALLET_TRANSACTIONS, 
         content=message,
     )
 
