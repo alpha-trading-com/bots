@@ -112,7 +112,6 @@ class DiscordCrawler:
         messages = self.fetch_messages(api_url=api_url)
         if not messages:
             return
-        global IMPORTANT_CHANNEL_LIST
         private_track_lists = [
             "1424029936527741043",
             "1316942343466909777",
@@ -218,6 +217,9 @@ class DiscordCrawler:
         """Run the crawler with specified interval in seconds"""
         print(f"Starting Discord crawler...")
         for i, channel_id in enumerate(self.channel_list):
+            if i == 0:
+                #continue for the root channel
+                continue
             init_messages = self.fetch_messages(api_url=self.api_urls[i])
             self.initial_messages.append(init_messages)
 
@@ -233,6 +235,9 @@ class DiscordCrawler:
             try:
                 print(f"\n[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Checking for new messages...")
                 for i, channel_id in enumerate(self.channel_list):
+                    if i == 0:
+                        #continue for the root channel
+                        continue
                     self.process_new_messages(api_url=self.api_urls[i], channel_name=i, target_user_ids=self.target_user_ids)
                 print(f"Waiting {check_interval} seconds until next check...")
             except KeyboardInterrupt:
