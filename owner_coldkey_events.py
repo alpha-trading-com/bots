@@ -11,6 +11,7 @@ from modules.constants import (
     WEBHOOK_URL_SS_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_MINI_WALLET_TRANSACTIONS,
     WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS,
+    WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS_IMP,
     GOOGLE_DOC_ID_OWNER_WALLETS_SS,
     NETWORK,
     CEXS,
@@ -318,6 +319,7 @@ def send_message_to_discord(stake_events):
 
 def send_message_to_discord_transfer(transfer_events):
     message = "Hey @everyone! \n"
+    imp_message = "Hey @everyone! \n"
     def get_owner_name(addr):
         if addr in owner_coldkeys:
             return f"Owner {owner_coldkeys.index(addr)}"
@@ -335,6 +337,7 @@ def send_message_to_discord_transfer(transfer_events):
             return "Unknown"
 
     exits_message = False
+    imp_exits_message = False
     for event in transfer_events:
         from_addr = event['from']
         to_addr = event['to']
@@ -357,19 +360,23 @@ def send_message_to_discord_transfer(transfer_events):
         if to_owner_name == "Unknown":
             to_owner_name = get_cexs_name(to_addr)
 
-        exits_message = True
         if from_owner_name.endswith("imp") or to_owner_name.endswith("imp"):
-            message += (f"🟢🟢🟢🟢**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
+            imp_message += (f"🟢🟢🟢🟢**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
+            imp_exits_message = True
         else:
             message += (f"**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
+            exits_message = True
 
-    if not exits_message:
-        return
-
-    send_webhook_message(
-        webhook_url=WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS, 
-        content=message,
-    )
+    if exits_message:
+        send_webhook_message(
+            webhook_url=WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS, 
+            content=message,
+        )
+    if imp_exits_message:
+        send_webhook_message(
+            webhook_url=WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS_IMP, 
+            content=imp_message,
+        )
 
 if __name__ == "__main__":    
     while True:
