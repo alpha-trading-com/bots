@@ -358,7 +358,10 @@ def send_message_to_discord_transfer(transfer_events):
             to_owner_name = get_cexs_name(to_addr)
 
         exits_message = True
-        message += (f"**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
+        if from_owner_name.endswith("imp") or to_owner_name.endswith("imp"):
+            message += (f"🟢🟢🟢🟢**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
+        else:
+            message += (f"**{from_owner_name}**({from_addr}) transferred {amount_tao} TAO to **{to_owner_name}**({to_addr})\n")
 
     if not exits_message:
         return
