@@ -343,7 +343,7 @@ def main():
     )
     
     # Check every 60 seconds (adjust as needed)
-    monitor.run(check_interval=60)
+    monitor.run(check_interval=30)
 
 
 if __name__ == "__main__":
