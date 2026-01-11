@@ -350,9 +350,6 @@ def send_message_to_discord_transfer(transfer_events):
         if amount_tao < 0.001:
             continue
 
-        if from_owner_name == to_owner_name:
-            continue
-
         if from_owner_name == "Unknown":
             from_owner_name = get_cexs_name(from_addr)
         
