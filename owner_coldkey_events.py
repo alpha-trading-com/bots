@@ -341,7 +341,6 @@ def send_message_to_discord_transfer(transfer_events):
     for event in transfer_events:
         from_addr = event['from']
         to_addr = event['to']
-        amount = event['amount']
         amount_tao = event['amount_tao']
         from_owner_name = get_owner_name(from_addr)
         to_owner_name = get_owner_name(to_addr)
