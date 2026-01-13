@@ -316,7 +316,6 @@ def send_message_to_discord(stake_events):
         print("mini_wallet_stake_events")
         send_mini_wallet_message(mini_wallet_stake_events)
 
-
 def send_message_to_discord_transfer(transfer_events):
     message = "Hey @everyone! \n"
     imp_message = "Hey @everyone! \n"
@@ -346,8 +345,14 @@ def send_message_to_discord_transfer(transfer_events):
         to_owner_name = get_owner_name(to_addr)
         if from_owner_name == "Unknown" and to_owner_name == "Unknown":
             continue
-
+        
+        if to_owner_name == "Owner 51":
+            continue
+        
         if amount_tao < 0.001:
+            continue
+
+        if to_addr == "5DzsVV2L4M9r4uWoyarzPyhfeCv6DDAEs5rM2bpHjmerPcGa":
             continue
 
         if from_owner_name == "Unknown":
