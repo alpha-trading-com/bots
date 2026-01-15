@@ -3,6 +3,10 @@ import time
 from datetime import datetime
 from typing import Dict, List, Optional
 
+from modules.constants import (
+    BOT_TOKEN,
+    GOOGLE_DOC_ID_CHANNELS,
+)
 
 class ChannelMonitorBot:
     """Monitor Discord guild channels for creation, deletion, and name changes"""
@@ -327,8 +331,7 @@ class ChannelMonitorBot:
 
 def main():
     """Main entry point"""
-    # Configuration - Replace these with your actual values
-    BOT_TOKEN = "MTIwNjY0MzY5NDEyODg1NzEwMw.GkBLIU.9yxK6xuxJbqYOJ7IcBFekUufJqNRCu-YqNE_I8"
+    
     GUILD_ID = "799672011265015819"
     
     # Optional: Add webhook URL for notifications
