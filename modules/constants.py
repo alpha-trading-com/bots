@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 WEBHOOK_URL_AETH_VIP_MESSAGES = "https://discord.com/api/webhooks/1444355854387253502/TzAaJT1a-Eya4PC49UamnXybEB6SthXgih8CclHarcXscTqSrI7D6OtTzhAyYf-wchCr"
 WEBHOOK_URL_AETH_NEWS = "https://discord.com/api/webhooks/1440684964784902299/oqS9xREAL46lsroqnsKfjuJ35xFSmXGj135qKqHk_UKwQ0oB--GY20n9m38pjqBRx-Ip"
@@ -34,7 +38,7 @@ KEY_WORDS = [
     "live",
 ]
 
-BOT_TOKEN = "NTI0MzA1MDgwOTA0NzEyMjA2.GK1x5x.nPaEFM6UGYDwXuojTWyKlIKX0T6VEIRHt75v0k"  
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "") # Discord token, can be found in the .env file and you can get it from inspect element of google browser
 
 GOOGLE_DOC_ID_OWNER_WALLETS = "1VUDA8mzHd_iUQEqiDWMORys6--2ab8nDSThGb--_PaQ"
 GOOGLE_DOC_ID_BOTS = "1Vdm20cXVAK-kjgjBw9XcbVYaAvvCWyY8IuPLAE2aRBI"

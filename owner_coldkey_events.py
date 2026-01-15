@@ -355,6 +355,9 @@ def send_message_to_discord_transfer(transfer_events):
         if to_addr == "5DzsVV2L4M9r4uWoyarzPyhfeCv6DDAEs5rM2bpHjmerPcGa":
             continue
 
+        if to_addr == "5HHS55o12rsvH5cKdAYzFW1bsPiQPPctcC8pcJLBHZbZnpHV":
+            continue
+
         if from_owner_name == "Unknown":
             from_owner_name = get_cexs_name(from_addr)
         
