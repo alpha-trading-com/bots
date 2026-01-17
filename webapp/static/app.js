@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const fetchDmBtn = document.getElementById('fetch-dm-btn');
     const clearDmBtn = document.getElementById('clear-dm-btn');
-    const userId = "1285396632921309267";
+    const userId = "1461212461100433537";
     const dmResults = document.getElementById('dm-results');
 
     fetchDmBtn.addEventListener('click', async function() {

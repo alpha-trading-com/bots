@@ -13,11 +13,9 @@ from aeth_discord_bot.bot import DiscordBot
 
 app = FastAPI(title="Discord Bot Web Interface")
 
-# Initialize DiscordBot (you'll need to set BOT_TOKEN as environment variable)
-BOT_TOKEN = "Bot MTQ2MTc5MTY5Njc2NDI3Njg1OQ.GIhtn-.6Leg1a-SYNgQ0AJbXegFEiyJnr2Zy9OmA38qvM"
 GUILD_ID = "1420796398307377284"  # Hardcoded guild ID
 
-discord_bot = DiscordBot(bot_token=BOT_TOKEN)
+discord_bot = DiscordBot()
 
 # Get the directory where this script is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

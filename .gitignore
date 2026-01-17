@@ -5,6 +5,6 @@ subtensor
 logs/*
 *.json
 .env
-
+bot.env
 test.py
 *.log

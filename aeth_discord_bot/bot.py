@@ -8,18 +8,14 @@ import requests
 import time
 from typing import List, Dict, Optional
 
+from dotenv import load_dotenv
 
-from aeth_discord_bot.constants import BANNED_KEYWORDS
+load_dotenv(f"{os.path.dirname(os.path.abspath(__file__))}/bot.env")
 
 class DiscordBot:
-    def __init__(self, bot_token: str):
-        """
-        Initialize the Discord bot
-        
-        Args:
-            bot_token: Discord bot token (format: "Bot YOUR_TOKEN" or just "YOUR_TOKEN")
-        """
-        self.bot_token = bot_token
+    def __init__(self):
+        self.bot_token = "Bot " + os.getenv("BOT_TOKEN")
+        print(self.bot_token)
         self.api_base = f"https://discord.com/api/v10"
         
     def get_headers(self) -> Dict[str, str]:
@@ -676,12 +672,9 @@ def main():
     """
     Main function to run the message deleter
     Configure your bot token and channel ID here
-    """
-
-    BOT_TOKEN = "Bot MTQ2MTc5MTY5Njc2NDI3Njg1OQ.GIhtn-.6Leg1a-SYNgQ0AJbXegFEiyJnr2Zy9OmA38qvM" # Aeth bot token
-    
+        """    
     # Create deleter instance
-    discord_bot = DiscordBot(bot_token=BOT_TOKEN)
+    discord_bot = DiscordBot()
     
     print(discord_bot.get_all_guild_members(guild_id="1420796398307377284"))
     # # discord_bot.send_message(content="Hello, I am here to let you know the important news and events. :heart:", channel_id="1447606805248086218")
