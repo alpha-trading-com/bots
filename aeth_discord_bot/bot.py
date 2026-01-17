@@ -675,8 +675,12 @@ def main():
         """    
     # Create deleter instance
     discord_bot = DiscordBot()
-    
-    print(discord_bot.get_all_guild_members(guild_id="1420796398307377284"))
+    # Read announcement.txt message
+    announcement_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'announcement.txt')
+    with open(announcement_file, 'r', encoding='utf-8') as f:
+        announcement_text = f.read()
+    print(announcement_text)
+    discord_bot.send_dm(user_id="1461212461100433537", content=announcement_text)
     # # discord_bot.send_message(content="Hello, I am here to let you know the important news and events. :heart:", channel_id="1447606805248086218")
     # discord_bot.send_dm(user_id=user_id, content=message)
     # channel_id = discord_bot._get_dm_channel_id(user_id=user_id)
