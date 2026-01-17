@@ -1,0 +1,230 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.tabs-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #e0e0e0;
+    background-color: #fafafa;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 15px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.tab-button.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+    background-color: white;
+}
+
+.tab-content {
+    display: none;
+    padding: 30px;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-content h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.tab-content p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* DM History Styles */
+.dm-controls {
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.action-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.action-button.secondary {
+    background-color: #6c757d;
+}
+
+.action-button.secondary:hover:not(:disabled) {
+    background-color: #5a6268;
+}
+
+.dm-results {
+    margin-top: 20px;
+}
+
+.dm-header {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.dm-header p {
+    margin: 5px 0;
+    color: #333;
+}
+
+.messages-container {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 3px solid #ddd;
+}
+
+.message.bot-message {
+    background-color: #e7f3ff;
+    border-left-color: #007bff;
+}
+
+.message.user-message {
+    background-color: #f8f9fa;
+    border-left-color: #6c757d;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.message-timestamp {
+    color: #666;
+}
+
+.message-content {
+    color: #333;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.loading, .error, .info {
+    padding: 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.loading {
+    background-color: #e7f3ff;
+    color: #007bff;
+}
+
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
