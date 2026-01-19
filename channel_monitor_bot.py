@@ -142,7 +142,7 @@ class DiscordCrawler:
 
             if (
                 message_id not in self.seen_message_ids[channel_name] and
-                any(target_user_id == message.get('author', {}).get('id') for target_user_id in target_user_ids)
+                any(target_user_id == message.get('author', {}).get('id') for target_user_id in target_user_ids and channel_name != 120)
             ):
                 new_vip_messages.append(message)
 
