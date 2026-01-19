@@ -143,28 +143,24 @@ def extract_stake_events_from_data(events_data):
                 
             elif event_id == 'StakeMoved':
                 # Extract stake move information - also a tuple
-                if isinstance(attributes, tuple) and len(attributes) >= 6:
-                    coldkey_tuple = to_ss58(attributes[0][0]) if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else attributes[0]
-                    from_hotkey_tuple = to_ss58(attributes[1][0]) if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else attributes[1]
-                    to_hotkey_tuple = to_ss58(attributes[3][0]) if isinstance(attributes[3], tuple) and len(attributes[3]) > 0 else attributes[3]
-                    netuid = attributes[4]
-                    amount = attributes[5]
-                else:
-                    coldkey_tuple = None
-                    from_hotkey_tuple = None
-                    to_hotkey_tuple = None
-                    netuid = None
-                    amount = None
+                # Remove the last two entries if 'StakeMoved' as they may be from synthetic split events
+                if len(stake_events) >= 2:
+                    stake_events = stake_events[:-2]
+
+                # if isinstance(attributes, tuple) and len(attributes) >= 6:
+                #     coldkey_tuple = to_ss58(attributes[0][0]) if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else attributes[0]
+                #     from_hotkey_tuple = to_ss58(attributes[1][0]) if isinstance(attributes[1], tuple) and len(attributes[1]) > 0 else attributes[1]
+                #     to_hotkey_tuple = to_ss58(attributes[3][0]) if isinstance(attributes[3], tuple) and len(attributes[3]) > 0 else attributes[3]
+                #     netuid = attributes[4]
+                #     amount = attributes[5]
+                # else:
+                #     coldkey_tuple = None
+                #     from_hotkey_tuple = None
+                #     to_hotkey_tuple = None
+                #     netuid = None
+                #     amount = None
                 
-                stake_events.append({
-                    'type': 'StakeMoved',
-                    'coldkey': coldkey_tuple,
-                    'from_hotkey': from_hotkey_tuple,
-                    'to_hotkey': to_hotkey_tuple,
-                    'netuid': netuid,
-                    'amount': amount,
-                    'amount_tao': amount / 1e9 if amount else 0,
-                })
+                
     
     return stake_events
 
