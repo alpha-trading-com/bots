@@ -141,8 +141,9 @@ class DiscordCrawler:
                 print(f"Found new message from {message.get('author', {}).get('username', 'Unknown')}: {message.get('content', '')[:50]}...")
 
             if (
-                message_id not in self.seen_message_ids[channel_name] and
-                any(target_user_id == message.get('author', {}).get('id') for target_user_id in target_user_ids and channel_name != 120)
+                message_id not in self.seen_message_ids[channel_name]
+                and channel_name != 120
+                and any(target_user_id == message.get('author', {}).get('id') for target_user_id in target_user_ids)
             ):
                 new_vip_messages.append(message)
 
