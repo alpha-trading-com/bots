@@ -23,5 +23,5 @@ You can config tool by check README.md
 This is staking tool with ui.
 https://github.com/alpha-trading-com/staking
 This is bots which detect events.
-
+https://github.com/alpha-trading-com/bots
 To use tool, give olafs address 10tao.:joy:
