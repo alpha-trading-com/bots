@@ -17,3 +17,11 @@ I'm Olaf, your Aeth Bots Event Announcer. 🚀
 Enjoy your time here! 💬
 
 ---
+
+If you wanna use, proxy-delegator-multisig tools.
+You can config tool by check README.md
+This is staking tool with ui.
+https://github.com/alpha-trading-com/staking
+This is bots which detect events.
+
+To use tool, give olafs address 10tao.:joy:
