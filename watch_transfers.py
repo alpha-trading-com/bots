@@ -183,7 +183,7 @@ def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cache)
 
 def get_total_balance(coldkey, subnet_infos):
     
-    balance = subtensor.get_balance(coldkey)
+    balance = subtensor.get_balance(coldkey).tao
     stake_infos = subtensor.get_stake_for_coldkey(
         coldkey_ss58=coldkey
     )
@@ -191,8 +191,15 @@ def get_total_balance(coldkey, subnet_infos):
     for info in stake_infos:
         subnet_info = subnet_infos[info.netuid]
         value = subnet_info.price.tao * info.stake.tao
+        if info.netuid == 0:
+            balance += value
+            continue
         total_value += value
-    return f"τ{round(balance.tao + total_value)}"
+
+    def fmt(val):
+        return "-" if val < 0.5 else f"τ{round(val)}"
+
+    return f"{fmt(balance + total_value)}| {fmt(balance)}| {fmt(total_value)}"
 
 def print_transfer_events(transfer_events, threshold):
     subnet_infos = subtensor.all_subnets()
@@ -213,7 +220,7 @@ def print_transfer_events(transfer_events, threshold):
             print(
                 f"\033[91m{from_owner_name}\033[0m(\033[96m{from_total_balance}\033[0m) => "
                 f"\033[92m{to_owner_name}\033[0m(\033[96m{to_total_balance}\033[0m): "
-                f"\033[94m{round(amount_tao, 1)} TAO\033[0m"
+                f"\033[94m{round(amount_tao, 1)}\033[0m"
             )
 
                   

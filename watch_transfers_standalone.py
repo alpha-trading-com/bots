@@ -147,16 +147,76 @@ def extract_transfer_events_from_data(events_data):
 
     return transfer_events
 
+
+def get_balance_and_stake_infos(subtensor, wallet_ss58, cache):
+    if wallet_ss58 in cache:
+        balance, stake_infos = cache[wallet_ss58]
+    stake_infos = subtensor.get_stake_for_coldkey(
+        coldkey_ss58=wallet_ss58
+    )
+    # stake_infos is a list of StakeInfo objects
+    balance = subtensor.get_balance(wallet_ss58)
+
+    cache[wallet_ss58] = balance, stake_infos
+    return cache[wallet_ss58]
+
+def get_total_value(subtensor, wallet_ss58, subnet_infos, current_netuid, cache):
+    cache_key = f"{wallet_ss58}_{current_netuid}"
+    if cache_key in cache:
+        return cache[cache_key]
+    
+    balance, stake_infos = get_balance_and_stake_infos(subtensor, wallet_ss58, cache)
+    free_value = balance.tao
+    now_subnet_stake_value = 0
+    other_subnet_staked_value = 0
+
+    for info in stake_infos:
+        subnet_info = subnet_infos[info.netuid]
+        value = subnet_info.price.tao * info.stake.tao
+        if info.netuid == 0:
+            free_value += value
+        elif current_netuid == info.netuid:
+            now_subnet_stake_value += value
+        else:
+            other_subnet_staked_value += value
+    
+    total_value = free_value + now_subnet_stake_value + other_subnet_staked_value
+
+
+def get_total_balance(coldkey, subnet_infos):
+    
+    balance = subtensor.get_balance(coldkey)
+    stake_infos = subtensor.get_stake_for_coldkey(
+        coldkey_ss58=coldkey
+    )
+    total_value = 0
+    for info in stake_infos:
+        subnet_info = subnet_infos[info.netuid]
+        value = subnet_info.price.tao * info.stake.tao
+        total_value += value
+    return f"τ{round(balance.tao + total_value)}"
+
 def print_transfer_events(transfer_events, threshold):
-     for event in transfer_events:
+    subnet_infos = subtensor.all_subnets()
+    is_first = True
+    for event in transfer_events:
         from_addr = event['from']
         to_addr = event['to']
         amount_tao = event['amount_tao']
         from_owner_name = get_coldkey_display_name(from_addr)
         to_owner_name = get_coldkey_display_name(to_addr)
-
+        from_total_balance = get_total_balance(from_addr, subnet_infos)
+        to_total_balance = get_total_balance(to_addr, subnet_infos)
+        
         if amount_tao > threshold:
-            print(f"\033[91m{from_owner_name}\033[0m => \033[92m{to_owner_name}\033[0m: \033[94m{round(amount_tao, 1)} TAO\033[0m")
+            if is_first:
+                print(f"{'*'*40}")
+                is_first = False
+            print(
+                f"\033[91m{from_owner_name}\033[0m(\033[96m{from_total_balance}\033[0m) => "
+                f"\033[92m{to_owner_name}\033[0m(\033[96m{to_total_balance}\033[0m): "
+                f"\033[94m{round(amount_tao, 1)} TAO\033[0m"
+            )
 
                   
 if __name__ == "__main__":    
@@ -171,7 +231,6 @@ if __name__ == "__main__":
         
         # Extract stake events from live data
         transfer_events = extract_transfer_events_from_data(events)
-        print(f"{'*'*40}")
         
         if transfer_events:
             print_transfer_events(transfer_events, threshold)
