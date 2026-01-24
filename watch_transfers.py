@@ -217,11 +217,21 @@ def print_transfer_events(transfer_events, threshold):
             if is_first:
                 print(f"{'*'*40}")
                 is_first = False
+
+            # Choose color depth based on amount
+            if amount_tao > 1000:
+                amount_color = "\033[95m"  # Deep magenta for very high amounts
+            elif amount_tao > 500:
+                amount_color = "\033[35m"  # Medium magenta for higher amounts
+            elif amount_tao > 50:
+                amount_color = "\033[94m"  # Deep blue for moderate amounts
+            else:
+                amount_color = "\033[96m"  # Lighter blue for lower threshold
+
             print(
-                
                 f"\033[91m{from_owner_name}\033[0m => "
                 f"\033[92m{to_owner_name}\033[0m:"
-                f"\033[94m{round(amount_tao, 1)}\033[0m"
+                f"{amount_color}{round(amount_tao, 1)}\033[0m"
             )
 
                   
