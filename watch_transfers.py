@@ -210,8 +210,8 @@ def print_transfer_events(transfer_events, threshold):
         amount_tao = event['amount_tao']
         from_owner_name = get_coldkey_display_name(from_addr)
         to_owner_name = get_coldkey_display_name(to_addr)
-        from_total_balance = get_total_balance(from_addr, subnet_infos)
-        to_total_balance = get_total_balance(to_addr, subnet_infos)
+        # from_total_balance = get_total_balance(from_addr, subnet_infos)
+        # to_total_balance = get_total_balance(to_addr, subnet_infos)
         
         if amount_tao > threshold:
             if is_first:
@@ -219,8 +219,8 @@ def print_transfer_events(transfer_events, threshold):
                 is_first = False
             print(
                 
-                f"\033[91m{from_owner_name}\033[0m(\033[96m{from_total_balance}\033[0m) => "
-                f"\033[92m{to_owner_name}\033[0m(\033[96m{to_total_balance}\033[0m):"
+                f"\033[91m{from_owner_name}\033[0m => "
+                f"\033[92m{to_owner_name}\033[0m:"
                 f"\033[94m{round(amount_tao, 1)}\033[0m"
             )
 
