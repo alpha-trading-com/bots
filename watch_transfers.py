@@ -238,7 +238,7 @@ def print_transfer_events(transfer_events, threshold):
 if __name__ == "__main__":    
     
     #threshold = float(input("Enter the threshold: "))
-    threshold = 0.5
+    threshold = 100
     while True:
         block_number = subtensor.get_current_block()
         block_hash = subtensor.substrate.get_block_hash(block_id=block_number)
