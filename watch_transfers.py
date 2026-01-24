@@ -146,7 +146,8 @@ def extract_transfer_events_from_data(events_data):
     return transfer_events
 
 def print_transfer_events(transfer_events, threshold):
-     for event in transfer_events:
+    is_first = True
+    for event in transfer_events:
         from_addr = event['from']
         to_addr = event['to']
         amount_tao = event['amount_tao']
@@ -154,6 +155,9 @@ def print_transfer_events(transfer_events, threshold):
         to_owner_name = get_coldkey_display_name(to_addr)
 
         if amount_tao > threshold:
+            if is_first:
+                print(f"{'*'*40}")
+                is_first = False
             print(f"\033[91m{from_owner_name}\033[0m => \033[92m{to_owner_name}\033[0m: \033[94m{round(amount_tao, 1)} TAO\033[0m")
 
                   
@@ -171,7 +175,6 @@ if __name__ == "__main__":
         transfer_events = extract_transfer_events_from_data(events)
         
         if transfer_events:
-            print(f"{'*'*40}")
             print_transfer_events(transfer_events, threshold)
         
         subtensor.wait_for_block()
