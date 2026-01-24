@@ -3,18 +3,20 @@ import threading
 import requests
 import re
 
+# Constants (inlined from modules.constants)
+NETWORK = "finney"
 
-from modules.bt_utils import get_total_value
+CEXS = {
+    "5FqBL928choLPmeFz5UVAvonBD5k7K2mZSXVC9RkFzLxoy2s": "MEXC",
+    "5GBnPzvPghS8AuCoo6bfnK7JUFHuyUhWSFD4woBNsKnPiEUi": "Binance",
+    "5HiveMEoWPmQmBAb8v63bKPcFhgTGCmST1TVZNvPHSTKFLCv": "Taobridge",
+    "5FqqXKb9zonSNKbZhEuHYjCXnmPbX9tdzMCU2gx8gir8Z8a5": "Cex",
+}
 
-
-from modules.constants import (
-    GOOGLE_DOC_ID_BOTS,
-    GOOGLE_DOC_ID_OWNER_WALLETS,
-    GOOGLE_DOC_ID_OWNER_WALLETS_SS,
-    GOOGLE_DOC_ID_OWNER_WALLETS_PS,
-    NETWORK,
-    CEXS,
-)
+GOOGLE_DOC_ID_BOTS = "1Vdm20cXVAK-kjgjBw9XcbVYaAvvCWyY8IuPLAE2aRBI"
+GOOGLE_DOC_ID_OWNER_WALLETS = "1VUDA8mzHd_iUQEqiDWMORys6--2ab8nDSThGb--_PaQ"
+GOOGLE_DOC_ID_OWNER_WALLETS_SS = "167NEkUZkpzZx1L-jDgjdDQNhu5rlddpV__rArvTfqoo"
+GOOGLE_DOC_ID_OWNER_WALLETS_PS = "1o0f3bPL5kvsRrnSI3vTc1knOlmY928SpaQP9Mi0USeI"
 
 REFRESH_INTERVAL = 20 # minutes
 subtensor = bt.subtensor(NETWORK)
@@ -175,3 +177,4 @@ if __name__ == "__main__":
             print_transfer_events(transfer_events, threshold)
         
         subtensor.wait_for_block()
+
