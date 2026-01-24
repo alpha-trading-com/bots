@@ -169,9 +169,9 @@ if __name__ == "__main__":
         
         # Extract stake events from live data
         transfer_events = extract_transfer_events_from_data(events)
-        print(f"{'*'*40}")
         
         if transfer_events:
+            print(f"{'*'*40}")
             print_transfer_events(transfer_events, threshold)
         
         subtensor.wait_for_block()
