@@ -218,9 +218,9 @@ def print_transfer_events(transfer_events, threshold):
                 print(f"{'*'*40}")
                 is_first = False
             print(
+                f"\033[94m{round(amount_tao, 1)}\033[0m: "
                 f"\033[91m{from_owner_name}\033[0m(\033[96m{from_total_balance}\033[0m) => "
-                f"\033[92m{to_owner_name}\033[0m(\033[96m{to_total_balance}\033[0m): "
-                f"\033[94m{round(amount_tao, 1)}\033[0m"
+                f"\033[92m{to_owner_name}\033[0m(\033[96m{to_total_balance}\033[0m)"
             )
 
                   
