@@ -23,7 +23,7 @@ subtensor_owner_coldkeys = bt.subtensor(NETWORK)
 bots = []
 wallet_owners = {}
 owner_coldkeys = []
-
+wallet_numbers = {}
 
 def load_bots_from_gdoc():
     url = f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_BOTS}/export?format=txt"
@@ -79,8 +79,10 @@ def get_coldkey_display_name(coldkey):
     if coldkey is None:
         return "Unknown"
     owner_color = "\033[93m"
+    wallet_number_color = "\033[96m"
     color = "\033[94m"
     reset = "\033[0m" 
+
 
     if coldkey in owner_coldkeys:
         return coldkey + f"{owner_color} (owner{owner_coldkeys.index(coldkey)}){reset}"
@@ -95,7 +97,12 @@ def get_coldkey_display_name(coldkey):
     if coldkey in CEXS:
         return coldkey + f"{owner_color} ({CEXS[coldkey]}){reset}"
     
-    return coldkey
+    if coldkey in wallet_numbers:
+        wallet_number = wallet_numbers[coldkey]
+    else:
+        wallet_number = len(wallet_numbers) + 1
+        wallet_numbers[coldkey] = wallet_number
+    return coldkey + f"{wallet_number_color} (wallet{wallet_number}){reset}"
 
 def get_color(event_type, coldkey):
     if event_type == 'StakeAdded':
