@@ -97,7 +97,7 @@ def get_coldkey_display_name(coldkey):
     else:
         wallet_number = len(wallet_numbers) + 1
         wallet_numbers[coldkey] = wallet_number
-    return coldkey + f"{wallet_number_color} (wallet{wallet_number}){reset}"
+    return coldkey + f"{wallet_number_color} (#{wallet_number}){reset}"
 
 def get_color(event_type, coldkey):
     if event_type == 'StakeAdded':
