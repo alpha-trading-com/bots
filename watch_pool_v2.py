@@ -220,6 +220,9 @@ def print_stake_events(stake_events, netuid, show_balance):
     for event in stake_events:
         netuid_val = int(event['netuid'])
         tao_amount = float(event['amount_tao'])
+        if not ((netuid == netuid_val or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1)):
+            continue
+        
         old_coldkey = event['coldkey']
         coldkey = get_coldkey_display_name(old_coldkey)
 
@@ -234,12 +237,11 @@ def print_stake_events(stake_events, netuid, show_balance):
             continue
 
         reset = "\033[0m"
-        if (netuid == netuid or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1):
-            total_value_str = ""
-            if show_balance:
-                total_value_str = get_total_value(subtensor, old_coldkey, now_subnet_infos, netuid_val, cash)
-    
-            print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
+        total_value_str = ""
+        if show_balance:
+            total_value_str = get_total_value(subtensor, old_coldkey, now_subnet_infos, netuid_val, cash)
+
+        print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
 
                   
 if __name__ == "__main__":    

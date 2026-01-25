@@ -215,31 +215,34 @@ def print_transfer_events(transfer_events, threshold):
         from_addr = event['from']
         to_addr = event['to']
         amount_tao = event['amount_tao']
+        
+        if amount_tao <= threshold:
+            continue
+
         from_owner_name = get_coldkey_display_name(from_addr)
         to_owner_name = get_coldkey_display_name(to_addr)
         # from_total_balance = get_total_balance(from_addr, subnet_infos)
         # to_total_balance = get_total_balance(to_addr, subnet_infos)
         
-        if amount_tao > threshold:
-            if is_first:
-                print(f"{'*'*40}")
-                is_first = False
+        if is_first:
+            print(f"{'*'*40}")
+            is_first = False
 
-            # Choose color depth based on amount
-            if amount_tao > 1000:
-                amount_color = "\033[95m"  # Deep magenta for very high amounts
-            elif amount_tao > 500:
-                amount_color = "\033[35m"  # Medium magenta for higher amounts
-            elif amount_tao > 50:
-                amount_color = "\033[94m"  # Deep blue for moderate amounts
-            else:
-                amount_color = "\033[96m"  # Lighter blue for lower threshold
+        # Choose color depth based on amount
+        if amount_tao > 1000:
+            amount_color = "\033[95m"  # Deep magenta for very high amounts
+        elif amount_tao > 500:
+            amount_color = "\033[35m"  # Medium magenta for higher amounts
+        elif amount_tao > 50:
+            amount_color = "\033[94m"  # Deep blue for moderate amounts
+        else:
+            amount_color = "\033[96m"  # Lighter blue for lower threshold
 
-            print(
-                f"\033[91m{from_owner_name}\033[0m => "
-                f"\033[92m{to_owner_name}\033[0m:"
-                f"{amount_color}{round(amount_tao, 1)}\033[0m"
-            )
+        print(
+            f"\033[91m{from_owner_name}\033[0m => "
+            f"\033[92m{to_owner_name}\033[0m:"
+            f"{amount_color}{round(amount_tao, 1)}\033[0m"
+        )
 
                   
 if __name__ == "__main__":    
