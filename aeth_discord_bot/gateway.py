@@ -359,16 +359,9 @@ class DiscordGateway:
     
     async def _price_update_loop(self):
         """Periodically update status with TAO price"""
-        # Fetch price immediately on first run
-        first_run = True
-        
         while self.running:
             try:
-                if not first_run:
-                    await asyncio.sleep(self.update_price_interval)
-                else:
-                    first_run = False
-                    
+                await asyncio.sleep(self.update_price_interval)
                 if not self.running:
                     break
                     
@@ -384,12 +377,10 @@ class DiscordGateway:
                     status_msg = f"TAO: {price_str}"
                     self.status_message = status_msg
                     await self._update_presence()
-                    print(f"Updated status with TAO price: {price_str}")
                 else:
                     print("Failed to fetch TAO price, keeping current status")
             except Exception as e:
                 print(f"Error in price update loop: {e}")
                 # Continue loop even on error
-                await asyncio.sleep(self.update_price_interval)
                 continue
 
