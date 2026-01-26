@@ -233,7 +233,7 @@ def main():
                         bot_addr = bot_info["bot"]
                         staked = bot_info["staked_amount"]
                         # Show shortened address (first 8 chars)
-                        bot_short = bot_addr[:8] + "..." + bot_addr[-8:]
+                        bot_short = bot_addr
                         response += f"• `{bot_short}`: {staked:.2f} TAO\n"
                 else:
                     response += "No bots with stake ≥ 0.5 TAO found in this subnet."
@@ -285,11 +285,13 @@ def main():
                 return f"❌ Error fetching subnet info: {str(e)}"
         # Example: Reply differently based on message content
         elif "hello" in content_lower or "hi" in content_lower:
-            return f"Hi {author_name}! How can I help you?"
+            return f"Hi @{author_name}! How can I help you?"
         elif "help" in content_lower:
             return "I'm here to help! Use `!bots_stake_info <subnet_id>` to get bot stake information. Use `!subnet <subnet_id>` to get subnet information." 
         else:
             return ":joy:"
+            # Return None to not reply to other messages
+            return None
     
     # Set the custom handler
     bot.set_message_handler(custom_message_handler)
