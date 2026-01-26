@@ -28,24 +28,26 @@ load_bots_from_gdoc()
 def get_bot_staked_in_subnet(subnet_id: int) -> tuple[float, list[dict]]:
     total_staked_amount = 0.0
     subnet = subtensor.subnet(netuid=subnet_id)
-    stake_infos = subtensor.get_stake_info_for_coldkeys(coldkey_ss58s=bots)
+    batch_size = 60
     bot_staked_infos = []
-    for bot, stake_info in stake_infos.items():
-        bot_staked_amount = 0.0
-        for stake in stake_info:
-            if stake.netuid != subnet_id:
+    for i in range(0, len(bots), batch_size):
+        batch = bots[i:i+batch_size]
+        stake_infos = subtensor.get_stake_info_for_coldkeys(coldkey_ss58s=batch)
+        for bot, stake_info in stake_infos.items():
+            bot_staked_amount = 0.0
+            for stake in stake_info:
+                if stake.netuid != subnet_id:
+                    continue
+                bot_staked_amount += stake.stake.tao * subnet.price.tao
+            total_staked_amount += bot_staked_amount
+            if bot_staked_amount < 0.5:
                 continue
-            bot_staked_amount += stake.stake.tao * subnet.price.tao
-        total_staked_amount += bot_staked_amount
-        if bot_staked_amount < 0.5:
-            continue
-        bot_staked_infos.append({
-            "bot": bot,
-            "staked_amount": bot_staked_amount,
-        })
-    
+            bot_staked_infos.append({
+                "bot": bot,
+                "staked_amount": bot_staked_amount,
+            })
     return total_staked_amount, bot_staked_infos
-
+        
 def get_subnet_info(subnet_id: int) -> dict:
     subnet: bt.DynamicInfo = subtensor.subnet(netuid=subnet_id)
     print(subnet)
