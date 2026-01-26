@@ -301,7 +301,7 @@ def main():
             return f"Hi <@{author_id}>! I'm here to help! Use `!bots_stake_info <subnet_id>` to get bot stake information. Use `!subnet <subnet_id>` to get subnet information."
         else:
             # Return None to not reply to other messages
-            return None
+            return f"Do your own research rather than asking stupid questions. :joy:"
     
     # Set the custom handler
     bot.set_message_handler(custom_message_handler)
