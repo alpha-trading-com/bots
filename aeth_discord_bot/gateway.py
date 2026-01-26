@@ -22,13 +22,40 @@ from dotenv import load_dotenv
 load_dotenv(f"{os.path.dirname(os.path.abspath(__file__))}/bot.env")
 
 
+def get_tao_price() -> Optional[float]:
+    """
+    Fetch TAO price in USD from CoinGecko API
+    
+    Returns:
+        TAO price in USD, or None if fetch fails
+    """
+    try:
+        import requests
+        # CoinGecko API endpoint for Bittensor (TAO)
+        url = "https://api.coingecko.com/api/v3/simple/price"
+        params = {
+            "ids": "bittensor",
+            "vs_currencies": "usd"
+        }
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("bittensor", {}).get("usd")
+        else:
+            print(f"Failed to fetch TAO price: HTTP {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Error fetching TAO price: {e}")
+        return None
+
+
 class DiscordGateway:
     """
     Minimal Discord Gateway connection for setting bot presence/status.
     This runs in a separate thread to maintain a WebSocket connection.
     """
     
-    def __init__(self, bot_token: str):
+    def __init__(self, bot_token: str, update_price_interval: int = 60):
         self.bot_token = bot_token
         self.ws = None
         self.session = None
@@ -40,14 +67,17 @@ class DiscordGateway:
         self.heartbeat_interval = None
         self.loop = None
         self.decompressor = None  # For zlib-stream decompression
+        self.update_price_interval = update_price_interval  # Update price every N seconds
+        self.show_tao_price = False  # Whether to show TAO price in status
         
-    def start(self, status_message: str = "Monitoring channels", activity_type: int = 3):
+    def start(self, status_message: str = "Monitoring channels", activity_type: int = 3, show_tao_price: bool = False):
         """
         Start the Gateway connection in a background thread
         
         Args:
             status_message: The status message to display (e.g., "Watching for messages")
             activity_type: Activity type (0=Playing, 1=Streaming, 2=Listening, 3=Watching, 4=Custom, 5=Competing)
+            show_tao_price: If True, will update status with TAO price periodically
         """
         if aiohttp is None:
             print("Warning: aiohttp not available. Cannot start Gateway connection.")
@@ -59,6 +89,7 @@ class DiscordGateway:
             
         self.status_message = status_message
         self.activity_type = activity_type
+        self.show_tao_price = show_tao_price
         self.running = True
         self.thread = threading.Thread(target=self._run_async_loop, daemon=True)
         self.thread.start()
@@ -208,10 +239,16 @@ class DiscordGateway:
                     self.session_id = payload.get("session_id")
                     # Set presence after ready
                     await self._update_presence()
+                    # Start price update loop if enabled
+                    if self.show_tao_price:
+                        asyncio.create_task(self._price_update_loop())
                     
                 elif event == "RESUMED":
                     print("Gateway RESUMED")
                     await self._update_presence()
+                    # Start price update loop if enabled
+                    if self.show_tao_price:
+                        asyncio.create_task(self._price_update_loop())
                     
             elif op == 7:  # Reconnect
                 print("Gateway requested reconnect")
@@ -319,4 +356,40 @@ class DiscordGateway:
         """Close the WebSocket connection"""
         if self.ws and not self.ws.closed:
             await self.ws.close()
+    
+    async def _price_update_loop(self):
+        """Periodically update status with TAO price"""
+        # Fetch price immediately on first run
+        first_run = True
+        
+        while self.running:
+            try:
+                if not first_run:
+                    await asyncio.sleep(self.update_price_interval)
+                else:
+                    first_run = False
+                    
+                if not self.running:
+                    break
+                    
+                tao_price = get_tao_price()
+                if tao_price is not None:
+                    # Format price nicely
+                    if tao_price >= 1:
+                        price_str = f"${tao_price:,.2f}"
+                    else:
+                        price_str = f"${tao_price:.4f}"
+                    
+                    # Update status with TAO price
+                    status_msg = f"TAO: {price_str}"
+                    self.status_message = status_msg
+                    await self._update_presence()
+                    print(f"Updated status with TAO price: {price_str}")
+                else:
+                    print("Failed to fetch TAO price, keeping current status")
+            except Exception as e:
+                print(f"Error in price update loop: {e}")
+                # Continue loop even on error
+                await asyncio.sleep(self.update_price_interval)
+                continue
 

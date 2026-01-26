@@ -130,8 +130,13 @@ class MessageListenerBot(DiscordBot):
             if bot_token.startswith("Bot "):
                 bot_token = bot_token[4:]
             default_status = status_message or f"Monitoring {len(channel_ids)} channel{'s' if len(channel_ids) > 1 else ''}"
-            self.gateway = DiscordGateway(bot_token=bot_token)
-            self.gateway.start(status_message=default_status, activity_type=3)  # activity_type 3 = Watching
+            # Enable TAO price display in status
+            self.gateway = DiscordGateway(bot_token=bot_token, update_price_interval=60)  # Update every 60 seconds
+            self.gateway.start(
+                status_message=default_status, 
+                activity_type=3,  # activity_type 3 = Watching
+                show_tao_price=True  # Enable real-time TAO price in status
+            )
         else:
             print("Warning: BOT_TOKEN not found. Gateway connection (online status) will not work.")
         
