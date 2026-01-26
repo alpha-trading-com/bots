@@ -18,7 +18,13 @@ def get_help_message(author_id: str = None, content: str = None) -> str:
 def get_exception_message(author_id: str = None, content: str = None) -> str:
     content_lower = content.lower()
     if "58" in content_lower and "who" in content_lower:
-        return "DSV bought it."
+        return "DSV bought sn58."
+
+    if "110" in content_lower and "who" in content_lower:
+        return "DSV bought sn110."
+    
+    if "102" in content_lower and "who" in content_lower:
+        return "DSV bought sn102."
     
 
     EXCEPTION_MESSAGE = """
