@@ -284,8 +284,8 @@ def main():
                     response += f"**Alpha In:** {as_k(subnet_info['alpha_in'])} Alpha\n"
                 if "alpha_out" in subnet_info:
                     response += f"**Alpha Out:** {as_k(subnet_info['alpha_out'])} Alpha\n"
-                if "emission" in subnet_info:
-                    response += f"**Emission:** {round(subnet_info['emission'] * 100)}% TAO\n"
+                # if "emission" in subnet_info:
+                #     response += f"**Emission:** {round(subnet_info['emission'] * 100)}% TAO\n"
                 # Add more fields as needed
 
                 return response
