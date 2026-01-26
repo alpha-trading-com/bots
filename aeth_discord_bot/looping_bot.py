@@ -1,7 +1,7 @@
 import sys
 import os
 import time
-from typing import Dict, Optional, Callable, Set
+from typing import Dict, Optional, Callable, Set, Union, List
 
 # Add parent directory to path to import constants
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -27,10 +27,19 @@ class MessageListenerBot(DiscordBot):
         self.running = False
         self.bot_user_id = None
     
-    def init_seen_message_ids(self, channel_id: str):
-        messages = self.fetch_messages(limit=100, channel_id=channel_id)
-        for message in messages:
-            self.processed_messages.add(message.get("id"))
+    def init_seen_message_ids(self, channel_id: Union[str, List[str]]):
+        """
+        Initialize seen message IDs for one or more channels
+        
+        Args:
+            channel_id: Single channel ID (str) or list of channel IDs
+        """
+        channel_ids = [channel_id] if isinstance(channel_id, str) else channel_id
+        for ch_id in channel_ids:
+            messages = self.fetch_messages(limit=100, channel_id=ch_id)
+            for message in messages:
+                self.processed_messages.add(message.get("id"))
+            print(f"Initialized {len(messages)} seen messages for channel {ch_id}")
 
 
     def _get_bot_user_id_sync(self) -> Optional[str]:
@@ -90,15 +99,22 @@ class MessageListenerBot(DiscordBot):
         # Mark message as processed
         self.processed_messages.add(message_id)
     
-    def start_polling(self, channel_id: str, poll_interval: float = 2.0, reply_content: Optional[str] = None):
+    def start_polling(self, channel_id: Union[str, List[str]], poll_interval: float = 2.0, reply_content: Optional[str] = None):
         """
-        Start polling a channel for new messages and reply automatically
+        Start polling one or more channels for new messages and reply automatically
         
         Args:
-            channel_id: The Discord channel ID to poll
+            channel_id: The Discord channel ID(s) to poll. Can be a single channel ID (str) or a list of channel IDs
             poll_interval: How often to check for new messages (in seconds). Default: 2.0
             reply_content: Optional default reply content. If None, uses default reply or custom handler.
         """
+        # Normalize to list format
+        channel_ids = [channel_id] if isinstance(channel_id, str) else channel_id
+        
+        if not channel_ids:
+            print("Error: No channel IDs provided")
+            return
+        
         # Get bot user ID to ignore our own messages
         self.bot_user_id = self._get_bot_user_id_sync()
         if not self.bot_user_id:
@@ -110,24 +126,33 @@ class MessageListenerBot(DiscordBot):
             original_handler = self.message_handler
             self.message_handler = lambda msg: reply_content
         
-        print(f"Starting to poll channel {channel_id} every {poll_interval} seconds...")
+        if len(channel_ids) == 1:
+            print(f"Starting to poll channel {channel_ids[0]} every {poll_interval} seconds...")
+        else:
+            print(f"Starting to poll {len(channel_ids)} channels every {poll_interval} seconds...")
+            print(f"Channels: {', '.join(channel_ids)}")
         print("Press Ctrl+C to stop")
         
         self.running = True
         
         try:
             while self.running:
-                # Fetch recent messages (most recent first)
-                messages = self.fetch_messages(limit=10, channel_id=channel_id)
+                # Poll each channel
+                for ch_id in channel_ids:
+                    if not self.running:
+                        break
+                    
+                    # Fetch recent messages (most recent first)
+                    messages = self.fetch_messages(limit=10, channel_id=ch_id)
+                    
+                    if messages:
+                        # Process messages in reverse order (oldest first) to maintain chronological order
+                        for message in reversed(messages):
+                            if not self.running:
+                                break
+                            self._handle_message(message, ch_id)
                 
-                if messages:
-                    # Process messages in reverse order (oldest first) to maintain chronological order
-                    for message in reversed(messages):
-                        if not self.running:
-                            break
-                        self._handle_message(message, channel_id)
-                
-                # Wait before next poll
+                # Wait before next poll cycle
                 time.sleep(poll_interval)
                 
         except KeyboardInterrupt:
@@ -149,8 +174,15 @@ def main():
     """
     bot = MessageListenerBot()
     
-    # Configure your channel ID here
-    CHANNEL_ID = "1465038917672894698"  # Replace with your channel ID
+    # Configure your channel ID(s) here
+    # Option 1: Single channel (backward compatible)
+    # CHANNEL_ID = "1465038917672894698"  # Replace with your channel ID
+    
+    # Option 2: Multiple channels
+    CHANNEL_IDS = [
+        "1465038917672894698",  # Channel 1
+        "1465309699229618353",  # Channel 2
+    ]
     
     # Option 1: Simple reply with a fixed message
     # Uncomment the line below to reply with a fixed message to all messages
@@ -159,9 +191,16 @@ def main():
     # Set the custom handler
     bot.set_message_handler(message_handler)
     
-    bot.init_seen_message_ids(channel_id=CHANNEL_ID)
+    # Initialize seen messages for all channels
+    bot.init_seen_message_ids(channel_id=CHANNEL_IDS)
+    # For multiple channels, use:
+    # bot.init_seen_message_ids(channel_id=CHANNEL_IDS)
+    
     # Start polling (this will run indefinitely until stopped with Ctrl+C)
-    bot.start_polling(channel_id=CHANNEL_ID, poll_interval=1.0)
+    # Single channel:
+    bot.start_polling(channel_id=CHANNEL_IDS, poll_interval=1.0)
+    # Multiple channels:
+    # bot.start_polling(channel_id=CHANNEL_IDS, poll_interval=1.0)
 
 
 if __name__ == "__main__":
