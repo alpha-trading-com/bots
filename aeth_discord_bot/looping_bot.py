@@ -64,6 +64,7 @@ class MessageListenerBot(DiscordBot):
         
         content = message_data.get("content", "")
         author_name = author.get("username", "Unknown")
+        author_id = author.get("id")  # Get user ID for mention
         
         print(f"New message from {author_name}: {content[:50]}...")
         
@@ -79,6 +80,7 @@ class MessageListenerBot(DiscordBot):
             reply_content = f"Hello! You said: {content[:100]}"
         
         # Send reply if we have content
+        # Note: The handler function should already include the mention if needed
         if reply_content:
             message_id_sent = self.send_message(content=reply_content, channel_id=channel_id)
             if message_id_sent:
@@ -200,6 +202,7 @@ def main():
         content_lower = content.lower()
         author = message.get("author", {})
         author_name = author.get("username", "Unknown")
+        author_id = author.get("id")  # Get user ID for mention
         
         print(f"Processing content: '{content}'")
         
@@ -208,11 +211,11 @@ def main():
             try:
                 # Parse subnet_id from command: /bots_stake_info subnet_id or bots_stake_info subnet_id
                 # Remove leading slash if present
-                content_clean = content.lstrip("/")
+                content_clean = content.lstrip("/!")
                 parts = content_clean.split()
                 print(f"Command parts: {parts}")
                 if len(parts) < 2:
-                    return "❌ Usage: `/bots_stake_info <subnet_id>`\nExample: `/bots_stake_info 2`"
+                    return f"❌ Usage: `/bots_stake_info <subnet_id>`\nExample: `/bots_stake_info 2`"
                 
                 subnet_id = int(parts[1])
                 
@@ -258,26 +261,34 @@ def main():
                     return f"❌ Subnet ID {subnet_id} not found."
                 
                 # Compose a nice reply
+                def as_k(val):
+                    try:
+                        val = float(val)
+                        if abs(val) >= 1000:
+                            return f"{val/1000:.2f}K"
+                        else:
+                            return f"{val:.2f}"
+                    except Exception:
+                        return str(val)
                 response = f"**Subnet Information for ID {subnet_id}**\n\n"
                 if "name" in subnet_info:
                     response += f"**Name:** {subnet_info['name']}\n"
                 if "price" in subnet_info:
                     response += f"**Price:** {subnet_info['price']} TAO\n"
                 if "owner" in subnet_info:
-                    owner_short = subnet_info['owner'][:8] + "..." + subnet_info['owner'][-8:]
+                    owner_short = subnet_info['owner']
                     response += f"**Owner:** `{owner_short}`\n"
                 if "tao_in" in subnet_info:
-                    response += f"**TAO In:** {subnet_info['tao_in']} TAO\n"
+                    response += f"**TAO In:** {as_k(subnet_info['tao_in'])} TAO\n"
                 if "alpha_in" in subnet_info:
-                    response += f"**Alpha In:** {subnet_info['alpha_in']} Alpha\n"
+                    response += f"**Alpha In:** {as_k(subnet_info['alpha_in'])} Alpha\n"
                 if "alpha_out" in subnet_info:
-                    response += f"**Alpha Out:** {subnet_info['alpha_out']} Alpha\n"
+                    response += f"**Alpha Out:** {as_k(subnet_info['alpha_out'])} Alpha\n"
                 if "emission" in subnet_info:
-                    response += f"**Emission:** {subnet_info['emission']} TAO\n"
+                    response += f"**Emission:** {round(subnet_info['emission'] * 100)}% TAO\n"
                 # Add more fields as needed
-                
+
                 return response
-                
             except ValueError:
                 return "❌ Invalid subnet ID. Please provide a valid number.\nExample: `!subnet 2`"
             except Exception as e:
@@ -285,11 +296,10 @@ def main():
                 return f"❌ Error fetching subnet info: {str(e)}"
         # Example: Reply differently based on message content
         elif "hello" in content_lower or "hi" in content_lower:
-            return f"Hi @{author_name}! How can I help you?"
+            return f"Hi <@{author_id}>! How can I help you?"
         elif "help" in content_lower:
-            return "I'm here to help! Use `!bots_stake_info <subnet_id>` to get bot stake information. Use `!subnet <subnet_id>` to get subnet information." 
+            return f"Hi <@{author_id}>! I'm here to help! Use `!bots_stake_info <subnet_id>` to get bot stake information. Use `!subnet <subnet_id>` to get subnet information."
         else:
-            return ":joy:"
             # Return None to not reply to other messages
             return None
     
