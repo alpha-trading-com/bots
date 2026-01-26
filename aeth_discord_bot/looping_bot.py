@@ -10,6 +10,7 @@ from aeth_discord_bot.bot import DiscordBot
 from aeth_discord_bot.analysis import get_bot_staked_in_subnet
 from aeth_discord_bot.analysis import get_subnet_info
 from aeth_discord_bot.message_handler import message_handler
+from aeth_discord_bot.gateway import DiscordGateway
 from dotenv import load_dotenv
 
 load_dotenv(f"{os.path.dirname(os.path.abspath(__file__))}/bot.env")
@@ -26,6 +27,7 @@ class MessageListenerBot(DiscordBot):
         self.message_handler: Optional[Callable] = None
         self.running = False
         self.bot_user_id = None
+        self.gateway: Optional[DiscordGateway] = None
     
     def init_seen_message_ids(self, channel_id: Union[str, List[str]]):
         """
@@ -99,7 +101,7 @@ class MessageListenerBot(DiscordBot):
         # Mark message as processed
         self.processed_messages.add(message_id)
     
-    def start_polling(self, channel_id: Union[str, List[str]], poll_interval: float = 2.0, reply_content: Optional[str] = None):
+    def start_polling(self, channel_id: Union[str, List[str]], poll_interval: float = 2.0, reply_content: Optional[str] = None, status_message: Optional[str] = None):
         """
         Start polling one or more channels for new messages and reply automatically
         
@@ -107,6 +109,7 @@ class MessageListenerBot(DiscordBot):
             channel_id: The Discord channel ID(s) to poll. Can be a single channel ID (str) or a list of channel IDs
             poll_interval: How often to check for new messages (in seconds). Default: 2.0
             reply_content: Optional default reply content. If None, uses default reply or custom handler.
+            status_message: Optional status message to display (e.g., "Monitoring channels"). If None, uses default.
         """
         # Normalize to list format
         channel_ids = [channel_id] if isinstance(channel_id, str) else channel_id
@@ -119,6 +122,18 @@ class MessageListenerBot(DiscordBot):
         self.bot_user_id = self._get_bot_user_id_sync()
         if not self.bot_user_id:
             print("Warning: Could not get bot user ID. May reply to own messages.")
+        
+        # Start Gateway connection for online status
+        bot_token = os.getenv("BOT_TOKEN")
+        if bot_token:
+            # Remove "Bot " prefix if present (Gateway expects just the token)
+            if bot_token.startswith("Bot "):
+                bot_token = bot_token[4:]
+            default_status = status_message or f"Monitoring {len(channel_ids)} channel{'s' if len(channel_ids) > 1 else ''}"
+            self.gateway = DiscordGateway(bot_token=bot_token)
+            self.gateway.start(status_message=default_status, activity_type=3)  # activity_type 3 = Watching
+        else:
+            print("Warning: BOT_TOKEN not found. Gateway connection (online status) will not work.")
         
         # Set default reply if provided
         original_handler = None
@@ -159,6 +174,10 @@ class MessageListenerBot(DiscordBot):
             print("\nStopping bot...")
             self.running = False
         finally:
+            # Stop Gateway connection
+            if self.gateway:
+                self.gateway.stop()
+            
             # Restore original handler if we set a default reply
             if reply_content and original_handler:
                 self.message_handler = original_handler
@@ -166,6 +185,8 @@ class MessageListenerBot(DiscordBot):
     def stop_polling(self):
         """Stop the polling loop"""
         self.running = False
+        if self.gateway:
+            self.gateway.stop()
 
 
 def main():
