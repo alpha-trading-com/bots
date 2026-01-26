@@ -1,11 +1,16 @@
 from typing import Dict, Optional
 from aeth_discord_bot.analysis import get_bot_staked_in_subnet
 from aeth_discord_bot.analysis import get_subnet_info
+from aeth_discord_bot.gateway import get_tao_price
 
 
-HELP_MESSAGE = """
-Hi <@{author_id}>! I'm here to help! Use `!bots_stake_info <subnet_id>` to get bot stake information. Use `!subnet <subnet_id>` to get subnet information.
-"""
+HELP_MESSAGE = (
+    "Hi <@{author_id}>! I'm here to help!\n\n"
+    "- Use `!bots_stake_info <subnet_id>` to get information about bot stakes in a subnet.\n"
+    "- Use `!subnet <subnet_id>` for details about a subnet.\n"
+    "- Use `!tao_price` to get the current price of TAO.\n"
+)
+
 def get_help_message(author_id: str = None, content: str = None) -> str:
     return HELP_MESSAGE.format(author_id=author_id)
 
@@ -103,6 +108,10 @@ def get_subnet_info_message(author_id: str = None, content: str = None) -> str:
         print(f"Error fetching subnet info: {e}")
         return f"❌ Error fetching subnet info: {str(e)}"
 
+def get_tao_price_message(author_id: str = None, content: str = None) -> str:
+    tao_price = get_tao_price()
+    return f"The current price of TAO is {tao_price} USD."
+
     # Option 2: Custom message handler
 def message_handler(message: Dict) -> Optional[str]:
     """Custom handler that can implement different logic based on message content"""
@@ -159,6 +168,8 @@ def message_handler(message: Dict) -> Optional[str]:
         return get_bots_stake_info_message(author_id, content)
     elif content_lower.startswith("!subnet"):
         return get_subnet_info_message(author_id, content)
+    elif content_lower.startswith("!tao_price"):
+        return get_tao_price_message(author_id, content)
     # Example: Reply differently based on message content
     elif "hello" in content_lower or "hi" in content_lower:
         return get_hello_message(author_id, content)
