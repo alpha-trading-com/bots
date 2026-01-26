@@ -15,7 +15,6 @@ load_dotenv(f"{os.path.dirname(os.path.abspath(__file__))}/bot.env")
 class DiscordBot:
     def __init__(self):
         self.bot_token = "Bot " + os.getenv("BOT_TOKEN")
-        print(self.bot_token)
         self.api_base = f"https://discord.com/api/v10"
         
     def get_headers(self) -> Dict[str, str]:

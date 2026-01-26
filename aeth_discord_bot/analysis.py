@@ -32,7 +32,6 @@ def get_bot_staked_in_subnet(subnet_id: int) -> tuple[float, list[dict]]:
     bot_staked_infos = []
     for bot, stake_info in stake_infos.items():
         bot_staked_amount = 0.0
-        print(stake_info)
         for stake in stake_info:
             if stake.netuid != subnet_id:
                 continue
@@ -46,6 +45,17 @@ def get_bot_staked_in_subnet(subnet_id: int) -> tuple[float, list[dict]]:
         })
     
     return total_staked_amount, bot_staked_infos
+
+def get_subnet_info(subnet_id: int) -> dict:
+    subnet: bt.DynamicInfo = subtensor.subnet(netuid=subnet_id)
+    return {
+        "name": subnet.subnet_name,
+        "price": subnet.price.tao,
+        "owner": subnet.owner_coldkey,
+        "tao_in": subnet.tao_in.tao,
+        "alpha_in": subnet.alpha_in.tao,
+        "emission": subnet.emission.tao,
+    }
 
 
 if __name__ == "__main__":
