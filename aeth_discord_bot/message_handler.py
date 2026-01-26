@@ -4,6 +4,7 @@ from aeth_discord_bot.analysis import get_subnet_info
 from aeth_discord_bot.gateway import get_tao_price, get_btc_price
 
 
+
 HELP_MESSAGE = (
     "Hi <@{author_id}>! I'm here to help!\n\n"
     "- Use `!bots_stake_info <subnet_id>` to get information about bot stakes in a subnet.\n"
@@ -15,6 +16,11 @@ def get_help_message(author_id: str = None, content: str = None) -> str:
     return HELP_MESSAGE.format(author_id=author_id)
 
 def get_exception_message(author_id: str = None, content: str = None) -> str:
+    content_lower = content.lower()
+    if "58" in content_lower and "who" in content_lower:
+        return "DSV bought it."
+    
+
     EXCEPTION_MESSAGE = """
     Do your own research rather than asking stupid questions. :joy:
     """
@@ -131,6 +137,7 @@ def get_tao_price_message(author_id: str = None, content: str = None) -> str:
     
     return response
 
+
     # Option 2: Custom message handler
 def message_handler(message: Dict) -> Optional[str]:
     """Custom handler that can implement different logic based on message content"""
@@ -196,5 +203,5 @@ def message_handler(message: Dict) -> Optional[str]:
         return get_help_message(author_id)
     else:
         # Return None to not reply to other messages
-        return get_exception_message()
+        return get_exception_message(author_id, content)
     
