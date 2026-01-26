@@ -49,6 +49,33 @@ def get_tao_price() -> Optional[float]:
         return None
 
 
+def get_btc_price() -> Optional[float]:
+    """
+    Fetch BTC price in USD from CoinGecko API
+    
+    Returns:
+        BTC price in USD, or None if fetch fails
+    """
+    try:
+        import requests
+        # CoinGecko API endpoint for Bitcoin
+        url = "https://api.coingecko.com/api/v3/simple/price"
+        params = {
+            "ids": "bitcoin",
+            "vs_currencies": "usd"
+        }
+        response = requests.get(url, params=params, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("bitcoin", {}).get("usd")
+        else:
+            print(f"Failed to fetch BTC price: HTTP {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Error fetching BTC price: {e}")
+        return None
+
+
 class DiscordGateway:
     """
     Minimal Discord Gateway connection for setting bot presence/status.

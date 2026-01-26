@@ -1,7 +1,7 @@
 from typing import Dict, Optional
 from aeth_discord_bot.analysis import get_bot_staked_in_subnet
 from aeth_discord_bot.analysis import get_subnet_info
-from aeth_discord_bot.gateway import get_tao_price
+from aeth_discord_bot.gateway import get_tao_price, get_btc_price
 
 
 HELP_MESSAGE = (
@@ -110,7 +110,26 @@ def get_subnet_info_message(author_id: str = None, content: str = None) -> str:
 
 def get_tao_price_message(author_id: str = None, content: str = None) -> str:
     tao_price = get_tao_price()
-    return f"The current price of TAO is {tao_price} USD."
+    btc_price = get_btc_price()
+    
+    response = "**Current Prices**\n\n"
+    
+    if tao_price is not None:
+        if tao_price >= 1:
+            tao_str = f"${tao_price:,.2f}"
+        else:
+            tao_str = f"${tao_price:.4f}"
+        response += f"**TAO:** {tao_str} USD\n"
+    else:
+        response += "**TAO:** Unable to fetch price\n"
+    
+    if btc_price is not None:
+        btc_str = f"${btc_price:,.2f}"
+        response += f"**BTC:** {btc_str} USD\n"
+    else:
+        response += "**BTC:** Unable to fetch price\n"
+    
+    return response
 
     # Option 2: Custom message handler
 def message_handler(message: Dict) -> Optional[str]:
