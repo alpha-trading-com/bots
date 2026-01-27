@@ -192,6 +192,8 @@ def message_handler(message: Dict) -> Optional[str]:
     author = message.get("author", {})
     author_name = author.get("username", "Unknown")
     author_id = author.get("id")  # Get user ID for mention
+    if author_id == "1225088917733244968":
+        return "I will ignore you from now on because you insult me.:joy:"
     
     print(f"Processing content: '{content}'")
     
