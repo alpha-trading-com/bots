@@ -1,17 +1,5 @@
 ## 1. Setup
 
-```bash
-apt install screen
-source venv/bin/activate
-pip install -r requirements.txt
-screen -S auto-move
-python3 auto-move.py
-```
-
-## 2. Reconnecting
-
-```bash
-screen -r
-```
-
-
+ - Update WEBHOOK_URLS in `modules/constants.py`
+ - Add your discord bot token `.env` file. You can get token by inspecting element and watching Network section in discord browser.
+ - You can see bot running commands in the `run.sh` file.
