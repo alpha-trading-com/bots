@@ -192,13 +192,13 @@ def message_handler(message: Dict) -> Optional[str]:
     author = message.get("author", {})
     author_name = author.get("username", "Unknown")
     author_id = author.get("id")  # Get user ID for mention
-    if author_id == "1225088917733244968":
-        return "I will ignore you from now on because you insult me.:joy:"
+    # if author_id == "1225088917733244968":
+    #     return "I will ignore you from now on because you insult me.:joy:"
     
     print(f"Processing content: '{content}'")
     
     # Handle /bots_stake_info command (with or without leading slash)
-    if content_lower.startswith("/bots_stake_info") or content_lower.startswith("!bots_stake_info"):
+    if content_lower.startswith("/bots_stake_info") or content_lower.startswith("!bots_stake_info") or content_lower.startswith("!bots"):
         return get_bots_stake_info_message(author_id, content)
     elif content_lower.startswith("!subnet"):
         return get_subnet_info_message(author_id, content)
