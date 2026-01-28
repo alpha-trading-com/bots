@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
     netuid = -1
     threshold = 0.5
-    show_balance = False
+    show_balance = True
     
     while True:
         try:
