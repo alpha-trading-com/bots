@@ -131,6 +131,7 @@ def extract_stake_extrinsic_from_data(extrinsics):
         ):
             args = call.get('call_args', [])
             amount_staked = next((a['value'] for a in args if a['name'] == 'amount_staked'), None)
+            limit_price = next((a['value'] for a in args if a['name'] == 'limit_price'), None)
             netuid = next((a['value'] for a in args if a['name'] == 'netuid'), None)
             hotkey = next((a['value'] for a in args if a['name'] == 'hotkey'), None)
             
@@ -152,6 +153,7 @@ def extract_stake_extrinsic_from_data(extrinsics):
                 'netuid': netuid,
                 'amount_tao': amount_staked/ 1e9,
                 'amount_raw': amount_staked,
+                'limit_price': limit_price,
                 'extrinsic_idx': idx,
             })
 
@@ -182,6 +184,7 @@ def extract_stake_extrinsic_from_data(extrinsics):
                 'netuid': netuid,
                 'amount_tao': amount_staked/ 1e9,
                 'amount_raw': amount_staked,
+                'limit_price': 1e9,
                 'extrinsic_idx': idx,
             })
 
@@ -234,7 +237,7 @@ def extract_stake_extrinsic_from_data(extrinsics):
                 amount_staked = next((a['value'] for a in args if a['name'] == 'amount_staked'), None)
                 netuid = next((a['value'] for a in args if a['name'] == 'netuid'), None)
                 hotkey = next((a['value'] for a in args if a['name'] == 'hotkey'), None)
-                
+                limit_price = next((a['value'] for a in args if a['name'] == 'limit_price'), None)
                 # Convert hotkey to SS58 if it's bytes
                 if hotkey is not None:
                     try:
@@ -253,6 +256,7 @@ def extract_stake_extrinsic_from_data(extrinsics):
                     'netuid': netuid,
                     'amount_tao': amount_staked / 1e9 if amount_staked else 0,
                     'amount_raw': amount_staked,
+                    'limit_price': limit_price,
                     'extrinsic_idx': idx,
                 })
             
@@ -285,6 +289,7 @@ def extract_stake_extrinsic_from_data(extrinsics):
                     'netuid': netuid,
                     'amount_tao': amount_staked / 1e9 if amount_staked else 0,
                     'amount_raw': amount_staked,
+                    'limit_price': 1e9,
                     'extrinsic_idx': idx,
                 })
 
@@ -411,6 +416,7 @@ def print_stake_extrinsic(stake_extrinsic, threshold, netuid, show_balance):
     for extrinsic in stake_extrinsic:
         netuid_val = int(extrinsic['netuid'])
         tao_amount = float(extrinsic['amount_tao'])
+        limit_price = float(extrinsic['limit_price']) / 1e9
         if not ((netuid == netuid_val or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1)):
             continue
         
@@ -433,7 +439,7 @@ def print_stake_extrinsic(stake_extrinsic, threshold, netuid, show_balance):
             total_value_str = get_total_value(subtensor, old_coldkey, now_subnet_infos, netuid_val, cash)
 
         # All extrinsics here are failed (no matching event)
-        print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str} ❌")
+        print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f} {limit_price:8.5f} {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
 
       
 if __name__ == "__main__":    
