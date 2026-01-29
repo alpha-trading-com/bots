@@ -17,6 +17,7 @@ WEBHOOK_URL_SS_SENSTIVE_MESSAGES = "https://discord.com/api/webhooks/14449023593
 WEBHOOK_URL_SS_INFOS = "https://discord.com/api/webhooks/1448700610281996391/I1J-wjDbM2-gyFjC0sCnVsu9djC6EXG2emjywEWhKqFumaMBahoffBubtjTB4AxBIRLY"
 
 WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS_IMP = "https://discord.com/api/webhooks/1459521067759439893/VEHiD_TZrUQTTJ2TRywuaHwIDLhS0j8ltojmS-NfVpGdWMW_1Cqw5izrCh3pJ8CKjRZv"
+WEBHOOK_URL_SS_GITHUB_REPOS = "https://discord.com/api/webhooks/1466575672888655915/QM7R9Wnd8MQMbFdLcuuLP0OY_obqVEK2p1fpAAykvFcl1Dwqvxogfbw4GUi9i0DsH2Fd"
 NETWORK = "finney"
 
 
