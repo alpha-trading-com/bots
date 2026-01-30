@@ -41,6 +41,11 @@ def load_wallet_owners_from_gdoc():
 
         except Exception as e:
             print(f"Failed to load wallet owners from Google Doc: {e}")
+    wallet_owners["5GkZb6S3PSv6stahzWXgMg2PAe8CxEYSp3PXWPJybhLt1xiF"] = "Jeeter"
+    wallet_owners["5FLQ2m1ZgVd2qXfE4ZXtxyuqmjjJHycKqFEWvExCiNzUtEEe"] = "Jeeter"
+    wallet_owners["5FnWKpesLZj1ZknKJZ6bzF3VucRxgD7VE4MFVDkh3WDbeUbL"] = "Jeeter"
+    wallet_owners["5HkGCkce7aKxinYtU588kjt7sy2HKrKgKyhbNoe13kvrPFT2"] = "Jeeter"
+
 
 def main():
     load_bots_from_gdoc()
