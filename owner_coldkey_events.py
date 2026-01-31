@@ -159,9 +159,11 @@ def extract_stake_events_from_data(events_data):
                 #     to_hotkey_tuple = None
                 #     netuid = None
                 #     amount = None
-                
-                
-    
+            elif event_id == 'StakeTransferred':
+                if len(stake_events) >= 2:
+                    stake_events[-1]['type'] = 'TransferredIn'
+                    stake_events[-2]['type'] = 'TransferredOut'
+                    
     return stake_events
 
 
@@ -218,6 +220,10 @@ def send_owner_coldkey_message(stake_events):
             color = "🟢"
         elif event['type'] == 'StakeRemoved':
             color = "🔴"
+        elif event['type'] == 'TransferredIn':
+            color = "🟡"
+        elif event['type'] == 'TransferredOut':
+            color = "🔵"
         else:
             continue
         owner_index = owner_coldkeys.index(coldkey)
