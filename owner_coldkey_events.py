@@ -249,6 +249,10 @@ def send_famous_wallet_message(stake_events):
             color = "🟢"
         elif event['type'] == 'StakeRemoved':
             color = "🔴"
+        elif event['type'] == 'TransferredIn':
+            color = "🟡"
+        elif event['type'] == 'TransferredOut':
+            color = "🔵"
         else:
             continue
         message += (
@@ -271,6 +275,10 @@ def send_mini_wallet_message(stake_events):
             color = "🟢"
         elif event['type'] == 'StakeRemoved':
             color = "🔴"
+        elif event['type'] == 'TransferredIn':
+            color = "🟡"
+        elif event['type'] == 'TransferredOut':
+            color = "🔵"
         else:
             continue
         message += (
