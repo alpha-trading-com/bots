@@ -12,6 +12,7 @@ from modules.constants import (
     GOOGLE_DOC_ID_OWNER_WALLETS,
     GOOGLE_DOC_ID_OWNER_WALLETS_SS,
     GOOGLE_DOC_ID_OWNER_WALLETS_PS,
+    GOOGLE_DOC_ID_PRIVATE_WALLETS,
     NETWORK,
 )
 
@@ -40,7 +41,8 @@ def load_wallet_owners_from_gdoc():
     urls = [
         f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_OWNER_WALLETS}/export?format=txt",
         f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_OWNER_WALLETS_SS}/export?format=txt",
-        f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_OWNER_WALLETS_PS}/export?format=txt"
+        f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_OWNER_WALLETS_PS}/export?format=txt",
+        f"https://docs.google.com/document/d/{GOOGLE_DOC_ID_PRIVATE_WALLETS}/export?format?txt"
     ]
     for url in urls:    
         try:
