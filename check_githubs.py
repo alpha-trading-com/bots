@@ -105,6 +105,7 @@ def monitor_github_repos(url_list, poll_interval=60):
             for url in url_list:
                 try:
                     current_sha = get_latest_commit_sha(url)
+                    print(f"Current SHA: {current_sha}")
                     if current_sha and current_sha != latest_shas.get(url):
                         print(f"Change detected in {url}!\nNew commit: {current_sha}")
                         latest_shas[url] = current_sha
