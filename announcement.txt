@@ -25,3 +25,10 @@ https://github.com/alpha-trading-com/staking
 This is bots which detect events.
 https://github.com/alpha-trading-com/bots
 To use tool, give olafs address 10tao.:joy:
+
+
+Dont do this in our Server
+
+- Dont share screenshots of live txs of our tool.
+  If you did, remove it.
+- Dont say politic sensitive words.
