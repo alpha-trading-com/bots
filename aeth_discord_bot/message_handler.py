@@ -1,4 +1,5 @@
 from typing import Dict, Optional
+import time
 from aeth_discord_bot.analysis import get_bot_staked_in_subnet
 from aeth_discord_bot.analysis import get_subnet_info
 from aeth_discord_bot.gateway import get_tao_price, get_btc_price
@@ -194,6 +195,9 @@ def message_handler(message: Dict) -> Optional[str]:
     author_id = author.get("id")  # Get user ID for mention
     # if author_id == "1225088917733244968":
     #     return "I will ignore you from now on because you insult me.:joy:"
+
+    if author_id == "1273724526190006467":
+        time.sleep(1000 * 60 * 2) # 2 minutes
     
     print(f"Processing content: '{content}'")
     

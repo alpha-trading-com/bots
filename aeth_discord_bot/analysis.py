@@ -9,7 +9,7 @@ import re
 from modules.constants import GOOGLE_DOC_ID_BOTS, GOOGLE_DOC_ID_JEETERS
 
 bots = []
-jeeters = {}
+jeeters = []
 subtensor = bt.Subtensor("finney")
 
 
@@ -37,7 +37,10 @@ def load_jeeters_from_gdoc():
         pattern = r'(5[1-9A-HJ-NP-Za-km-z]{47})\s+([^\s]+)'
         for match in re.findall(pattern, text):
             address, owner = match
-            jeeters[address] = owner
+            jeeters.append({
+                "address": address, 
+                "owner": owner,
+            })
 
     except Exception as e:  
         print(f"Failed to load jeeters from Google Doc: {e}")
@@ -75,7 +78,7 @@ def get_jeeter_staked_in_subnet(subnet_id: int) -> tuple[float, list[dict]]:
     batch_size = 60
     jeeter_staked_infos = []
     for i in range(0, len(jeeters), batch_size):
-        batch = jeeters[i:i+batch_size]
+        batch = [jeeter["address"] for jeeter in jeeters[i:i+batch_size]]
         stake_infos = subtensor.get_stake_info_for_coldkeys(coldkey_ss58s=batch)
         for jeeter, stake_info in stake_infos.items():
             jeeter_staked_amount = 0.0
@@ -87,7 +90,8 @@ def get_jeeter_staked_in_subnet(subnet_id: int) -> tuple[float, list[dict]]:
             if jeeter_staked_amount < 0.5:
                 continue
             jeeter_staked_infos.append({
-                "jeeter": jeeter,
+                "jeeter": jeeter["address"],
+                "owner": jeeter["owner"],
                 "staked_amount": jeeter_staked_amount,
             })
     return total_staked_amount, jeeter_staked_infos
@@ -106,4 +110,4 @@ def get_subnet_info(subnet_id: int) -> dict:
 
 
 if __name__ == "__main__":
-    print(get_bot_staked_in_subnet(2))
+    print(get_jeeter_staked_in_subnet(2))
