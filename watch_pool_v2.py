@@ -269,7 +269,7 @@ if __name__ == "__main__":
     t = threading.Thread(target=get_user_input)
     t.daemon = True
     t.start()
-    t.join(timeout=30)
+    t.join(timeout=10)
     if show_balance_input_result[0] is None:
         show_balance_input_result[0] = ""
     user_input = show_balance_input_result[0].strip().lower()
