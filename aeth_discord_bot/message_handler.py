@@ -196,8 +196,6 @@ def message_handler(message: Dict) -> Optional[str]:
     # if author_id == "1225088917733244968":
     #     return "I will ignore you from now on because you insult me.:joy:"
 
-    if author_id == "1273724526190006467":
-        time.sleep(1000 * 60 * 2) # 2 minutes
     
     print(f"Processing content: '{content}'")
     

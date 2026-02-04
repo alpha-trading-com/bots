@@ -10,6 +10,7 @@ from modules.constants import GOOGLE_DOC_ID_BOTS, GOOGLE_DOC_ID_JEETERS
 
 bots = []
 jeeters = []
+jeeter_address_to_owner = {}
 subtensor = bt.Subtensor("finney")
 
 
@@ -41,7 +42,7 @@ def load_jeeters_from_gdoc():
                 "address": address, 
                 "owner": owner,
             })
-
+            jeeter_address_to_owner[address] = owner
     except Exception as e:  
         print(f"Failed to load jeeters from Google Doc: {e}")
 
@@ -90,8 +91,8 @@ def get_jeeter_staked_in_subnet(subnet_id: int) -> tuple[float, list[dict]]:
             if jeeter_staked_amount < 0.5:
                 continue
             jeeter_staked_infos.append({
-                "jeeter": jeeter["address"],
-                "owner": jeeter["owner"],
+                "address": jeeter,
+                "owner": jeeter_address_to_owner[jeeter],
                 "staked_amount": jeeter_staked_amount,
             })
     return total_staked_amount, jeeter_staked_infos
