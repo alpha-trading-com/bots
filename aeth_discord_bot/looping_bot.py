@@ -84,7 +84,7 @@ class MessageListenerBot(DiscordBot):
         reply_content = None
         if self.message_handler:
             try:
-                reply_content = self.message_handler(message_data)
+                reply_content = self.message_handler(message_data, channel_id)
             except Exception as e:
                 print(f"Error in message handler: {e}")
         else:

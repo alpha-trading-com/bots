@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 import time
 from aeth_discord_bot.analysis import get_bot_staked_in_subnet
+from aeth_discord_bot.analysis import get_jeeter_staked_in_subnet
 from aeth_discord_bot.analysis import get_subnet_info
 from aeth_discord_bot.gateway import get_tao_price, get_btc_price
 
@@ -71,6 +72,40 @@ def get_bots_stake_info_message(author_id: str = None, content: str = None) -> s
             response += f"• `{bot_short}`: {staked:.2f} TAO\n"
     else:
         response += "No bots with stake ≥ 0.5 TAO found in this subnet."
+    
+    return response
+    
+def get_jeeters_stake_info_message(author_id: str = None, content: str = None) -> str:
+    # Parse subnet_id from command: /jeeters_stake_info subnet_id or jeeters_stake_info subnet_id
+    # Remove leading slash if present
+    content_clean = content.lstrip("/!")
+    parts = content_clean.split()
+    print(f"Command parts: {parts}")
+    if len(parts) < 2:
+        return f"❌ Usage: `/jeeters_stake_info <subnet_id>`\nExample: `/jeeters_stake_info 2`"
+    subnet_id = int(parts[1])
+    
+    # Get jeeter stake info
+    print(f"Fetching jeeter stake info for subnet {subnet_id}...")
+    total_staked, jeeter_infos = get_jeeter_staked_in_subnet(subnet_id)
+    
+    # Format the response
+    response = f"**Jeeter Stake Info for Subnet {subnet_id}**\n\n"
+    response += f"**Total Staked:** {total_staked:.2f} TAO\n\n"
+    
+    if jeeter_infos:
+        # Sort by staked amount (descending)
+        jeeter_infos_sorted = sorted(jeeter_infos, key=lambda x: x["staked_amount"], reverse=True)
+        
+        response += "**Jeeters (staked ≥ 0.5 TAO):**\n"
+        for jeeter_info in jeeter_infos_sorted:
+            jeeter_addr = jeeter_info["address"]
+            staked = jeeter_info["staked_amount"]
+            # Show shortened address (first 8 chars)
+            jeeter_short = jeeter_addr
+            response += f"• `{jeeter_short}`: {staked:.2f} TAO\n"
+    else:
+        response += "No jeeters with stake ≥ 0.5 TAO found in this subnet."
     
     return response
 
@@ -146,7 +181,7 @@ def get_tao_price_message(author_id: str = None, content: str = None) -> str:
 
 
     # Option 2: Custom message handler
-def message_handler(message: Dict) -> Optional[str]:
+def message_handler(message: Dict, channel_id: str) -> Optional[str]:
     """Custom handler that can implement different logic based on message content"""
     # Debug: Print full message to see all fields
     print("=" * 50)
@@ -202,6 +237,11 @@ def message_handler(message: Dict) -> Optional[str]:
     # Handle /bots_stake_info command (with or without leading slash)
     if content_lower.startswith("/bots_stake_info") or content_lower.startswith("!bots_stake_info") or content_lower.startswith("!bots"):
         return get_bots_stake_info_message(author_id, content)
+    elif content_lower.startswith("/jeeters_stake_info") or content_lower.startswith("!jeeters_stake_info") or content_lower.startswith("!jeeters"):
+        if channel_id != "1465309699229618353":
+            return "❌ This command is only available in the #jeeters channel."
+        return get_jeeters_stake_info_message(author_id, content)
+
     elif content_lower.startswith("!subnet"):
         return get_subnet_info_message(author_id, content)
     elif content_lower.startswith("!tao_price"):
