@@ -100,10 +100,11 @@ def get_jeeters_stake_info_message(author_id: str = None, content: str = None) -
         response += "**Jeeters (staked ≥ 0.5 TAO):**\n"
         for jeeter_info in jeeter_infos_sorted:
             jeeter_addr = jeeter_info["address"]
+            jeeter_name = jeeter_info["owner"]
             staked = jeeter_info["staked_amount"]
             # Show shortened address (first 8 chars)
             jeeter_short = jeeter_addr
-            response += f"• `{jeeter_short}`: {staked:.2f} TAO\n"
+            response += f"• `{jeeter_short}` ({jeeter_name}): {staked:.2f} TAO\n"
     else:
         response += "No jeeters with stake ≥ 0.5 TAO found in this subnet."
     

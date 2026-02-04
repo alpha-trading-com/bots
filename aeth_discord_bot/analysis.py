@@ -99,7 +99,6 @@ def get_jeeter_staked_in_subnet(subnet_id: int) -> tuple[float, list[dict]]:
 
 def get_subnet_info(subnet_id: int) -> dict:
     subnet: bt.DynamicInfo = subtensor.subnet(netuid=subnet_id)
-    print(subnet)
     return {
         "name": subnet.subnet_name,
         "price": subnet.price.tao,
