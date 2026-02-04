@@ -232,9 +232,8 @@ def message_handler(message: Dict, channel_id: str) -> Optional[str]:
     # if author_id == "1225088917733244968":
     #     return "I will ignore you from now on because you insult me.:joy:"
 
-    
-    print(f"Processing content: '{content}'")
-    
+    if author_id == "1273724526190006467":
+        time.sleep(1000 * 60 * 2)
     # Handle /bots_stake_info command (with or without leading slash)
     if content_lower.startswith("/bots_stake_info") or content_lower.startswith("!bots_stake_info") or content_lower.startswith("!bots"):
         return get_bots_stake_info_message(author_id, content)
