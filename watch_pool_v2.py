@@ -256,7 +256,25 @@ if __name__ == "__main__":
 
     #netuid = int(input("Enter the netuid: "))
     #threshold = float(input("Enter the threshold: "))
-    show_balance = float(input("Enter whether you want to show wallet balance (yes or no)") == "yes")
+    import sys
+    import threading
+
+    show_balance_input_result = [None]
+    def get_user_input():
+        try:
+            show_balance_input_result[0] = input("Enter whether you want to show wallet balance (yes or no) [default: yes in 30s]: ")
+        except EOFError:
+            show_balance_input_result[0] = ""
+
+    t = threading.Thread(target=get_user_input)
+    t.daemon = True
+    t.start()
+    t.join(timeout=30)
+    if show_balance_input_result[0] is None:
+        show_balance_input_result[0] = ""
+    user_input = show_balance_input_result[0].strip().lower()
+    show_balance = float(user_input == "yes" or user_input == "")
+
 
     netuid = -1
     threshold = 0.5
