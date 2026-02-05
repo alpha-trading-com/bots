@@ -18,8 +18,8 @@ WEBHOOK_URL_SS_INFOS = "https://discord.com/api/webhooks/1448700610281996391/I1J
 
 WEBHOOK_URL_SS_TRANSFER_TRANSACTIONS_IMP = "https://discord.com/api/webhooks/1459521067759439893/VEHiD_TZrUQTTJ2TRywuaHwIDLhS0j8ltojmS-NfVpGdWMW_1Cqw5izrCh3pJ8CKjRZv"
 WEBHOOK_URL_SS_GITHUB_REPOS = "https://discord.com/api/webhooks/1466575672888655915/QM7R9Wnd8MQMbFdLcuuLP0OY_obqVEK2p1fpAAykvFcl1Dwqvxogfbw4GUi9i0DsH2Fd"
-# NETWORK = "finney"
-NETWORK = "ws://161.97.128.68:9944"
+NETWORK = "finney"
+# NETWORK = "ws://209.126.9.130:9944"
 
 
 CEXS = {
