@@ -26,14 +26,16 @@ from modules.discord import send_webhook_message, create_embed
 
 
 IMPORTANT_CHANNEL_LIST = []
+
 class DiscordCrawler:
-    def __init__(self, channel_list: List[str], bot_token: str, target_user_ids: List[str]):
-        self.channel_list = channel_list
+    def __init__(self, bot_token: str, target_user_ids: List[str]):
         self.bot_token = bot_token
+        self.guild_id = "799672011265015819"
         self.seen_message_ids: List = []
         self.api_urls = []
         self.initial_messages = []
         self.target_user_ids = target_user_ids
+        self.channel_list = self.load_channel_list()
         for channel_id in self.channel_list:
             self.api_urls.append(f"https://discord.com/api/v10/channels/{channel_id}/messages")
             empty_set = set()
@@ -44,6 +46,31 @@ class DiscordCrawler:
             "Authorization": f"{self.bot_token}",
             "Content-Type": "application/json"
         }
+
+    def fetch_all_channels(self) -> List[Dict]:
+        """Fetch all channels from the Discord guild"""
+        
+        url = f"https://discord.com/api/v10/guilds/{self.guild_id}/channels"
+
+        retries = 5
+        while retries > 0:
+            try:
+                response = requests.get(url, headers=self.get_headers())
+
+                if response.status_code == 200:
+                    return response.json()
+                else:
+                    print(f"Error fetching channels: {response.status_code}")
+                    print(f"Response: {response.text}")
+                    retries -= 1
+                    time.sleep(2)
+            except Exception as e:
+                print(f"Exception while fetching channels: {e}")
+                retries -= 1
+                time.sleep(2)
+
+        print("Failed to fetch channels after retries")
+        return []
     
     def fetch_messages(self, limit: int = 50, api_url: str = "") -> List[Dict]:
         """Fetch recent messages from the channel"""
@@ -249,6 +276,27 @@ class DiscordCrawler:
                 print("Continuing in 60 seconds...")
             time.sleep(check_interval)
 
+    def load_channel_list(self) -> List[str]:    
+        """Print all text channels from the guild that are under specific categories"""
+        channels = self.fetch_all_channels()
+        if not channels:
+            print("Warning: Failed to fetch channels")
+            return
+
+        allowed_categories = {"1290321693427892358", "1366426072765431808", "1161764488186441768"}
+        text_channels = [
+            ch for ch in channels
+            if ch.get('type') == 0 and str(ch.get('parent_id')) in allowed_categories
+        ]
+
+        channel_list = []
+        for channel in sorted(text_channels, key=lambda x: x.get('name', '')):
+            channel_id = channel.get('id', 'Unknown')
+            channel_list.append(channel_id)
+        channel_list.remove("1179129432410173541") # subnet role assigne
+        channel_list.remove("1161764746819805215") # subnet role assigner
+        channel_list.append("1341812134807343114") # price-talk
+        return channel_list
 
 def main():
     # Configuration - Replace these with your actual values
@@ -295,15 +343,9 @@ def main():
                     IMPORTANT_CHANNEL_LIST.append(channel_id)
             return output
 
-
-    # Loads the channel list from the Google Doc
-    CHANNEL_LIST = load_channel_list_from_gdoc(GOOGLE_DOC_ID_CHANNELS)
-   
-    
-    
+    load_channel_list_from_gdoc(GOOGLE_DOC_ID_CHANNELS)
     # Create and run crawler
     crawler = DiscordCrawler(
-        channel_list=CHANNEL_LIST,
         bot_token=BOT_TOKEN,
         target_user_ids=TARGET_USER_IDS
     )
