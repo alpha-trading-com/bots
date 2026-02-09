@@ -21,14 +21,19 @@ from dotenv import load_dotenv
 
 load_dotenv(f"{os.path.dirname(os.path.abspath(__file__))}/bot.env")
 
+# Cache for last successful prices
+_last_tao_price: Optional[float] = None
+_last_btc_price: Optional[float] = None
+
 
 def get_tao_price() -> Optional[float]:
     """
     Fetch TAO price in USD from CoinGecko API
     
     Returns:
-        TAO price in USD, or None if fetch fails
+        TAO price in USD, or last successful price if fetch fails
     """
+    global _last_tao_price
     try:
         import requests
         # CoinGecko API endpoint for Bittensor (TAO)
@@ -40,13 +45,21 @@ def get_tao_price() -> Optional[float]:
         response = requests.get(url, params=params, timeout=10)
         if response.status_code == 200:
             data = response.json()
-            return data.get("bittensor", {}).get("usd")
+            price = data.get("bittensor", {}).get("usd")
+            if price is not None:
+                _last_tao_price = price
+                return price
         else:
             print(f"Failed to fetch TAO price: HTTP {response.status_code}")
-            return None
     except Exception as e:
         print(f"Error fetching TAO price: {e}")
-        return None
+    
+    # Return last successful price if available
+    if _last_tao_price is not None:
+        print(f"Using last successful TAO price: ${_last_tao_price}")
+        return _last_tao_price
+    
+    return None
 
 
 def get_btc_price() -> Optional[float]:
@@ -54,8 +67,9 @@ def get_btc_price() -> Optional[float]:
     Fetch BTC price in USD from CoinGecko API
     
     Returns:
-        BTC price in USD, or None if fetch fails
+        BTC price in USD, or last successful price if fetch fails
     """
+    global _last_btc_price
     try:
         import requests
         # CoinGecko API endpoint for Bitcoin
@@ -67,13 +81,21 @@ def get_btc_price() -> Optional[float]:
         response = requests.get(url, params=params, timeout=10)
         if response.status_code == 200:
             data = response.json()
-            return data.get("bitcoin", {}).get("usd")
+            price = data.get("bitcoin", {}).get("usd")
+            if price is not None:
+                _last_btc_price = price
+                return price
         else:
             print(f"Failed to fetch BTC price: HTTP {response.status_code}")
-            return None
     except Exception as e:
         print(f"Error fetching BTC price: {e}")
-        return None
+    
+    # Return last successful price if available
+    if _last_btc_price is not None:
+        print(f"Using last successful BTC price: ${_last_btc_price}")
+        return _last_btc_price
+    
+    return None
 
 
 class DiscordGateway:
@@ -385,7 +407,7 @@ class DiscordGateway:
             await self.ws.close()
     
     async def _price_update_loop(self):
-        """Periodically update status with TAO price"""
+        """Periodically update status with TAO and BTC prices"""
         # Fetch price immediately on first run
         first_run = True
         
@@ -400,20 +422,35 @@ class DiscordGateway:
                     break
                     
                 tao_price = get_tao_price()
+                btc_price = get_btc_price()
+                
+                # Build status message with both prices
+                price_parts = []
+                
                 if tao_price is not None:
-                    # Format price nicely
+                    # Format TAO price nicely
                     if tao_price >= 1:
-                        price_str = f"${tao_price:,.2f}"
+                        tao_str = f"${tao_price:,.2f}"
                     else:
-                        price_str = f"${tao_price:.4f}"
-                    
-                    # Update status with TAO price
-                    status_msg = f"TAO: {price_str}"
+                        tao_str = f"${tao_price:.4f}"
+                    price_parts.append(f"TAO: {tao_str}")
+                
+                if btc_price is not None:
+                    # Format BTC price nicely
+                    if btc_price >= 1:
+                        btc_str = f"${btc_price:,.2f}"
+                    else:
+                        btc_str = f"${btc_price:.4f}"
+                    price_parts.append(f"BTC: {btc_str}")
+                
+                if price_parts:
+                    # Join prices with newline
+                    status_msg = "\n".join(price_parts)
                     self.status_message = status_msg
                     await self._update_presence()
-                    print(f"Updated status with TAO price: {status_msg}")
+                    print(f"Updated status with prices:\n{status_msg}")
                 else:
-                    print("Failed to fetch TAO price, keeping current status")
+                    print("Failed to fetch prices, keeping current status")
             except Exception as e:
                 print(f"Error in price update loop: {e}")
                 # Continue loop even on error
