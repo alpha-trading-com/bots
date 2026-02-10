@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from modules.constants import (
     BOT_TOKEN,
     GOOGLE_DOC_ID_CHANNELS,
-    WEBHOOK_URL_AETH_CHAIN_EVENT,
+    WEBHOOK_URL_AETH_CHANNEL_EVENT,
 )
 
 class ChannelMonitorBot:
@@ -337,7 +337,7 @@ def main():
     
     # Optional: Add webhook URL for notifications
     # WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
-    WEBHOOK_URL = WEBHOOK_URL_AETH_CHAIN_EVENT  # Set to None to disable webhook notifications
+    WEBHOOK_URL = WEBHOOK_URL_AETH_CHANNEL_EVENT  # Set to None to disable webhook notifications
     
     # Create and run the monitor
     monitor = ChannelMonitorBot(
