@@ -194,6 +194,11 @@ class MessageListenerBot(DiscordBot):
             self.gateway.stop()
 
 
+
+BUSINESS_KEYWORDS_TO_CHECK = [
+    "company",
+    "salary",
+]
 def main():
     """
     Main function to run the message listener bot
@@ -228,6 +233,26 @@ def main():
     # Multiple channels:
     # bot.start_polling(channel_id=CHANNEL_IDS, poll_interval=1.0)
 
+import re
+def check_business_keywords(message: Dict) -> bool:
+    """
+    Check if message contains any business keywords
+    """
+    content = message.get("content", "")
+    return any(re.search(rf'\b{re.escape(word)}\b', content, re.IGNORECASE) if " " not in word else re.search(rf'(?<!\w){re.escape(word)}(?!\w)', content, re.IGNORECASE) for word in BUSINESS_KEYWORDS_TO_CHECK)
+
+def format_business_message(user_name: str, company_name: str, job_title: str) -> str:
+    message = f"""
+    please let {user_name} find {job_title} from the {company_name} as soon as possible.
+    And let me know the result what he get.
+    """
+    return message
 
 if __name__ == "__main__":
-    main()
+    user_name = "John"
+    company_name = BUSINESS_KEYWORDS_TO_CHECK[0]
+    job_title = BUSINESS_KEYWORDS_TO_CHECK[1]
+    message = format_business_message(user_name, company_name, job_title)
+    with open("bussiness_traders.txt", "w") as f:
+        f.write(message)
+#    main()
