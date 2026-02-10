@@ -667,24 +667,65 @@ class DiscordBot:
         return True
 
 
+
+    # Create deleter instance
+discord_bot = DiscordBot()
+
+def announce():
+     # # Read announcement.txt message
+    announcement_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'announcement.txt')
+    with open(announcement_file, 'r', encoding='utf-8') as f:
+        announcement_text = f.read()
+    print(announcement_text)
+
+def clear_channel():
+    channel_id = discord_bot._get_dm_channel_id(user_id="1461212461100433537")
+    print(channel_id)
+    print(discord_bot.delete_all_messages(channel_id=channel_id))
+    #print(discord_bot.fetch_messages(channel_id=channel_id))
+
+def get_channel_messages():
+    channel_id = discord_bot._get_dm_channel_id(user_id="1461212461100433537")
+    print(channel_id)
+    messages = discord_bot.fetch_messages(channel_id=channel_id)
+    print(messages)
+
 def main():
     """
     Main function to run the message deleter
     Configure your bot token and channel ID here
         """    
-    # Create deleter instance
-    discord_bot = DiscordBot()
-    # Read announcement.txt message
-    announcement_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'announcement.txt')
-    with open(announcement_file, 'r', encoding='utf-8') as f:
-        announcement_text = f.read()
-    print(announcement_text)
-    discord_bot.send_dm(user_id="1461212461100433537", content=announcement_text)
+    # # Read announcement.txt message
+    # announcement_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'announcement.txt')
+    # with open(announcement_file, 'r', encoding='utf-8') as f:
+    #     announcement_text = f.read()
+    # print(announcement_text)
+    # discord_bot.send_dm(user_id="1461212461100433537", content=announcement_text)
     # # discord_bot.send_message(content="Hello, I am here to let you know the important news and events. :heart:", channel_id="1447606805248086218")
     # discord_bot.send_dm(user_id=user_id, content=message)
-    # channel_id = discord_bot._get_dm_channel_id(user_id=user_id)
-    # # print(channel_id)
-    # print(discord_bot.delete_messages_with_keywords_in_channel(channel_id=channel_id))
+    # channel_id = discord_bot._get_dm_channel_id(user_id="1461212461100433537")
+    # print(channel_id)
+    # print(discord_bot.delete_all_messages(channel_id=channel_id))
+    #print(discord_bot.fetch_messages(channel_id=channel_id))
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Aeth Discord Bot Utility Commands")
+    parser.add_argument("--announce",  help="Announce")
+    parser.add_argument("--clear",  help="Clear")
+    parser.add_argument("--get",  help="Fetch")
+    args = parser.parse_args()
+
+    if args.announce:
+        announce()
+    elif args.clear:
+        clear_channel()
+    elif args.get:
+        get_channel_messages()
+    else:
+        print("No command option given. Use --help for available commands.")
+    #main()
+    #get_channel_messages()
+    #clear_channel()
+    #pass
