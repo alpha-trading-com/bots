@@ -27,7 +27,12 @@ def get_exception_message(author_id: str = None, content: str = None) -> str:
     
     if "102" in content_lower and "who" in content_lower:
         return "DSV bought sn102."
+
+    if "21" in content_lower and "who" in content_lower:
+        return "DSV bought sn21."
     
+    if "55" in content_lower and "who" in content_lower:
+        return "Yuma still is holding sn55. They might gonna new project on it or might gonna sell it."
 
     EXCEPTION_MESSAGE = """
     Do your own research rather than asking stupid questions. :joy:
