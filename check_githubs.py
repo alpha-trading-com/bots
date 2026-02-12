@@ -131,7 +131,11 @@ if __name__ == "__main__":
         # "https://github.com/user/repo",
         # Add your target repo URLs here
         "https://github.com/taostat/blockmachine",
-        "https://github.com/unconst/eclair"
+        "https://github.com/unconst/eclair",
+        "https://github.com/unconst/SigmaZero",
+        "https://github.com/unconst/tau",
+        "https://github.com/unconst/tau-agent",
+        "https://github.com/GodOfAgents/Dark-Subnet"
     ]
     if not github_urls:
         print("No GitHub URLs provided to monitor.")
