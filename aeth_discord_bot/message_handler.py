@@ -192,6 +192,10 @@ def get_reg_price_info_message(author_id: str = None, content: str = None) -> st
     response = "**Subnet Registration Price**\n\n"
     response += f"**Price:** {info['burn_cost']} TAO\n"
     response += f"**Prune Subnet ID:** {info['prune_subnet_id']}\n"
+    subnet_info = get_subnet_info(info['prune_subnet_id'])
+    response += f"**Subnet Name:** {subnet_info['name']}\n"
+    response += f"**Subnet Owner:** {subnet_info['owner']}\n"
+    response += f"**Subnet Price:** {subnet_info['price']} TAO\n"
     return response
 
 
