@@ -114,7 +114,6 @@ def get_reg_price() -> dict:
         method="get_network_registration_cost",
     )
     burn_cost = query.decode() / 1e9  # convert to TAO
-    subtensor = bt.subtensor(network='finney')
     query = subtensor.substrate.runtime_call(
         api="SubnetInfoRuntimeApi",
         method="get_subnet_to_prune",
