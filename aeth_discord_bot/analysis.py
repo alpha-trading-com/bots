@@ -108,6 +108,13 @@ def get_subnet_info(subnet_id: int) -> dict:
         "emission": subnet.emission.tao,
     }
 
+def get_reg_price() -> float:
+    query = subtensor.substrate.runtime_call(
+        api="SubnetRegistrationRuntimeApi",
+        method="get_network_registration_cost",
+    )
+    decoded = query.decode() / 1e9  # convert to TAO
+    return decoded
 
 if __name__ == "__main__":
     print(get_jeeter_staked_in_subnet(2))

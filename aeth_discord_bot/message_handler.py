@@ -4,6 +4,7 @@ from aeth_discord_bot.analysis import get_bot_staked_in_subnet
 from aeth_discord_bot.analysis import get_jeeter_staked_in_subnet
 from aeth_discord_bot.analysis import get_subnet_info
 from aeth_discord_bot.gateway import get_tao_price, get_btc_price
+from aeth_discord_bot.analysis import get_reg_price
 
 
 
@@ -12,6 +13,7 @@ HELP_MESSAGE = (
     "- Use `!bots_stake_info <subnet_id>` to get information about bot stakes in a subnet.\n"
     "- Use `!subnet <subnet_id>` for details about a subnet.\n"
     "- Use `!tao_price` to get the current price of TAO.\n"
+    "- Use `!reg_price or !burn_cost` to get the current registration price for a subnet.\n"
 )
 
 def get_help_message(author_id: str = None, content: str = None) -> str:
@@ -185,6 +187,12 @@ def get_tao_price_message(author_id: str = None, content: str = None) -> str:
     
     return response
 
+def get_reg_price_info_message(author_id: str = None, content: str = None) -> str:
+    reg_price = get_reg_price()
+    response = "**Subnet Registration Price**\n\n"
+    response += f"**Price:** {reg_price} TAO\n"
+    return response
+
 
     # Option 2: Custom message handler
 def message_handler(message: Dict, channel_id: str) -> Optional[str]:
@@ -246,7 +254,8 @@ def message_handler(message: Dict, channel_id: str) -> Optional[str]:
         if channel_id != "1465309699229618353":
             return "❌ This command is only available in the #jeeters channel."
         return get_jeeters_stake_info_message(author_id, content)
-
+    elif content_lower.startswith("!reg_price") or content_lower.startswith("!burn_cost"):
+        return get_reg_price_info_message(author_id, content)
     elif content_lower.startswith("!subnet"):
         return get_subnet_info_message(author_id, content)
     elif content_lower.startswith("!tao_price"):
