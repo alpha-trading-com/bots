@@ -188,9 +188,10 @@ def get_tao_price_message(author_id: str = None, content: str = None) -> str:
     return response
 
 def get_reg_price_info_message(author_id: str = None, content: str = None) -> str:
-    reg_price = get_reg_price()
+    info = get_reg_price()
     response = "**Subnet Registration Price**\n\n"
-    response += f"**Price:** {reg_price} TAO\n"
+    response += f"**Price:** {info['burn_cost']} TAO\n"
+    response += f"**Prune Subnet ID:** {info['prune_subnet_id']}\n"
     return response
 
 

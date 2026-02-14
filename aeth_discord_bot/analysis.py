@@ -108,13 +108,23 @@ def get_subnet_info(subnet_id: int) -> dict:
         "emission": subnet.emission.tao,
     }
 
-def get_reg_price() -> float:
+def get_reg_price() -> dict:
     query = subtensor.substrate.runtime_call(
         api="SubnetRegistrationRuntimeApi",
         method="get_network_registration_cost",
     )
-    decoded = query.decode() / 1e9  # convert to TAO
-    return decoded
+    burn_cost = query.decode() / 1e9  # convert to TAO
+    subtensor = bt.subtensor(network='finney')
+    query = subtensor.substrate.runtime_call(
+        api="SubnetInfoRuntimeApi",
+        method="get_subnet_to_prune",
+    )
+    prune_subnet_id = query.decode()
+
+    return {
+        "burn_cost": burn_cost,
+        "prune_subnet_id": prune_subnet_id,
+    }
 
 if __name__ == "__main__":
     print(get_jeeter_staked_in_subnet(2))
