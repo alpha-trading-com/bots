@@ -105,6 +105,8 @@ def get_subnet_info(subnet_id: int) -> dict:
         "owner": subnet.owner_coldkey,
         "tao_in": subnet.tao_in.tao,
         "alpha_in": subnet.alpha_in.tao,
+        "alpha_out": subnet.alpha_out.tao,
+        "ADR": subnet.alpha_out.tao / subnet.alpha_in.tao,
         "emission": subnet.emission.tao,
     }
 
