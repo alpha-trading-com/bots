@@ -1,10 +1,12 @@
 import requests
 import re
 
-GOOGLE_DOC_ID_BOTS = "1Vdm20cXVAK-kjgjBw9XcbVYaAvvCWyY8IuPLAE2aRBI"
-GOOGLE_DOC_ID_OWNER_WALLETS = "1VUDA8mzHd_iUQEqiDWMORys6--2ab8nDSThGb--_PaQ"
-GOOGLE_DOC_ID_OWNER_WALLETS_SS = "167NEkUZkpzZx1L-jDgjdDQNhu5rlddpV__rArvTfqoo"
-GOOGLE_DOC_ID_OWNER_WALLETS_PS = "1o0f3bPL5kvsRrnSI3vTc1knOlmY928SpaQP9Mi0USeI"
+from modules.constants import (
+    GOOGLE_DOC_ID_BOTS,
+    GOOGLE_DOC_ID_OWNER_WALLETS,
+    GOOGLE_DOC_ID_OWNER_WALLETS_SS,
+    GOOGLE_DOC_ID_OWNER_WALLETS_PS,
+)
 
 bots = []
 wallet_owners = {}
