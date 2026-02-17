@@ -126,7 +126,7 @@ class ColdkeySwapFetcher:
                                 webhook_url=WEBHOOK_URL_SS_EVENTS,
                                 content=message
                             )
-                            threading.Timer(24, lambda: send_webhook_message(
+                            threading.Timer(0.1, lambda: send_webhook_message(
                                 webhook_url=WEBHOOK_URL_AETH_CHAIN_EVENT,
                                 content=message
                             )).start()
