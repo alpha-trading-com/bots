@@ -1,11 +1,14 @@
 import requests
 import re
+import bittensor as bt
+
 
 from modules.constants import (
     GOOGLE_DOC_ID_BOTS,
     GOOGLE_DOC_ID_OWNER_WALLETS,
     GOOGLE_DOC_ID_OWNER_WALLETS_SS,
     GOOGLE_DOC_ID_OWNER_WALLETS_PS,
+    NETWORK,
 )
 
 bots = []
@@ -43,15 +46,23 @@ def load_wallet_owners_from_gdoc():
 
         except Exception as e:
             print(f"Failed to load wallet owners from Google Doc: {e}")
+
+def load_subnet_owners_from_chain():
     wallet_owners["5GkZb6S3PSv6stahzWXgMg2PAe8CxEYSp3PXWPJybhLt1xiF"] = "Jeeter"
     wallet_owners["5FLQ2m1ZgVd2qXfE4ZXtxyuqmjjJHycKqFEWvExCiNzUtEEe"] = "Jeeter"
     wallet_owners["5FnWKpesLZj1ZknKJZ6bzF3VucRxgD7VE4MFVDkh3WDbeUbL"] = "Jeeter"
     wallet_owners["5HkGCkce7aKxinYtU588kjt7sy2HKrKgKyhbNoe13kvrPFT2"] = "Jeeter"
 
+    subtensor = bt.Subtensor(NETWORK)
+    subnet_infos = subtensor.all_subnets()
+    for idx, subnet_info in enumerate(subnet_infos):
+        owner_coldkey = subnet_info.owner_coldkey
+        wallet_owners[owner_coldkey] = f"Owner({idx}){subnet_info.subnet_name}"
 
 def main():
     load_bots_from_gdoc()
     load_wallet_owners_from_gdoc()
+    load_subnet_owners_from_chain()
     # Dump all wallet_owners (mapping of address->label) into a .txt file as JS "const LABELS = {...};"
     with open('wallet_labels.txt', 'w', encoding='utf-8') as f:
         f.write("const LABELS = {\n")
@@ -69,4 +80,6 @@ def main():
         f.write("};\n")
 
 if __name__ == "__main__":
+    #load_subnet_owners_from_chain()
+    #print(wallet_owners)
     main()

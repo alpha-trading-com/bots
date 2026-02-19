@@ -127,5 +127,8 @@ def get_reg_price() -> dict:
         "prune_subnet_id": prune_subnet_id,
     }
 
+def get_adr_subnets(limit: int = 10) -> list[int]:
+    subnet_infos = subtensor.all_subnets()
+    print(subnet_infos[76])
 if __name__ == "__main__":
-    print(get_jeeter_staked_in_subnet(2))
+    print(get_adr_subnets(10))
