@@ -25,8 +25,8 @@ from modules.constants import (
 )
 
 REFRESH_INTERVAL = 20 # minutes
-subtensor = bt.subtensor(NETWORK)
-subtensor_owner_coldkeys = bt.subtensor(NETWORK)
+subtensor = bt.Subtensor(NETWORK)
+subtensor_owner_coldkeys = bt.Subtensor(NETWORK)
 
 bots = []
 wallet_owners = {}
