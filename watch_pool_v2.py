@@ -229,6 +229,9 @@ def print_stake_events(stake_events, netuid, show_balance):
         tao_amount = float(event['amount_tao'])
         if not ((netuid == netuid_val or netuid == -1) and (abs(tao_amount) > threshold or threshold == -1)):
             continue
+
+        if event['type'] == 'StakeMoved':
+            continue
         
         old_coldkey = event['coldkey']
         hotkey = event['hotkey']
