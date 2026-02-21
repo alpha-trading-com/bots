@@ -380,6 +380,7 @@ def find_failed_extrinsics(stake_extrinsics, stake_events):
         List of failed extrinsic dictionaries
     """
     failed_extrinsics = []
+    coldkeys = []   
     
     # Create a set of hashes from events for quick lookup
     event_hashes = set()
@@ -406,13 +407,17 @@ def find_failed_extrinsics(stake_extrinsics, stake_events):
             # If no matching event found, this extrinsic failed
             if extrinsic_hash not in event_hashes:
                 failed_extrinsics.append(extrinsic)
-    
-    return failed_extrinsics
+                if coldkey not in coldkeys:
+                    coldkeys.append(coldkey)
+    return failed_extrinsics, coldkeys
 
-def print_stake_extrinsic(stake_extrinsic, threshold, netuid, show_balance):
+def print_stake_extrinsic(stake_extrinsic, coldkeys, threshold, netuid, show_balance):
     now_subnet_infos = subtensor.all_subnets()
     prices = [float(subnet_info.price) for subnet_info in now_subnet_infos]
     cash = {}
+    if show_balance:
+        balances = subtensor.get_balances(*coldkeys)
+        stake_infos = subtensor.get_stake_info_for_coldkeys(coldkey_ss58s=coldkeys)
     for extrinsic in stake_extrinsic:
         netuid_val = int(extrinsic['netuid'])
         tao_amount = float(extrinsic['amount_tao'])
@@ -436,7 +441,7 @@ def print_stake_extrinsic(stake_extrinsic, threshold, netuid, show_balance):
         reset = "\033[0m"
         total_value_str = ""
         if show_balance:
-            total_value_str = get_total_value(subtensor, old_coldkey, now_subnet_infos, netuid_val, cash)
+            total_value_str = get_total_value(subtensor, old_coldkey, now_subnet_infos, netuid_val, cash, balances[old_coldkey], stake_infos[old_coldkey])
 
         # All extrinsics here are failed (no matching event)
         print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f} {limit_price:8.5f} {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
@@ -468,11 +473,11 @@ if __name__ == "__main__":
             stake_events = extract_stake_added_events_from_data(events)
             
             # Find failed extrinsics (extrinsics without matching events)
-            failed_extrinsics = find_failed_extrinsics(stake_extrinsics, stake_events)
+            failed_extrinsics, coldkeys = find_failed_extrinsics(stake_extrinsics, stake_events)
             
             print(f"*{'*'*40}")
             if failed_extrinsics:
-                print_stake_extrinsic(failed_extrinsics, threshold, netuid, show_balance)
+                print_stake_extrinsic(failed_extrinsics, coldkeys, threshold, netuid, show_balance)
             subtensor.wait_for_block()
         except Exception as e:
             print(f"Error: {e}")
