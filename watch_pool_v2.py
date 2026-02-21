@@ -77,7 +77,7 @@ def refresh_owner_coldkeys_periodically(interval_minutes=REFRESH_INTERVAL):
 
 refresh_owner_coldkeys_periodically()
 
-def get_coldkey_display_name(coldkey):
+def get_coldkey_display_name(coldkey, hotkey=None):
     if coldkey is None:
         return "Unknown"
     owner_color = "\033[93m"
@@ -94,6 +94,10 @@ def get_coldkey_display_name(coldkey):
 
     if coldkey in wallet_owners:
         return coldkey + f"{owner_color} ({wallet_owners[coldkey]}){reset}"
+
+    if hotkey == "5E4hBXkG9uVc1y9zdNzgCiLHrPbFukChkYeN1LxFnZgg4ASL":
+        return coldkey + f"{owner_color} (Mentant){reset}"
+
     
     if coldkey in wallet_numbers:
         wallet_number = wallet_numbers[coldkey]
@@ -227,7 +231,8 @@ def print_stake_events(stake_events, netuid, show_balance):
             continue
         
         old_coldkey = event['coldkey']
-        coldkey = get_coldkey_display_name(old_coldkey)
+        hotkey = event['hotkey']
+        coldkey = get_coldkey_display_name(old_coldkey, hotkey)
 
         color = get_color(event['type'], coldkey)    
 
