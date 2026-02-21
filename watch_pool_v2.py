@@ -17,8 +17,8 @@ from modules.constants import (
 )
 
 REFRESH_INTERVAL = 20 # minutes
-subtensor = bt.subtensor(NETWORK)
-subtensor_owner_coldkeys = bt.subtensor(NETWORK)
+subtensor = bt.Subtensor(NETWORK)
+subtensor_owner_coldkeys = bt.Subtensor(NETWORK)
 
 bots = []
 wallet_owners = {}
@@ -126,6 +126,7 @@ def extract_stake_events_from_data(events_data):
         List of dictionaries containing stake/unstake event information
     """
     stake_events = []
+    coldkeys = []
     
     for event in events_data:
         phase = event.get('phase', {})
@@ -170,6 +171,8 @@ def extract_stake_events_from_data(events_data):
                     'amount': amount,
                     'amount_tao': amount / 1e9 if amount else 0,
                 })
+                if coldkey_tuple not in coldkeys:
+                    coldkeys.append(coldkey_tuple)
                 
             elif event_id == 'StakeRemoved':
                 # Extract unstake information - also a tuple
@@ -193,8 +196,10 @@ def extract_stake_events_from_data(events_data):
                     'amount': amount,
                     'amount_tao': amount / 1e9 if amount else 0,
                 })
-                
+                if coldkey_tuple not in coldkeys:
+                    coldkeys.append(coldkey_tuple)
             elif event_id == 'StakeMoved':
+                continue
                 # Extract stake move information - also a tuple
                 if isinstance(attributes, tuple) and len(attributes) >= 6:
                     coldkey_tuple = to_ss58(attributes[0][0]) if isinstance(attributes[0], tuple) and len(attributes[0]) > 0 else attributes[0]
@@ -218,12 +223,19 @@ def extract_stake_events_from_data(events_data):
                     'amount': amount,
                     'amount_tao': amount / 1e9 if amount else 0,
                 })
+                if coldkey_tuple not in coldkeys:
+                    coldkeys.append(coldkey_tuple)
     
-    return stake_events
-def print_stake_events(stake_events, netuid, show_balance):
+    return stake_events, coldkeys
+def print_stake_events(stake_events, netuid, show_balance, coldkeys):
     now_subnet_infos = subtensor.all_subnets()
     prices = [float(subnet_info.price) for subnet_info in now_subnet_infos]
     cash = {}
+
+    if show_balance:
+        stake_infos = subtensor.get_stake_info_for_coldkeys(coldkey_ss58s=coldkeys)
+        balances = subtensor.get_balances(*coldkeys)
+        
     for event in stake_events:
         netuid_val = int(event['netuid'])
         tao_amount = float(event['amount_tao'])
@@ -250,7 +262,15 @@ def print_stake_events(stake_events, netuid, show_balance):
         reset = "\033[0m"
         total_value_str = ""
         if show_balance:
-            total_value_str = get_total_value(subtensor, old_coldkey, now_subnet_infos, netuid_val, cash)
+            total_value_str = get_total_value(
+                subtensor, 
+                old_coldkey, 
+                now_subnet_infos, 
+                netuid_val, 
+                cash,
+                balances[old_coldkey],
+                stake_infos[old_coldkey]
+            )
 
         print(f"{color}SN {netuid_val:3d} => {prices[netuid_val]:8.5f}  {sign}{tao_amount:5.1f}  {coldkey}{reset} {total_value_str}")
 
@@ -272,7 +292,7 @@ if __name__ == "__main__":
     t = threading.Thread(target=get_user_input)
     t.daemon = True
     t.start()
-    t.join(timeout=10)
+    t.join(timeout=5)
     if show_balance_input_result[0] is None:
         show_balance_input_result[0] = ""
     user_input = show_balance_input_result[0].strip().lower()
@@ -290,9 +310,9 @@ if __name__ == "__main__":
 
         
         # Extract stake events from live data
-        stake_events = extract_stake_events_from_data(events)
+        stake_events, coldkeys = extract_stake_events_from_data(events)
         if stake_events:
             print(f"*{'*'*40}")
-            print_stake_events(stake_events, netuid, show_balance)
+            print_stake_events(stake_events, netuid, show_balance, coldkeys)
         
         subtensor.wait_for_block()
